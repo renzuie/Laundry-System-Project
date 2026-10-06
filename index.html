@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Fresh Laundry · Staff Screen</title>
+<title>Washing Well Laundry Shop · Staff Screen</title>
 <style>
 /* Self-hosted fonts (works offline) */
 @font-face{font-family:'DM Sans';font-style:normal;font-weight:400;font-display:swap;src:url('vendor/fonts/dm-sans-latin-400-normal.woff2') format('woff2')}
@@ -118,6 +118,21 @@ select{min-height:56px;font:inherit;font-size:16px;border:1px solid #cfe2f1;bord
 .total strong,.receipt .total strong{font:700 28px Manrope,sans-serif;margin:0;display:inline}
 .order-row{display:flex;justify-content:space-between;align-items:center;gap:12px;border:1px solid #d6e6f3;border-radius:12px;padding:14px;margin:10px 0;background:#f8fcff}
 .order-row small{display:block;color:var(--muted);margin-top:4px;font-size:13px}
+
+/* ===== Branding / per-load pricing additions ===== */
+.footer{flex-wrap:wrap;gap:6px 20px}
+.welcome-inner .welcome-meta{margin:28px 0 0;font-size:13px;line-height:1.6}
+.hint{font-weight:400;color:var(--muted)}
+.total small{display:block;font-weight:400;font-size:13px;color:var(--muted)}
+.shop{margin-bottom:14px}
+.shop b{display:block;font:800 18px Manrope,sans-serif}
+.shop small{display:block;color:var(--muted);font-size:13px}
+
+/* ===== Add-on steppers ===== */
+.service.addon.has{border:2px solid var(--green);background:#e6f3ff}
+.stepper{display:flex;align-items:center;gap:12px}
+.stepper button{width:48px;height:48px;border-radius:50%;border:1px solid #cfe2f1;background:#fff;color:var(--green);font-size:24px;line-height:1}
+.stepper output{min-width:24px;text-align:center;font-weight:700}
 </style>
 </head>
 <body>
@@ -125,65 +140,83 @@ select{min-height:56px;font:inherit;font-size:16px;border:1px solid #cfe2f1;bord
 <div class="welcome-bubbles" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
 <div class="welcome-inner">
 <span class="logo">✳</span>
-<div class="eyebrow">Fresh Laundry · Staff screen</div>
-<h1>Welcome to fresh.</h1>
+<div class="eyebrow">Washing Well Laundry Shop</div>
+<h1>Welcome to Washing Well.</h1>
 <p>Clean clothes, one less thing on your list.</p>
 <button type="button" class="welcome-start" id="start">Tap to begin →</button>
+<p class="welcome-meta">Serving customers since June 3, 2020<br>Blk. 6, Lot 32, Olivarez Homes, Phase 5, Sto. Tomas, Biñan, Laguna</p>
 </div>
 </section>
-<header><div class="brand"><span class="logo">✳</span><div>fresh.<small>LAUNDRY & CARE</small></div></div><div class="header-right"><span class="badge"><span class="dot"></span>Staff screen</span><time id="clock"></time></div></header>
-<main><div class="welcome"><div><div class="eyebrow">Orders · Status · Verification</div><h1>Ready for the next load.</h1><p>Record an order, update its status, or verify a pickup.</p></div><div class="welcome-note">Clean clothes.<br>One less thing on your list.</div></div>
+<header><div class="brand"><span class="logo">✳</span><div>Washing Well<small>LAUNDRY SHOP</small></div></div><div class="header-right"><span class="badge"><span class="dot"></span>Staff screen</span><time id="clock"></time></div></header>
+<main><div class="welcome"><div><div class="eyebrow">Orders · Status · Verification</div><h1>Ready for the next load.</h1><p>Record an order, update its status, or verify a pickup.</p></div><div class="welcome-note">Washing Well Laundry Shop<br>Since June 3, 2020</div></div>
 <div class="cards">
-<button class="card primary" data-open="order"><span class="icon"><svg viewBox="0 0 32 32"><rect x="5" y="3" width="22" height="26" rx="4"/><circle cx="16" cy="19" r="7"/><path d="M9 8h1m4 0h9M10 19c3-4 6 4 12 0"/></svg></span><h2>New order</h2><p>Enter the weight, pick a service and add-ons. The total is computed for you.<br>Then print the receipt with its QR code.</p><span class="card-bottom">Record an order <span class="arrow">↗</span></span></button>
+<button class="card primary" data-open="order"><span class="icon"><svg viewBox="0 0 32 32"><rect x="5" y="3" width="22" height="26" rx="4"/><circle cx="16" cy="19" r="7"/><path d="M9 8h1m4 0h9M10 19c3-4 6 4 12 0"/></svg></span><h2>New order</h2><p>Enter the weight and pick a service. The price is computed per load.<br>Then print the receipt with its QR code.</p><span class="card-bottom">Record an order <span class="arrow">↗</span></span></button>
 <button class="card" data-open="orders"><span class="icon"><svg viewBox="0 0 32 32"><rect x="7" y="4" width="18" height="25" rx="3"/><path d="M12 4V2h8v2M12 12h8m-8 5h8m-8 5h4"/><path d="m20 23 2 2 5-5"/></svg></span><h2>Orders & status</h2><p>See every order and update its laundry status.</p><span class="card-bottom">Manage orders <span class="arrow">↗</span></span></button>
 <button class="card" data-open="verify"><span class="icon"><svg viewBox="0 0 32 32"><rect x="4" y="4" width="9" height="9" rx="1"/><rect x="19" y="4" width="9" height="9" rx="1"/><rect x="4" y="19" width="9" height="9" rx="1"/><path d="M19 19h3v3m6-3v9m-9 0h3m3-3h3"/></svg></span><h2>Verify order</h2><p>Scan a receipt's QR code or type the order number before release.</p><span class="card-bottom">Verify a pickup <span class="arrow">↗</span></span></button>
 </div>
 <div class="section-title">How an order flows <span>FROM DROP-OFF TO PICKUP</span></div>
 <div class="steps"><div class="step"><span class="num">01</span><div><b>Weigh & record</b><p>Enter weight, service and add-ons.</p></div></div><div class="step"><span class="num">02</span><div><b>Print receipt</b><p>The receipt carries the order's QR code.</p></div></div><div class="step"><span class="num">03</span><div><b>Update status</b><p>Customers see progress on their phones.</p></div></div><div class="step"><span class="num">04</span><div><b>Verify & release</b><p>Scan the QR, then hand over the laundry.</p></div></div></div>
 <div class="help"><span>ⓘ &nbsp; Need a quick reminder of how this screen works?</span><button data-open="help">Quick guide ↗</button></div>
-</main><footer class="footer"><span>Thoughtful care for your everyday wear.</span><span>Prototype · Sample prices · Orders saved on this device</span></footer>
+</main><footer class="footer"><span>Washing Well Laundry Shop · Blk. 6, Lot 32, Olivarez Homes, Phase 5, Sto. Tomas, Biñan, Laguna</span><span>Est. June 3, 2020 · Prototype · Sample prices</span></footer>
 <dialog id="modal"><div class="dialog-top"><h2 id="modal-title"></h2><button class="close" aria-label="Close dialog">×</button></div><div id="modal-body"></div></dialog>
 <script src="vendor/qrcode.min.js"></script>
 <script>
 const modal=document.querySelector('#modal'),body=document.querySelector('#modal-body'),title=document.querySelector('#modal-title');
 const STATUS_URL='';/* Set to the customer status page, e.g. 'https://your-site/status.html?id=' — until then the QR encodes only the order number */
 const STATUSES=['Received','Washing','Drying','Folding','Ready for pickup','Claimed'];
-const services=[{name:'Wash & fold',price:65,description:'Washed, dried, and neatly folded'},{name:'Wash only',price:35,description:'A thorough wash for everyday clothes'},{name:'Dry only',price:30,description:'Gentle drying for clean laundry'}];
-const addons=[{name:'Detergent',price:10},{name:'Fabric conditioner',price:10},{name:'Stain remover',price:15}];
-let selected=0,picked=new Set();
+const SHOP={name:'Washing Well Laundry Shop',address:'Blk. 6, Lot 32, Olivarez Homes, Phase 5, Sto. Tomas, Biñan, Laguna'};
+/* From the shop's posted price list. A load is up to 7 kg of lightweight clothes or 5 kg of heavyweight; comforters are per piece.
+   Staff can still override the price on each order. */
+const services=[
+{name:'Wash & fold · Lightweight',price:170,kg:7,description:'T-shirts, shorts, sando · up to 7 kg per load'},
+{name:'Wash & fold · Heavyweight',price:170,kg:5,description:'Bedding, pants, towels, jackets, joggers · up to 5 kg per load'},
+{name:'Wash & fold · Comforter',price:200,piece:true,description:'Double / Queen size · per piece'},
+{name:'Wash only · Lightweight',price:85,kg:7,description:'Regular clothes · up to 7 kg per load'},
+{name:'Wash only · Heavyweight',price:85,kg:5,description:'Mixed with heavyweight · up to 5 kg per load'},
+{name:'Dry only',price:90,kg:7,description:'Per load'}];
+const addons=[{name:'Liquid detergent',price:18},{name:'Fab con',price:10},{name:'Excess clothes (up to 1 kg)',price:20}];
+let selected=0,qtys=addons.map(()=>0);
 const peso=n=>'₱'+n.toFixed(2).replace(/\.00$/,'');
 const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function getOrders(){try{return JSON.parse(localStorage.getItem('fresh-orders')||'[]')}catch{return []}}
 function saveOrders(o){try{localStorage.setItem('fresh-orders',JSON.stringify(o));return true}catch{return false}}
 function newId(){const a=new Uint8Array(4);crypto.getRandomValues(a);return 'FR-'+[...a].map(x=>x.toString(16).padStart(2,'0')).join('').toUpperCase()}
-function calcTotal(w,s,ad){return w*services[s].price+[...ad].reduce((t,i)=>t+addons[i].price,0)}
-function serviceRows(){return '<div class="services">'+services.map((s,i)=>`<button class="service ${i===selected?'selected':''}" type="button" data-service="${i}" aria-pressed="${i===selected}"><span><b>${s.name}</b><small>${s.description}</small></span><b>₱${s.price}/kg</b></button>`).join('')+'</div>'}
-function orderForm(){selected=0;picked=new Set();
-body.innerHTML=`<form id="order-form"><label class="field">Customer name<input name="customer" required maxlength="60" autocomplete="off" placeholder="Customer name"></label><label class="field">Weight (kg)<input name="weight" type="number" inputmode="decimal" min="0.1" max="100" step="0.1" required placeholder="e.g. 3.5"></label><b class="lbl">Service</b>${serviceRows()}<b class="lbl">Additional products</b><div class="services">${addons.map((a,i)=>`<button class="service" type="button" data-addon="${i}" aria-pressed="false"><span><b>${a.name}</b></span><b>+${peso(a.price)}</b></button>`).join('')}</div><div class="total">Total <strong id="total">₱0</strong></div><button class="action">Create order</button></form>`;
-const form=body.querySelector('form'),totalEl=body.querySelector('#total');
-const update=()=>{totalEl.textContent=peso(calcTotal(parseFloat(form.elements.weight.value)||0,selected,picked))};
-body.querySelectorAll('[data-service]').forEach(b=>b.onclick=()=>{selected=Number(b.dataset.service);body.querySelectorAll('[data-service]').forEach((el,i)=>{el.classList.toggle('selected',i===selected);el.setAttribute('aria-pressed',i===selected)});update()});
-body.querySelectorAll('[data-addon]').forEach(b=>b.onclick=()=>{const i=Number(b.dataset.addon);picked.has(i)?picked.delete(i):picked.add(i);b.classList.toggle('selected',picked.has(i));b.setAttribute('aria-pressed',picked.has(i));update()});
-form.elements.weight.oninput=update;
-form.onsubmit=e=>{e.preventDefault();const name=form.elements.customer.value.trim(),w=parseFloat(form.elements.weight.value);
+const loadsFor=(w,s)=>s.piece?Math.max(1,Math.round(w)):Math.max(1,Math.ceil(w/s.kg-1e-9));
+const unitWord=s=>s.piece?'piece':'load';
+const plural=(n,u='load')=>n+' '+u+(n===1?'':'s');
+const qty=o=>o.unit==='pc'?plural(o.loads,'piece'):o.weight+' kg'+(o.loads?' ('+plural(o.loads)+')':'');
+function calcTotal(w,s,ppl,qs){return loadsFor(w,s)*ppl+qs.reduce((t,q,i)=>t+q*addons[i].price,0)}
+function serviceRows(){return '<div class="services">'+services.map((s,i)=>`<button class="service ${i===selected?'selected':''}" type="button" data-service="${i}" aria-pressed="${i===selected}"><span><b>${s.name}</b><small>${s.description}</small></span><b>₱${s.price}/${s.piece?'pc':'load'}</b></button>`).join('')+'</div>'}
+function orderForm(){selected=0;qtys=addons.map(()=>0);
+body.innerHTML=`<form id="order-form"><label class="field">Customer name<input name="customer" required maxlength="60" autocomplete="off" placeholder="Customer name"></label><label class="field"><span id="wlabel">Weight (kg)</span> <span class="hint" id="whint"></span><input name="weight" type="number" inputmode="decimal" min="0.1" max="100" step="0.1" required placeholder="e.g. 3.5"></label><b class="lbl">Service</b>${serviceRows()}<label class="field" id="pplabel">Price per load (₱)<input name="ppl" type="number" inputmode="decimal" min="0" step="1" required value="${services[0].price}"></label><b class="lbl">Additional products</b><div class="services">${addons.map((a,i)=>`<div class="service addon"><span><b>${a.name}</b><small>${peso(a.price)} each</small></span><span class="stepper"><button type="button" data-dec="${i}" aria-label="Less ${a.name}">−</button><output id="q${i}">0</output><button type="button" data-inc="${i}" aria-label="More ${a.name}">+</button></span></div>`).join('')}</div><div class="total"><span>Total<small id="breakdown">Enter the weight</small></span><strong id="total">₱0</strong></div><button class="action">Create order</button></form>`;
+const form=body.querySelector('form'),totalEl=body.querySelector('#total'),brk=body.querySelector('#breakdown'),wl=body.querySelector('#wlabel'),wh=body.querySelector('#whint'),pl=body.querySelector('#pplabel');
+let lastPiece=false;
+const update=()=>{const s=services[selected],w=parseFloat(form.elements.weight.value)||0,ppl=parseFloat(form.elements.ppl.value)||0;if(w>0){totalEl.textContent=peso(calcTotal(w,s,ppl,qtys));brk.textContent=`${plural(loadsFor(w,s),unitWord(s))} × ${peso(ppl)}`+(qtys.some(q=>q)?' + add-ons':'')}else{totalEl.textContent='₱0';brk.textContent=s.piece?'Enter the number of pieces':'Enter the weight'}};
+const sync=()=>{const s=services[selected],w=form.elements.weight;wl.textContent=s.piece?'Number of pieces':'Weight (kg)';wh.textContent=s.piece?'· per piece':'· up to '+s.kg+' kg per load';pl.firstChild.textContent=s.piece?'Price per piece (₱)':'Price per load (₱)';w.step=s.piece?'1':'0.1';w.min=s.piece?'1':'0.1';w.placeholder=s.piece?'e.g. 1':'e.g. 3.5';if(!!s.piece!==lastPiece){w.value='';lastPiece=!!s.piece}form.elements.ppl.value=s.price;update()};
+body.querySelectorAll('[data-service]').forEach(b=>b.onclick=()=>{selected=Number(b.dataset.service);body.querySelectorAll('[data-service]').forEach((el,i)=>{el.classList.toggle('selected',i===selected);el.setAttribute('aria-pressed',i===selected)});sync()});
+body.querySelectorAll('[data-inc],[data-dec]').forEach(b=>b.onclick=()=>{const up=b.dataset.inc!==undefined,i=Number(up?b.dataset.inc:b.dataset.dec);qtys[i]=Math.max(0,Math.min(20,qtys[i]+(up?1:-1)));body.querySelector('#q'+i).textContent=qtys[i];b.closest('.addon').classList.toggle('has',qtys[i]>0);update()});
+form.elements.weight.oninput=update;form.elements.ppl.oninput=update;sync();
+form.onsubmit=e=>{e.preventDefault();const s=services[selected],name=form.elements.customer.value.trim(),w=parseFloat(form.elements.weight.value),ppl=parseFloat(form.elements.ppl.value);
 if(!name){form.elements.customer.setCustomValidity('Please enter the customer name.');form.elements.customer.reportValidity();form.elements.customer.oninput=()=>form.elements.customer.setCustomValidity('');return}
-if(!(w>0)){form.elements.weight.setCustomValidity('Please enter the weight in kg.');form.elements.weight.reportValidity();form.elements.weight.oninput=()=>{form.elements.weight.setCustomValidity('');update()};return}
-const order={id:newId(),customer:name,weight:w,service:services[selected].name,addons:[...picked].map(i=>addons[i].name),total:calcTotal(w,selected,picked),status:STATUSES[0],created:Date.now()};
+if(!(w>0)){form.elements.weight.setCustomValidity(s.piece?'Please enter the number of pieces.':'Please enter the weight in kg.');form.elements.weight.reportValidity();form.elements.weight.oninput=()=>{form.elements.weight.setCustomValidity('');update()};return}
+if(!(ppl>=0)){form.elements.ppl.setCustomValidity('Please enter the price.');form.elements.ppl.reportValidity();form.elements.ppl.oninput=()=>{form.elements.ppl.setCustomValidity('');update()};return}
+const order={id:newId(),customer:name,weight:s.piece?Math.round(w):w,unit:s.piece?'pc':'kg',loads:loadsFor(w,s),pricePerLoad:ppl,service:s.name,addons:qtys.map((q,i)=>q?addons[i].name+' × '+q:null).filter(Boolean),total:calcTotal(w,s,ppl,qtys),status:STATUSES[0],created:Date.now()};
 const orders=getOrders();orders.push(order);
 if(!saveOrders(orders)){body.innerHTML='<p class="error">This browser cannot save the order.</p>';return}
 receipt(order)}}
 function receipt(order){title.textContent='Order created';
-body.innerHTML=`<div class="receipt"><span class="eyebrow">Order number</span><strong>${order.id}</strong><p>${esc(order.customer)} · ${order.service} · ${order.weight} kg${order.addons.length?'<br>'+esc(order.addons.join(', ')):''}</p><div class="total">Total <strong>${peso(order.total)}</strong></div><div id="order-qr" class="order-qr" role="img" aria-label="QR code for order ${order.id}"></div><p class="qr-caption">Scan to check your laundry status.</p></div><button class="action ghost print-hide" id="print" type="button">Print receipt</button><button class="action print-hide" id="done" type="button">Back to home</button>`;
+const when=new Date(order.created).toLocaleString('en-PH',{dateStyle:'medium',timeStyle:'short'});
+body.innerHTML=`<div class="receipt"><div class="shop"><b>${SHOP.name}</b><small>${SHOP.address}</small></div><span class="eyebrow">Order number</span><strong>${order.id}</strong><p>${esc(order.customer)} · ${order.service}<br>${order.unit==='pc'?plural(order.loads,'piece'):order.weight+' kg · '+plural(order.loads)} × ${peso(order.pricePerLoad)}${order.addons.length?'<br>Add-ons: '+esc(order.addons.join(', ')):''}<br>${when}</p><div class="total"><span>Total</span><strong>${peso(order.total)}</strong></div><div id="order-qr" class="order-qr" role="img" aria-label="QR code for order ${order.id}"></div><p class="qr-caption">Scan to check your laundry status.</p></div><button class="action ghost print-hide" id="print" type="button">Print receipt</button><button class="action print-hide" id="done" type="button">Back to home</button>`;
 new QRCode(document.querySelector('#order-qr'),{text:STATUS_URL?STATUS_URL+order.id:order.id,width:200,height:200,colorDark:'#000000',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
 document.querySelector('#print').onclick=()=>window.print();document.querySelector('#done').onclick=()=>modal.close()}
 function ordersView(){const list=getOrders().slice().reverse();
-body.innerHTML=list.length?`<div class="orders">${list.map(o=>`<div class="order-row"><div><b>${esc(o.customer)}</b><small>${o.id} · ${o.service} · ${o.weight} kg · ${peso(o.total)}</small></div><select data-status="${o.id}" aria-label="Status for ${o.id}">${STATUSES.map(t=>`<option${t===o.status?' selected':''}>${t}</option>`).join('')}</select></div>`).join('')}</div>`:'<p>No orders yet. Create one from the home screen.</p>';
+body.innerHTML=list.length?`<div class="orders">${list.map(o=>`<div class="order-row"><div><b>${esc(o.customer)}</b><small>${o.id} · ${o.service} · ${qty(o)} · ${peso(o.total)}</small></div><select data-status="${o.id}" aria-label="Status for ${o.id}">${STATUSES.map(t=>`<option${t===o.status?' selected':''}>${t}</option>`).join('')}</select></div>`).join('')}</div>`:'<p>No orders yet. Create one from the home screen.</p>';
 body.querySelectorAll('[data-status]').forEach(sel=>sel.onchange=()=>{const os=getOrders(),o=os.find(x=>x.id===sel.dataset.status);if(o){o.status=sel.value;saveOrders(os)}})}
 function verifyView(){body.innerHTML='<p>Scan the receipt’s QR code or type the order number.</p><form id="lookup"><label class="field">Order number<input name="id" required maxlength="120" placeholder="e.g. FR-12AB34CD" autocomplete="off" autofocus></label><button class="action">Verify order</button></form><div id="result" aria-live="polite"></div>';
 body.querySelector('form').onsubmit=e=>{e.preventDefault();const raw=new FormData(e.target).get('id').trim().toUpperCase(),m=raw.match(/FR-[0-9A-F]{8}/),id=m?m[0]:raw;
 const orders=getOrders(),order=orders.find(o=>o.id===id),result=document.querySelector('#result');result.replaceChildren();
 const line=document.createElement('div');line.className=order?'status-line':'error';
-const show=()=>{line.textContent=`${order.customer} · ${order.service} · ${order.weight} kg · ${peso(order.total)} · Status: ${order.status}`};
+const show=()=>{line.textContent=`${order.customer} · ${order.service} · ${qty(order)} · ${peso(order.total)} · Status: ${order.status}`};
 if(order)show();else line.textContent='Order not found on this device. Check the number and try again.';
 result.append(line);
 if(order&&order.status!=='Claimed'){const btn=document.createElement('button');btn.type='button';btn.className='action';btn.textContent='Mark as claimed';btn.onclick=()=>{order.status='Claimed';saveOrders(orders);show();btn.remove()};result.append(btn)}}}
@@ -191,7 +224,7 @@ function open(view){title.textContent={order:'New order',orders:'Orders & status
 if(view==='order')orderForm();
 if(view==='orders')ordersView();
 if(view==='verify')verifyView();
-if(view==='help')body.innerHTML='<p>1. <b>New order</b>: enter the customer name and weight, choose a service and add-ons, then create the order and print the receipt.<br>2. <b>Orders & status</b>: change an order’s status as it moves from washing to pickup.<br>3. <b>Verify order</b>: scan or type the order number before releasing the laundry.</p><div class="note">Orders are saved on this device only. Customer phone status and camera scanning are connected in a later step.</div>';
+if(view==='help')body.innerHTML='<p>1. <b>New order</b>: enter the customer name and weight (one load is up to 7 kg of lightweight clothes or 5 kg of heavyweight), choose a service, adjust the price per load if needed, add any extra products, then create the order and print the receipt.<br>2. <b>Orders & status</b>: change an order’s status as it moves from washing to pickup.<br>3. <b>Verify order</b>: scan or type the order number before releasing the laundry.</p><div class="note">Orders are saved on this device only. Customer phone status and camera scanning are connected in a later step.</div>';
 if(!modal.open)modal.showModal();}
 document.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>open(b.dataset.open));document.querySelector('.close').onclick=()=>modal.close();function tick(){document.querySelector('#clock').textContent=new Intl.DateTimeFormat('en-PH',{hour:'numeric',minute:'2-digit',timeZone:'Asia/Manila'}).format(new Date())}tick();setInterval(tick,30000);
 const homeEls=document.querySelectorAll('header,main,.footer'),welcome=document.querySelector('#welcome');
