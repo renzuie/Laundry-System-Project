@@ -52,9 +52,58 @@ dialog{max-height:calc(100dvh - 32px);overflow-y:auto;overscroll-behavior:contai
  .receipt strong{font-size:28px;overflow-wrap:anywhere}
 }
 .order-qr{display:table;margin:20px auto 12px;padding:20px;background:#fff;border-radius:12px}.order-qr img,.order-qr canvas{display:block;max-width:100%;height:auto}.qr-caption{font-size:14px;margin:0}
+/* ===== Light blue & white laundry theme (overrides) ===== */
+:root{--ink:#123a5c;--muted:#6b8499;--green:#2379c2;--lime:#d9efff;--paper:#f3f9ff}
+header,.footer{border-color:#dcecf8}
+.badge{background:#e3f2fd}
+.dot{background:#3aa0e8}
+.eyebrow{color:#4a8dc0}
+button:focus-visible,input:focus-visible{outline-color:#5bb0ee}
+.card{border-color:#dcecf8}
+.card:hover{box-shadow:0 12px 30px #2379c218}
+.primary{border-color:var(--green)}
+.primary p{color:#d4ebff}
+.icon{background:#eaf5fd}
+.primary .icon{background:#ffffff26}
+.arrow{border-color:#d3e6f5}
+.steps{background:#e8f3fc}
+.num{border-color:#c4dcee;background:#fff}
+input{border-color:#cfe2f1;background:#f8fcff}
+.service{border-color:#d6e6f3;background:#f8fcff}
+.service.selected{border-color:var(--green);background:#e6f3ff}
+.close{background:#e6f1fa}
+.note{background:#e6f3ff;color:#4a6f8f}
+.status-line{border-left-color:#3aa0e8;background:#eaf5ff}
+dialog::backdrop{background:#0f2f4d66}
+
+/* ===== Welcome screen ===== */
+.welcome-screen{position:fixed;inset:0;z-index:50;display:grid;place-items:center;text-align:center;padding:32px;overflow:hidden;cursor:pointer;background:linear-gradient(180deg,#e3f3ff 0%,#fff 100%);transition:opacity .4s,visibility .4s}
+.welcome-screen.leaving{opacity:0;visibility:hidden}
+.welcome-inner{position:relative;max-width:560px}
+.welcome-inner .logo{width:88px;height:88px;border-radius:28px;font-size:56px;margin:0 auto 28px}
+.welcome-inner h1{font-size:clamp(40px,7vw,68px);letter-spacing:-2.5px}
+.welcome-inner p{font-size:18px;margin:0 0 36px}
+.welcome-start{border:0;background:var(--green);color:#fff;border-radius:999px;padding:20px 44px;min-height:64px;font-size:20px;font-weight:600;box-shadow:0 10px 30px #2379c240}
+.welcome-bubbles i{position:absolute;border-radius:50%;background:#2379c20f;border:2px solid #2379c21f;animation:drift 6s ease-in-out infinite}
+.welcome-bubbles i:nth-child(1){width:220px;height:220px;left:-60px;top:12%}
+.welcome-bubbles i:nth-child(2){width:140px;height:140px;right:8%;top:10%;animation-delay:-2s}
+.welcome-bubbles i:nth-child(3){width:300px;height:300px;right:-100px;bottom:-80px;animation-delay:-4s}
+.welcome-bubbles i:nth-child(4){width:90px;height:90px;left:14%;bottom:12%;animation-delay:-1s}
+@keyframes drift{50%{transform:translateY(-14px)}}
+@media(prefers-reduced-motion:reduce){.welcome-bubbles i{animation:none}.welcome-screen{transition:none}}
 </style>
 </head>
 <body>
+<section id="welcome" class="welcome-screen" aria-label="Welcome">
+<div class="welcome-bubbles" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+<div class="welcome-inner">
+<span class="logo">✳</span>
+<div class="eyebrow">Fresh Laundry · Customer kiosk</div>
+<h1>Welcome to fresh.</h1>
+<p>Clean clothes, one less thing on your list.</p>
+<button type="button" class="welcome-start" id="start">Tap to begin →</button>
+</div>
+</section>
 <header><div class="brand"><span class="logo">✳</span><div>fresh.<small>LAUNDRY & CARE</small></div></div><div class="header-right"><span class="badge"><span class="dot"></span>Customer kiosk</span><time id="clock"></time></div></header>
 <main><div class="welcome"><div><div class="eyebrow">A little care. A fresh start.</div><h1>Fresh laundry starts here.</h1><p>Leave the laundry to us. What would you like to do today?</p></div><div class="welcome-note">Clean clothes.<br>One less thing on your list.</div></div>
 <div class="cards">
@@ -80,5 +129,8 @@ if(view==='help')body.innerHTML='<p>Please speak to a team member at the counter
 if(view==='status'){body.innerHTML='<p>Enter the order number you received at this kiosk.</p><form id="lookup"><label class="field">Order number<input name="id" required maxlength="30" placeholder="e.g. FR-12AB34CD" autocomplete="off"></label><button class="action">Find my order</button></form><div id="result" aria-live="polite"></div>';body.querySelector('form').onsubmit=e=>{e.preventDefault();const order=getOrders().find(o=>o.id===new FormData(e.target).get('id').trim().toUpperCase());const result=document.querySelector('#result');result.replaceChildren();const line=document.createElement('div');line.className=order?'status-line':'error';line.textContent=order?`${order.service} · Awaiting staff confirmation. Please visit the counter for weighing and payment.`:'Order not found in this demo session. Check your number or ask staff for assistance.';result.append(line)}}
 if(!modal.open)modal.showModal();}
 document.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>open(b.dataset.open));document.querySelector('.close').onclick=()=>modal.close();function tick(){document.querySelector('#clock').textContent=new Intl.DateTimeFormat('en-PH',{hour:'numeric',minute:'2-digit',timeZone:'Asia/Manila'}).format(new Date())}tick();setInterval(tick,30000);
+const homeEls=document.querySelectorAll('header,main,.footer'),welcome=document.querySelector('#welcome');
+homeEls.forEach(el=>el.inert=true);
+welcome.addEventListener('click',()=>{homeEls.forEach(el=>el.inert=false);welcome.classList.add('leaving')});
 </script>
 </body></html>
