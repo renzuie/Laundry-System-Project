@@ -25,7 +25,6 @@
   --primary: #0284c7;
   --primary-hover: #0369a1;
   --primary-soft: #e0f2fe;
-  --lime: #e0f2fe;
   --surface: #ffffff;
   --paper: #f8fafc;
   --border: #cbd5e1;
@@ -193,47 +192,6 @@ header {
   color: var(--muted);
 }
 .lock-btn:hover { background: #eef5fc; color: var(--ink); }
-
-.settings-tabs {
-  display: flex;
-  gap: 6px;
-  border-bottom: 1.5px solid var(--border);
-  padding-bottom: 10px;
-  margin-bottom: 18px;
-  overflow-x: auto;
-}
-.settings-tab {
-  border: 0;
-  background: none;
-  padding: 8px 14px;
-  border-radius: 10px;
-  font-weight: 700;
-  font-size: 13px;
-  color: var(--muted);
-  white-space: nowrap;
-}
-.settings-tab.active {
-  background: var(--primary-soft);
-  color: var(--primary);
-}
-.settings-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-}
-@media (max-width: 600px) {
-  .settings-grid { grid-template-columns: 1fr; }
-}
-.settings-group {
-  margin-bottom: 16px;
-}
-.settings-group h3 {
-  font-size: 13.5px;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  color: var(--muted);
-  margin: 0 0 10px;
-}
 
 main {
   width: 100%;
@@ -435,55 +393,6 @@ svg {
   border: 0;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
-
-.section-title {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 36px 0 16px;
-  font-size: 13.5px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--muted);
-}
-
-.section-title span {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 1.8px;
-  color: var(--primary);
-}
-
-.steps {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 18px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  padding: 24px;
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
-}
-
-.step { display: flex; gap: 14px; align-items: flex-start; }
-
-.num {
-  border: 1px solid #cce1f5;
-  background: #f2f8fe;
-  color: var(--primary);
-  border-radius: 12px;
-  width: 34px;
-  height: 34px;
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-  font-size: 12px;
-  font-weight: 800;
-}
-
-.step b { font-size: 13.5px; font-weight: 700; color: var(--ink); }
-.step p { font-size: 12px; margin: 4px 0 0; line-height: 1.45; color: var(--muted); }
 
 .help {
   display: flex;
@@ -851,6 +760,33 @@ input:focus, select:focus {
   height: 48px;
   border-bottom: 1px dotted #ccc;
   margin-top: 16px;
+}
+
+/* Load Slip / Bag Tag Styling */
+.load-slip {
+  text-align: center;
+  padding: 14px 8px;
+  color: #000000 !important;
+  font-family: 'DM Sans', -apple-system, sans-serif;
+  border-top: 2px dashed #000;
+  margin-top: 14px;
+}
+.load-slip * { color: #000000 !important; }
+.load-badge {
+  display: inline-block;
+  border: 2px solid #000;
+  border-radius: 6px;
+  font-weight: 800;
+  font-size: 14px;
+  padding: 3px 12px;
+  letter-spacing: 0.5px;
+  margin: 6px 0;
+}
+.slip-qr {
+  display: table;
+  margin: 10px auto;
+  padding: 8px;
+  background: #fff;
 }
 
 .total {
@@ -1259,11 +1195,15 @@ input:focus, select:focus {
   }
   dialog::backdrop { display: none; }
   .close, .print-hide { display: none !important; }
-  .receipt, .receipt * {
+  .receipt, .receipt *, .load-slip, .load-slip * {
     color: #000000 !important;
     text-shadow: none !important;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
+  }
+  .receipt-page-break {
+    page-break-after: always;
+    break-after: page;
   }
 }
 
@@ -1274,13 +1214,11 @@ input:focus, select:focus {
 @media (max-width: 900px) {
   .stats-ribbon { grid-template-columns: repeat(2, 1fr); }
   .cards { grid-template-columns: 1fr; }
-  .steps { grid-template-columns: 1fr 1fr; }
 }
 
 @media (max-width: 600px) {
   main { padding: 24px 18px; }
   .stats-ribbon { grid-template-columns: 1fr; }
-  .steps { grid-template-columns: 1fr; }
   .welcome { flex-direction: column; align-items: flex-start; gap: 8px; }
   .welcome-note { text-align: left; }
   .header-right time { display: none; }
@@ -1379,7 +1317,7 @@ input:focus, select:focus {
     </div>
     <time class="time-pill" id="clock"></time>
     <button type="button" class="lock-btn" id="settings-btn" title="Pricing & Capacities" aria-label="Pricing & Capacities" data-open="settings">
-      <svg viewBox="0 0 24 24" style="width:18px;height:18px;"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+      <svg viewBox="0 0 24 24" style="width:18px;height:18px;"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83-2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
     </button>
     <button type="button" class="lock-btn" id="lock-screen-btn" title="Lock Terminal" aria-label="Lock screen">
       <svg viewBox="0 0 24 24" style="width:18px;height:18px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
@@ -1498,7 +1436,7 @@ const DEFAULT_CONFIG = {
     contact: '0917-123-4567',
     footerNote: 'Thank you for choosing Washing Well!\nPlease present this slip when claiming.'
   },
-  rules: { excessFee: 20, foldMin: 20, foldMax: 30, splitAskKg: 9 },
+  rules: { excessFee: 20, foldMin: 20, foldMax: 30, splitAskKg: 8.001 },
   services: [
     { name: 'Wash, Dry & Fold', price: 170, kg: 7, description: 'Complete cycle · folding included · 6–7 kg/load' },
     { name: 'Wash & Dry only', price: 170, kg: 7, description: 'Ready to press · 6–7 kg/load' },
@@ -1610,14 +1548,26 @@ function calcLine(s, catIdx, w, fee, ch) {
   if (s.fee) return fee >= RULES.foldMin && fee <= RULES.foldMax ? { cap: 0, loads: 1, excess: 0, ask: false, price: fee } : null;
   if (!(w > 0)) return null;
   const cap = s.cats ? CATS[catIdx].kg : s.kg;
-  if (w >= RULES.splitAskKg) {
-    const n = Math.max(2, Math.ceil(w / cap - 1e-9));
-    if (ch === 'split') return { cap, loads: n, excess: 0, ask: true, price: n * s.price };
-    if (ch === 'one') return { cap, loads: 1, excess: RULES.excessFee, ask: true, price: s.price + RULES.excessFee };
-    return { cap, loads: n, excess: 0, ask: true, pending: true, price: 0 };
+
+  // Each load allows up to standard cap, with exactly 1 kg excess allowed across load tiers (e.g., 8kg for 1 load, 15kg for 2 loads)
+  let n = Math.ceil(w / cap);
+  if (n < 1) n = 1;
+
+  // Check if weight fits into (n-1) loads with allowable 1 kg excess
+  if (n > 1) {
+    const prevCapWithExcess = (n - 1) * cap + 1;
+    if (w <= prevCapWithExcess) {
+      n = n - 1;
+    }
   }
-  if (w <= cap) return { cap, loads: 1, excess: 0, ask: false, price: s.price };
-  return { cap, loads: 1, excess: RULES.excessFee, ask: false, price: s.price + RULES.excessFee };
+
+  const baseCapacity = n * cap;
+  const maxLoadLimit = baseCapacity + 1;
+
+  if (w > baseCapacity && w <= maxLoadLimit) {
+    return { cap, loads: n, excess: RULES.excessFee, autoSplit: n > 1, maxSingle: maxLoadLimit, price: n * s.price + RULES.excessFee };
+  }
+  return { cap, loads: n, excess: 0, autoSplit: n > 1, maxSingle: maxLoadLimit, price: n * s.price };
 }
 
 function splitWeights(w, n) {
@@ -1714,17 +1664,19 @@ function serviceStep() {
       </div>
       <label class="field" id="fbox" style="display:none">Folding Fee (₱${RULES.foldMin}–₱${RULES.foldMax})<input name="fee" type="number" inputmode="decimal" min="${RULES.foldMin}" max="${RULES.foldMax}" step="1" value="${RULES.foldMin}"></label>
       <div id="warn"></div>
-      <b class="lbl" style="display:block;margin:20px 0 6px;font-size:13.5px;">Detergent & Conditioners</b>
-      <div class="services">
-        ${addons.map((a, i) => `
-          <div class="service addon">
-            <span><b>${a.name}</b><small>${peso(a.price)} per ${a.unit}</small></span>
-            <span class="stepper">
-              <button type="button" data-dec="${i}" aria-label="Less ${a.name}">−</button>
-              <output id="q${i}">0</output>
-              <button type="button" data-inc="${i}" aria-label="More ${a.name}">+</button>
-            </span>
-          </div>`).join('')}
+      <div id="addons-section">
+        <b class="lbl" style="display:block;margin:20px 0 6px;font-size:13.5px;">Detergent & Conditioners</b>
+        <div class="services">
+          ${addons.map((a, i) => `
+            <div class="service addon">
+              <span><b>${a.name}</b><small>${peso(a.price)} per ${a.unit}</small></span>
+              <span class="stepper">
+                <button type="button" data-dec="${i}" aria-label="Less ${a.name}">−</button>
+                <output id="q${i}">0</output>
+                <button type="button" data-inc="${i}" aria-label="More ${a.name}">+</button>
+              </span>
+            </div>`).join('')}
+        </div>
       </div>
       <div class="total"><span>Current Item<small id="breakdown" style="display:block;color:var(--muted);font-weight:400;">Enter weight</small></span><strong id="total">₱0</strong></div>
       <button class="action">Add Service to Order</button>
@@ -1741,36 +1693,53 @@ function serviceStep() {
 
   const update = () => {
     const { s, w, fee } = cur(), c = calcLine(s, cat, w, fee, choice), warn = $('#warn');
-    if (c && c.ask) {
-      const n = Math.max(2, Math.ceil(w / c.cap - 1e-9)), two = n === 2 ? 'two loads' : n + ' loads';
-      warn.innerHTML = `
-        <div class="note">High Capacity Warning: Weight is ${RULES.splitAskKg} kg or higher. Ask customer to split into ${two}?</div>
-        <div class="services">
-          <button type="button" class="service ${choice === 'split' ? 'selected' : ''}" data-choice="split">
-            <span><b>Split into ${two}</b><small>${plural(n)} × ${peso(s.price)}</small></span><b>${peso(n * s.price)}</b>
-          </button>
-          <button type="button" class="service ${choice === 'one' ? 'selected' : ''}" data-choice="one">
-            <span><b>Keep as 1 single load</b><small>Includes ${peso(RULES.excessFee)} excess heavy fee</small></span><b>${peso(s.price + RULES.excessFee)}</b>
-          </button>
-        </div>`;
-      warn.querySelectorAll('[data-choice]').forEach(b => b.onclick = () => { choice = b.dataset.choice; update(); });
+    if (c && c.autoSplit) {
+      if (c.excess) {
+        warn.innerHTML = `
+          <div class="note" style="border-left-color:var(--warning);background:var(--warning-soft);color:#92400e;">
+            <b>Multi-Load with Excess:</b> Scale weight (${w} kg) is distributed into <b>${plural(c.loads)}</b> with an allowable 1 kg excess (${c.loads * c.cap}–${c.maxSingle} kg) adding flat ${peso(c.excess)}.
+          </div>`;
+      } else {
+        warn.innerHTML = `
+          <div class="note">
+            <b>Distributed Load:</b> Scale weight (${w} kg) exceeds single drum capacity (${c.cap} kg) and is split into <b>${plural(c.loads)}</b>.
+          </div>`;
+      }
+    } else if (c && c.excess) {
+      warn.innerHTML = `<div class="note">Over standard capacity (${c.cap} kg): flat ${peso(c.excess)} excess fee applied for allowable 1 kg excess (${c.cap}–${c.maxSingle} kg).</div>`;
     } else {
-      warn.innerHTML = c && c.excess ? `<div class="note">Over capacity limit (${c.cap} kg): flat ${peso(c.excess)} excess charge included.</div>` : '';
+      warn.innerHTML = '';
     }
 
-    if (!c || c.pending) {
+    if (!c) {
       $('#total').textContent = '₱0';
-      $('#breakdown').textContent = !c ? (s.fee ? 'Enter folding fee' : 'Enter laundry weight') : 'Select 1 or 2 loads';
+      $('#breakdown').textContent = s.fee ? 'Enter folding fee' : 'Enter laundry weight';
       return;
     }
 
     const add = qtys.reduce((t, q, i) => t + q * addons[i].price, 0);
     $('#total').textContent = peso(c.price + add);
-    $('#breakdown').textContent = s.fee ? 'Folding fee' : plural(c.loads) + ' × ' + peso(s.price) + (c.excess ? ' + heavy fee' : '') + (add ? ' + add-ons' : '');
+    $('#breakdown').textContent = s.fee ? 'Folding fee' : plural(c.loads) + ' × ' + peso(s.price) + (c.excess ? ' + ₱' + c.excess + ' excess' : '') + (add ? ' + add-ons' : '');
   };
 
   const sync = () => {
     const s = services[selected];
+    const isWash = s.name.includes('Wash');
+
+    // Hide and clear detergents and conditioners if not a wash service (Dry only or Fold only)
+    const addonsSection = $('#addons-section');
+    if (addonsSection) {
+      addonsSection.style.display = isWash ? 'block' : 'none';
+      if (!isWash) {
+        qtys = addons.map(() => 0);
+        addons.forEach((_, i) => {
+          const qEl = $('#q' + i);
+          if (qEl) qEl.textContent = '0';
+        });
+        body.querySelectorAll('.service.addon').forEach(el => el.classList.remove('has'));
+      }
+    }
+
     $('#cat-box').innerHTML = s.cats ? '<b class="lbl" style="display:block;margin:14px 0 6px;font-size:13.5px;">Fabric Classification</b><div class="services">' + CATS.map((c, i) => `<button class="service ${i === cat ? 'selected' : ''}" type="button" data-cat="${i}"><span><b>${c.name}</b><small>${c.hint}</small></span></button>`).join('') + '</div>' : '';
     $('#wbox').style.display = s.fee ? 'none' : 'block';
     $('#fbox').style.display = s.fee ? 'block' : 'none';
@@ -1814,10 +1783,6 @@ function serviceStep() {
       el.setCustomValidity(s.fee ? 'Please enter a valid fee.' : 'Please enter valid laundry weight.');
       el.reportValidity();
       el.oninput = () => { el.setCustomValidity(''); choice = null; update(); };
-      return;
-    }
-    if (c.pending) {
-      $('#warn').insertAdjacentHTML('beforeend', '<p class="error">Please choose split loads or single load.</p>');
       return;
     }
     cart.push({
@@ -1921,22 +1886,43 @@ function summaryView() {
 function receipt(order) {
   title.textContent = 'Receipt';
   const when = new Date(order.created).toLocaleString('en-PH', { dateStyle: 'medium', timeStyle: 'short' });
-  body.innerHTML = `
-    <div class="receipt">
+
+  // Compile individual loads across all services in this order
+  const loadList = [];
+  (order.items || []).forEach(it => {
+    const count = it.loads || 1;
+    for (let i = 0; i < count; i++) {
+      const w = it.loadWeights && it.loadWeights[i] ? it.loadWeights[i] : (it.weight ? (it.weight / count).toFixed(1) : '');
+      loadList.push({
+        service: it.service,
+        category: it.category || '',
+        weight: w,
+        addons: it.addons || []
+      });
+    }
+  });
+
+  const totalLoads = loadList.length;
+
+  // 1. Build Master Staff / Customer Receipt HTML
+  let html = `
+    <div class="receipt receipt-page-break">
       <div class="shop">
         <b>${SHOP.name}</b><br>
         <span style="font-size:12px;">${SHOP.branch}</span><br>
         <span style="font-size:11px;">${SHOP.address}</span>
       </div>
-      <div style="border-top:1px dashed #000;margin:12px 0 8px;"></div>
+      <div style="border-top:1.5px dashed #000;margin:10px 0 6px;"></div>
+      <div style="font-size:12px;font-weight:800;letter-spacing:1px;">★ MASTER ORDER SLIP ★</div>
       <span style="font-size:11px;letter-spacing:1px;font-weight:700;">ORDER REFERENCE NUMBER</span>
       <strong>${order.id}</strong>
-      <p style="font-size:13px;line-height:1.45;margin:8px 0;">
+      <p style="font-size:13px;line-height:1.45;margin:6px 0;">
         Customer: <b>${esc(order.customer || 'Walk-in')}</b><br>
         ${order.contact ? 'Mobile: ' + esc(order.contact) + '<br>' : ''}
+        Total Physical Loads: <b>${totalLoads} ${totalLoads === 1 ? 'Bundle' : 'Bundles'}</b><br>
         Date: ${when}
       </p>
-      <div style="border-top:1px dashed #000;margin:10px 0;"></div>
+      <div style="border-top:1px dashed #000;margin:8px 0;"></div>
       <div style="text-align:left;font-size:13px;line-height:1.4;">
         ${order.items.map(i => `
           <div style="display:flex;justify-content:space-between;font-weight:700;margin-top:6px;">
@@ -1951,33 +1937,86 @@ function receipt(order) {
         <strong style="font-size:24px;">${peso(order.total)}</strong>
       </div>
       <div class="pay">${order.paid ? 'PAID · COMPLETE' : 'UNPAID · BALANCE DUE'}</div>
-      <div id="order-qr" class="order-qr" role="img" aria-label="QR Code"></div>
-      <p style="font-size:11px;margin:4px 0 0;font-weight:600;">Scan QR code to view live status</p>
-      <div style="font-size:11px;margin-top:12px;line-height:1.4;">
+      <div id="master-qr" class="order-qr" role="img" aria-label="Master QR Code"></div>
+      <p style="font-size:11px;margin:4px 0 0;font-weight:600;">Scan QR code for live tracking status</p>
+      <div style="font-size:11px;margin-top:10px;line-height:1.4;">
         ${esc(SHOP.footerNote).replace(/\n/g, '<br>')}
       </div>
       <div class="paper-cutter-space"></div>
     </div>
-    <div style="display:grid;gap:10px;" class="print-hide">
-      <button class="action" id="print" type="button">🖨️ Print Receipt</button>
+  `;
+
+  // 2. Build 1 Bag Tag / Basket Slip per Load
+  loadList.forEach((ld, idx) => {
+    const loadNo = idx + 1;
+    const isLast = loadNo === totalLoads;
+    html += `
+      <div class="load-slip ${!isLast ? 'receipt-page-break' : ''}">
+        <div style="font-size:12px;font-weight:700;">${SHOP.name}</div>
+        <div class="load-badge">LOAD TAG: ${loadNo} OF ${totalLoads}</div>
+        <div style="font-size:11px;letter-spacing:1px;font-weight:700;margin-top:4px;">ORDER REF</div>
+        <strong style="font-size:22px;display:block;margin:4px 0;">${order.id}</strong>
+        <div style="font-size:13px;line-height:1.4;margin:6px 0;text-align:left;border-top:1px dashed #000;padding-top:6px;">
+          Customer: <b>${esc(order.customer || 'Walk-in')}</b><br>
+          Service: <b>${ld.service}</b><br>
+          ${ld.category ? 'Fabric: ' + ld.category + '<br>' : ''}
+          ${ld.weight ? 'Load Scale: <b>' + ld.weight + ' kg</b><br>' : ''}
+          ${ld.addons && ld.addons.length ? 'Add-ons: ' + ld.addons.map(a => a.name).join(', ') + '<br>' : ''}
+          Payment: <b>${order.paid ? 'PAID' : 'COLLECT AT PICKUP'}</b>
+        </div>
+        <div id="slip-qr-${loadNo}" class="slip-qr" role="img" aria-label="Load Tag QR"></div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.5px;">ATTACH TO LAUNDRY BASKET / BAG</div>
+        <div class="paper-cutter-space"></div>
+      </div>
+    `;
+  });
+
+  html += `
+    <div style="display:grid;gap:10px;margin-top:16px;" class="print-hide">
+      <div class="note" style="margin:0 0 6px;">
+        🖨️ Ready to print <b>${1 + totalLoads} slips</b> (1 Master Receipt + ${totalLoads} Load Bag Tags).
+      </div>
+      <button class="action" id="print" type="button">🖨️ Print All Slips (${1 + totalLoads})</button>
       <button class="action ghost" id="done" type="button">Close & Return to Dashboard</button>
-    </div>`;
+    </div>
+  `;
 
-  const qrContainer = document.querySelector('#order-qr');
+  body.innerHTML = html;
+
+  // Render Master QR Code
   const qrText = STATUS_URL ? STATUS_URL + order.id : order.id;
-
+  const masterContainer = document.querySelector('#master-qr');
   if (typeof QRCode !== 'undefined') {
-    new QRCode(qrContainer, {
+    new QRCode(masterContainer, {
       text: qrText,
-      width: 170,
-      height: 170,
+      width: 160,
+      height: 160,
       colorDark: '#000000',
       colorLight: '#ffffff',
       correctLevel: QRCode.CorrectLevel.M
     });
   } else {
-    qrContainer.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=170x170&data=${encodeURIComponent(qrText)}" alt="QR Code for ${order.id}" width="170" height="170">`;
+    masterContainer.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(qrText)}" alt="QR Code" width="160" height="160">`;
   }
+
+  // Render individual QR codes for each load tag
+  loadList.forEach((_, idx) => {
+    const loadNo = idx + 1;
+    const slipContainer = document.querySelector(`#slip-qr-${loadNo}`);
+    const slipText = STATUS_URL ? `${STATUS_URL}${order.id}&load=${loadNo}` : `${order.id}-L${loadNo}`;
+    if (typeof QRCode !== 'undefined') {
+      new QRCode(slipContainer, {
+        text: slipText,
+        width: 120,
+        height: 120,
+        colorDark: '#000000',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.M
+      });
+    } else {
+      slipContainer.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(slipText)}" alt="QR Code Load ${loadNo}" width="120" height="120">`;
+    }
+  });
 
   document.querySelector('#print').onclick = () => window.print();
   document.querySelector('#done').onclick = () => modal.close();
@@ -2277,7 +2316,7 @@ function settingsView() {
         <div class="setting-row">
           <div class="setting-info">
             <span class="setting-title">Over-Capacity Excess Fee</span>
-            <span class="setting-sub">Flat charge when exceeding drum limit</span>
+            <span class="setting-sub">Fee for 1 kg allowable excess (up to 8 kg)</span>
           </div>
           <div class="affix-box">
             <span class="affix-symbol">₱</span>
@@ -2287,11 +2326,11 @@ function settingsView() {
 
         <div class="setting-row">
           <div class="setting-info">
-            <span class="setting-title">Split Load Prompt Threshold</span>
-            <span class="setting-sub">Weight that triggers 2-load split proposal</span>
+            <span class="setting-title">Mandatory Split Threshold</span>
+            <span class="setting-sub">Exceeding this (over 8 kg) forces 2+ loads</span>
           </div>
           <div class="affix-box">
-            <input name="splitAskKg" type="number" step="0.5" min="1" value="${RULES.splitAskKg}" required>
+            <input name="splitAskKg" type="number" step="0.5" min="1" value="8" required>
             <span class="affix-symbol suffix">kg</span>
           </div>
         </div>
@@ -2396,8 +2435,8 @@ function open(view) {
   if (view === 'help') {
     body.innerHTML = `
       <div style="font-size:14px;line-height:1.6;color:var(--ink);">
-        <p><b>1. Creating Orders:</b> Weigh clothes on the scale. High weight loads (9 kg+) trigger an automatic prompt to split into two loads or add an excess heavy charge.</p>
-        <p><b>2. Printing Receipts:</b> When printed, the receipt includes customer details and the encoded tracking QR code.</p>
+        <p><b>1. Creating Orders:</b> Weigh clothes on the scale. Up to 7 kg is a regular load. 7.1 kg–8.0 kg incurs an excess charge of +₱20 (max 1 kg excess allowed). Anything over 8.0 kg is automatically split into 2 or more loads.</p>
+        <p><b>2. Printing Receipts:</b> Receipts include customer details and the encoded tracking QR code.</p>
         <p><b>3. Managing Loads:</b> Transition orders from Washing → Drying → Folding → Ready for Pickup. Unpaid orders cannot be set to Released until marked as paid.</p>
         <p><b>4. QR Verification:</b> Use a barcode scanner or type the ID to verify pickup release instantly.</p>
       </div>`;
