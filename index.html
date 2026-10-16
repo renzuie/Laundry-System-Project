@@ -1,240 +1,2531 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Washing Well Laundry Shop · Staff Screen</title>
+<!-- Modern Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..700&family=JetBrains+Mono:wght@400;600&family=Manrope:wght@400..800&display=swap" rel="stylesheet">
 <style>
-/* Self-hosted fonts (works offline) */
+/* Font Fallbacks */
 @font-face{font-family:'DM Sans';font-style:normal;font-weight:400;font-display:swap;src:url('vendor/fonts/dm-sans-latin-400-normal.woff2') format('woff2')}
 @font-face{font-family:'DM Sans';font-style:normal;font-weight:500;font-display:swap;src:url('vendor/fonts/dm-sans-latin-500-normal.woff2') format('woff2')}
 @font-face{font-family:'DM Sans';font-style:normal;font-weight:600;font-display:swap;src:url('vendor/fonts/dm-sans-latin-600-normal.woff2') format('woff2')}
 @font-face{font-family:'DM Sans';font-style:normal;font-weight:700;font-display:swap;src:url('vendor/fonts/dm-sans-latin-700-normal.woff2') format('woff2')}
 @font-face{font-family:'Manrope';font-style:normal;font-weight:400;font-display:swap;src:url('vendor/fonts/manrope-latin-400-normal.woff2') format('woff2')}
-@font-face{font-family:'Manrope';font-style:normal;font-weight:500;font-display:swap;src:url('vendor/fonts/manrope-latin-500-normal.woff2') format('woff2')}
 @font-face{font-family:'Manrope';font-style:normal;font-weight:600;font-display:swap;src:url('vendor/fonts/manrope-latin-600-normal.woff2') format('woff2')}
 @font-face{font-family:'Manrope';font-style:normal;font-weight:700;font-display:swap;src:url('vendor/fonts/manrope-latin-700-normal.woff2') format('woff2')}
 @font-face{font-family:'Manrope';font-style:normal;font-weight:800;font-display:swap;src:url('vendor/fonts/manrope-latin-800-normal.woff2') format('woff2')}
-:root{--ink:#203b35;--muted:#75847d;--green:#285b48;--lime:#dfedb5;--paper:#f5f6f0}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:'DM Sans',sans-serif}button,input{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible{outline:3px solid #95b568;outline-offset:4px}header{display:flex;justify-content:space-between;align-items:center;padding:30px 5%;border-bottom:1px solid #e2e6dc}.brand{display:flex;align-items:center;gap:12px;font-family:Manrope,sans-serif;font-size:23px;font-weight:800}.logo{background:var(--green);color:var(--lime);width:43px;height:43px;border-radius:14px;display:grid;place-items:center;font-size:30px}.brand small{display:block;font:10px 'DM Sans',sans-serif;letter-spacing:2.5px;margin-top:3px}.header-right{display:flex;gap:25px;align-items:center;font-size:13px}.badge{background:#e8eddf;border-radius:30px;padding:10px 16px}.dot{display:inline-block;width:7px;height:7px;background:#6e9460;border-radius:50%;margin-right:7px}main{max-width:1260px;margin:auto;padding:48px 45px 30px}.eyebrow{font-size:11px;letter-spacing:2px;font-weight:700;text-transform:uppercase;color:#70836b}h1{font-family:Manrope,sans-serif;font-size:clamp(32px,4vw,49px);font-weight:600;letter-spacing:-2px;margin:12px 0}p{color:var(--muted);line-height:1.6}.welcome{display:flex;align-items:center;justify-content:space-between;margin-bottom:34px}.welcome p{margin:0}.welcome-note{font-size:13px;color:var(--muted);text-align:right}.cards{display:grid;grid-template-columns:1.35fr 1fr 1fr;gap:20px}.card{border:1px solid #e1e6dc;border-radius:23px;padding:27px;text-align:left;min-height:330px;background:#fff;display:flex;flex-direction:column;transition:transform .2s,box-shadow .2s;color:var(--ink)}.card:hover{transform:translateY(-5px);box-shadow:0 12px 30px #203b3510}.primary{background:var(--green);color:#fff;border-color:var(--green);position:relative;overflow:hidden}.primary:after{content:'';position:absolute;width:190px;height:190px;border:35px solid #ffffff06;border-radius:50%;right:-50px;top:60px;pointer-events:none}.icon{width:61px;height:61px;border-radius:18px;background:#f0f3e9;display:grid;place-items:center;margin-bottom:35px}.primary .icon{background:#ffffff15;color:var(--lime)}svg{width:29px;height:29px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}.card h2{font:600 25px Manrope,sans-serif;letter-spacing:-.7px;margin:0 0 10px}.card p{font-size:14px;margin:0;max-width:245px}.primary p{color:#c4d6cb}.card-bottom{margin-top:auto;padding-top:27px;display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:600}.arrow{border:1px solid #dce3d7;border-radius:50%;width:35px;height:35px;display:grid;place-items:center;font-size:20px}.primary .arrow{background:var(--lime);color:var(--ink);border:0}.section-title{display:flex;justify-content:space-between;align-items:center;margin:36px 0 18px;font-size:14px;font-weight:600}.section-title span{font-size:11px;font-weight:400;color:var(--muted)}.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;background:#ecefe5;padding:24px;border-radius:18px}.step{display:flex;gap:13px;align-items:center}.num{border:1px solid #d3dbc8;border-radius:50%;width:31px;height:31px;display:grid;place-items:center;flex-shrink:0;font-size:12px}.step b{font-size:12px;font-weight:600}.step p{font-size:11px;margin:4px 0 0;line-height:1.4}.help{display:flex;justify-content:space-between;align-items:center;padding:24px 0;margin-top:12px;font-size:12px;color:var(--muted)}.help button{border:0;background:none;color:var(--green);padding:12px;font-weight:600}.footer{border-top:1px solid #e2e6dc;padding:20px 5%;display:flex;justify-content:space-between;font-size:10px;color:var(--muted)}dialog{border:0;border-radius:24px;padding:32px;width:min(580px,92vw);color:var(--ink);box-shadow:0 20px 90px #0003}dialog::backdrop{background:#152f2766;backdrop-filter:blur(5px)}.dialog-top{display:flex;justify-content:space-between;align-items:center}.dialog-top h2{margin:0;font:600 26px Manrope,sans-serif}.close{border:0;background:#edf0e8;border-radius:50%;width:42px;height:42px;font-size:23px}.field{display:block;margin:18px 0;font-size:13px;font-weight:600}input{display:block;width:100%;border:1px solid #d6dfd1;border-radius:12px;padding:15px;margin-top:8px;background:#fafbf7;color:var(--ink)}.services{display:grid;gap:10px;margin:20px 0}.service{display:flex;justify-content:space-between;align-items:center;border:1px solid #dde4d7;border-radius:12px;padding:17px;background:#fafbf7;color:var(--ink);text-align:left}.service.selected{border:2px solid var(--green);background:#edf2e3}.service small{display:block;color:var(--muted);margin-top:5px}.action{width:100%;background:var(--green);color:#fff;border:0;padding:17px;border-radius:12px;margin-top:15px;font-weight:600}.note{font-size:12px;background:#edf2e3;border-radius:12px;padding:14px;color:#5a705b}.receipt{text-align:center;padding:20px 0}.receipt strong{font:700 35px Manrope,sans-serif;display:block;margin:15px}.status-line{padding:16px;border-left:3px solid #91b168;margin:15px 0;background:#f0f4e9}.error{color:#ad423b;font-size:13px}@media(max-width:800px){header{padding:20px}.header-right time{display:none}main{padding:32px 20px}.cards{grid-template-columns:1fr}.card{min-height:240px}.icon{margin-bottom:20px}.welcome-note{display:none}.steps{grid-template-columns:1fr 1fr}.help{gap:10px}.footer{gap:20px}.card p{max-width:none}}@media(prefers-reduced-motion:reduce){.card{transition:none}}
-/* Touchscreen: generous touch controls and orientation-aware home screen. */
-body{min-height:100svh;display:flex;flex-direction:column}
-main{width:100%;flex:1}
-button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
-.close{width:52px;height:52px;flex-shrink:0}
-.help button,.action,input{min-height:56px;font-size:16px}
-.service{min-height:76px;font-size:16px;gap:16px}
-.service small,.note,.field{font-size:14px}
-input{scroll-margin:24px}
-dialog{max-height:calc(100dvh - 32px);overflow-y:auto;overscroll-behavior:contain}
-.dialog-top{gap:16px}
-@media(hover:none){.card:hover{transform:none;box-shadow:none}}
-@media(min-width:601px) and (max-width:1366px){
- header{padding:20px 32px}
- main{padding:28px 32px 12px}
- .welcome{margin-bottom:24px}.welcome-note{display:none}
- h1{font-size:40px;letter-spacing:-1.5px}
- .welcome p{font-size:16px}
- .cards{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
- .card{padding:24px;min-height:280px}
- .card h2{font-size:24px}.card p{font-size:16px;max-width:none}
- .icon{margin-bottom:22px}.card-bottom{font-size:14px;padding-top:20px}
- .section-title{margin:24px 0 14px;font-size:16px}
- .steps{gap:16px;padding:20px}.step{gap:10px}
- .step b{font-size:14px}.step p{font-size:13px}
- .help{padding:12px 0;margin-top:8px;font-size:14px}
- .footer{padding:16px 32px;font-size:12px}
-}
-@media(min-width:601px) and (max-width:1000px) and (orientation:portrait){
- .cards{grid-template-columns:repeat(2,minmax(0,1fr))}
- .primary{grid-column:1/-1;min-height:210px;display:grid;grid-template-columns:76px 1fr;column-gap:20px;align-content:center}
- .primary .icon{grid-row:1/4;margin:0;align-self:center}
- .primary h2,.primary p,.primary .card-bottom{grid-column:2}
- .primary .card-bottom{padding-top:12px}
- .card:not(.primary){min-height:250px}
- .steps{grid-template-columns:repeat(2,minmax(0,1fr))}
- .header-right time{display:block}
-}
-@media(max-width:600px){
- .section-title span{display:none}
- .help{flex-wrap:wrap}
- dialog{padding:24px}
- .service{padding:14px}.service small{font-size:13px}
- .receipt strong{font-size:28px;overflow-wrap:anywhere}
-}
-.order-qr{display:table;margin:20px auto 12px;padding:20px;background:#fff;border-radius:12px}.order-qr img,.order-qr canvas{display:block;max-width:100%;height:auto}.qr-caption{font-size:14px;margin:0}
-/* ===== Light blue & white laundry theme (overrides) ===== */
-:root{--ink:#123a5c;--muted:#6b8499;--green:#2379c2;--lime:#d9efff;--paper:#f3f9ff}
-header,.footer{border-color:#dcecf8}
-.badge{background:#e3f2fd}
-.dot{background:#3aa0e8}
-.eyebrow{color:#4a8dc0}
-button:focus-visible,input:focus-visible{outline-color:#5bb0ee}
-.card{border-color:#dcecf8}
-.card:hover{box-shadow:0 12px 30px #2379c218}
-.primary{border-color:var(--green)}
-.primary p{color:#d4ebff}
-.icon{background:#eaf5fd}
-.primary .icon{background:#ffffff26}
-.arrow{border-color:#d3e6f5}
-.steps{background:#e8f3fc}
-.num{border-color:#c4dcee;background:#fff}
-input{border-color:#cfe2f1;background:#f8fcff}
-.service{border-color:#d6e6f3;background:#f8fcff}
-.service.selected{border-color:var(--green);background:#e6f3ff}
-.close{background:#e6f1fa}
-.note{background:#e6f3ff;color:#4a6f8f}
-.status-line{border-left-color:#3aa0e8;background:#eaf5ff}
-dialog::backdrop{background:#0f2f4d66}
 
-/* ===== Welcome screen ===== */
-.welcome-screen{position:fixed;inset:0;z-index:50;display:grid;place-items:center;text-align:center;padding:32px;overflow:hidden;cursor:pointer;background:linear-gradient(180deg,#e3f3ff 0%,#fff 100%);transition:opacity .4s,visibility .4s}
-.welcome-screen.leaving{opacity:0;visibility:hidden}
-.welcome-inner{position:relative;max-width:560px}
-.welcome-inner .logo{width:88px;height:88px;border-radius:28px;font-size:56px;margin:0 auto 28px}
-.welcome-inner h1{font-size:clamp(40px,7vw,68px);letter-spacing:-2.5px}
-.welcome-inner p{font-size:18px;margin:0 0 36px}
-.welcome-start{border:0;background:var(--green);color:#fff;border-radius:999px;padding:20px 44px;min-height:64px;font-size:20px;font-weight:600;box-shadow:0 10px 30px #2379c240}
-.welcome-bubbles i{position:absolute;border-radius:50%;background:#2379c20f;border:2px solid #2379c21f;animation:drift 6s ease-in-out infinite}
-.welcome-bubbles i:nth-child(1){width:220px;height:220px;left:-60px;top:12%}
-.welcome-bubbles i:nth-child(2){width:140px;height:140px;right:8%;top:10%;animation-delay:-2s}
-.welcome-bubbles i:nth-child(3){width:300px;height:300px;right:-100px;bottom:-80px;animation-delay:-4s}
-.welcome-bubbles i:nth-child(4){width:90px;height:90px;left:14%;bottom:12%;animation-delay:-1s}
-@keyframes drift{50%{transform:translateY(-14px)}}
-@media(prefers-reduced-motion:reduce){.welcome-bubbles i{animation:none}.welcome-screen{transition:none}}
-
-/* ===== Print receipt ===== */
-.action.ghost{background:#fff;color:var(--green);border:2px solid var(--green)}
-@media print{
- body>*:not(dialog){display:none!important}
- body{display:block;background:#fff}
- dialog{position:static;width:auto;max-height:none;padding:0;box-shadow:none;overflow:visible}
- dialog::backdrop{display:none}
- .close,.print-hide{display:none!important}
+:root {
+  --ink: #0f172a;
+  --muted: #475569;
+  --primary: #0284c7;
+  --primary-hover: #0369a1;
+  --primary-soft: #e0f2fe;
+  --lime: #e0f2fe;
+  --surface: #ffffff;
+  --paper: #f8fafc;
+  --border: #cbd5e1;
+  --border-focus: #38bdf8;
+  --success: #059669;
+  --success-soft: #d1fae5;
+  --warning: #d97706;
+  --warning-soft: #fef3c7;
+  --danger: #e11d48;
+  --danger-soft: #ffe4e6;
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 10px 25px -4px rgba(2, 132, 199, 0.15), 0 4px 10px -2px rgba(15, 23, 42, 0.04);
+  --shadow-lg: 0 20px 45px -8px rgba(15, 23, 42, 0.18);
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
 }
 
-/* ===== Staff dashboard additions ===== */
-select{min-height:56px;font:inherit;font-size:16px;border:1px solid #cfe2f1;border-radius:12px;padding:0 12px;background:#f8fcff;color:var(--ink);max-width:48%}
-.lbl{display:block;margin:18px 0 -8px;font-size:13px;font-weight:600}
-.total{display:flex;justify-content:space-between;align-items:center;font-weight:600;padding:16px;background:#e6f3ff;border-radius:12px;margin:15px 0}
-.total strong,.receipt .total strong{font:700 28px Manrope,sans-serif;margin:0;display:inline}
-.order-row{display:flex;justify-content:space-between;align-items:center;gap:12px;border:1px solid #d6e6f3;border-radius:12px;padding:14px;margin:10px 0;background:#f8fcff}
-.order-row small{display:block;color:var(--muted);margin-top:4px;font-size:13px}
+* { box-sizing: border-box; }
 
-/* ===== Branding / per-load pricing additions ===== */
-.footer{flex-wrap:wrap;gap:6px 20px}
-.welcome-inner .welcome-meta{margin:28px 0 0;font-size:13px;line-height:1.6}
-.hint{font-weight:400;color:var(--muted)}
-.total small{display:block;font-weight:400;font-size:13px;color:var(--muted)}
-.shop{margin-bottom:14px}
-.shop b{display:block;font:800 18px Manrope,sans-serif}
-.shop small{display:block;color:var(--muted);font-size:13px}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 163, 184, 0.4) transparent;
+}
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.35);
+  border-radius: 999px;
+  transition: background .18s ease;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.65);
+}
 
-/* ===== Add-on steppers ===== */
-.service.addon.has{border:2px solid var(--green);background:#e6f3ff}
-.stepper{display:flex;align-items:center;gap:12px}
-.stepper button{width:48px;height:48px;border-radius:50%;border:1px solid #cfe2f1;background:#fff;color:var(--green);font-size:24px;line-height:1}
-.stepper output{min-width:24px;text-align:center;font-weight:700}
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+}
+
+button, input, select { font: inherit; }
+button {
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: all .18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+button:active { transform: scale(0.98); }
+button:focus-visible, input:focus-visible, select:focus-visible {
+  outline: 3px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 5%;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: 'Manrope', sans-serif;
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.logo {
+  background: linear-gradient(135deg, #2ea3f8, #1877c9);
+  color: #fff;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  font-size: 24px;
+  box-shadow: 0 6px 14px rgba(24, 119, 201, 0.28);
+}
+
+.brand small {
+  display: block;
+  font: 700 9.5px 'DM Sans', sans-serif;
+  letter-spacing: 2.2px;
+  color: var(--primary);
+  margin-top: 1px;
+}
+
+.header-right {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  font-size: 13px;
+}
+
+.badge-staff {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 30px;
+  padding: 7px 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: var(--ink);
+  box-shadow: var(--shadow-sm);
+}
+
+.dot-pulse {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  background: #10b981;
+  border-radius: 50%;
+}
+.dot-pulse::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  border: 2px solid #10b981;
+  animation: pulse-ring 2s infinite;
+}
+@keyframes pulse-ring {
+  0% { transform: scale(0.8); opacity: 1; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+.time-pill {
+  background: #f0f6fc;
+  border-radius: 30px;
+  padding: 8px 14px;
+  font-weight: 600;
+  font-feature-settings: 'tnum';
+  color: var(--muted);
+}
+
+.lock-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+}
+.lock-btn:hover { background: #eef5fc; color: var(--ink); }
+
+.settings-tabs {
+  display: flex;
+  gap: 6px;
+  border-bottom: 1.5px solid var(--border);
+  padding-bottom: 10px;
+  margin-bottom: 18px;
+  overflow-x: auto;
+}
+.settings-tab {
+  border: 0;
+  background: none;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.settings-tab.active {
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+@media (max-width: 600px) {
+  .settings-grid { grid-template-columns: 1fr; }
+}
+.settings-group {
+  margin-bottom: 16px;
+}
+.settings-group h3 {
+  font-size: 13.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--muted);
+  margin: 0 0 10px;
+}
+
+main {
+  width: 100%;
+  flex: 1;
+  max-width: 1280px;
+  margin: auto;
+  padding: 36px 32px 30px;
+}
+
+.welcome {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.eyebrow {
+  font-size: 11px;
+  letter-spacing: 2px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+h1 {
+  font-family: 'Manrope', sans-serif;
+  font-size: clamp(28px, 3.6vw, 42px);
+  font-weight: 700;
+  letter-spacing: -1.5px;
+  margin: 6px 0 0;
+  color: var(--ink);
+}
+
+.welcome-note {
+  font-size: 13px;
+  color: var(--muted);
+  text-align: right;
+  line-height: 1.5;
+}
+
+/* Stats Ribbon */
+.stats-ribbon {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.stat-chip {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  box-shadow: var(--shadow-sm);
+  transition: transform .18s;
+}
+.stat-chip:hover { transform: translateY(-2px); }
+.stat-chip small {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 700;
+  color: var(--muted);
+}
+.stat-chip b {
+  font-family: 'Manrope', sans-serif;
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -0.5px;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr 1fr;
+  gap: 22px;
+}
+
+.card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 30px;
+  text-align: left;
+  min-height: 310px;
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-sm);
+  transition: transform .22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow .22s cubic-bezier(0.16, 1, 0.3, 1), border-color .22s;
+  color: var(--ink);
+  position: relative;
+  overflow: hidden;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-md);
+  border-color: #bcd9f5;
+}
+
+.primary {
+  background: linear-gradient(145deg, #1877c9, #0f5c9e);
+  color: #fff;
+  border-color: #1263ab;
+  box-shadow: 0 16px 36px -6px rgba(24, 119, 201, 0.35);
+}
+.primary:hover {
+  box-shadow: 0 20px 42px -6px rgba(24, 119, 201, 0.45);
+  border-color: #4aa7f2;
+}
+
+.primary:after {
+  content: '';
+  position: absolute;
+  width: 240px;
+  height: 240px;
+  border: 40px solid rgba(255, 255, 255, 0.05);
+  border-radius: 50%;
+  right: -70px;
+  top: 50px;
+  pointer-events: none;
+}
+
+.icon {
+  width: 58px;
+  height: 58px;
+  border-radius: 18px;
+  background: var(--primary-soft);
+  color: var(--primary);
+  display: grid;
+  place-items: center;
+  margin-bottom: 30px;
+  transition: transform .2s ease;
+}
+.card:hover .icon { transform: scale(1.06); }
+
+.primary .icon {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+svg {
+  width: 28px;
+  height: 28px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.card h2 {
+  font: 700 24px 'Manrope', sans-serif;
+  letter-spacing: -0.6px;
+  margin: 0 0 10px;
+}
+
+.card p {
+  font-size: 14.5px;
+  line-height: 1.55;
+  margin: 0;
+  color: var(--muted);
+}
+.primary p { color: #d7ebfc; }
+
+.card-bottom {
+  margin-top: auto;
+  padding-top: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+.arrow {
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  transition: transform .18s ease, background-color .18s;
+  background: #f8fcff;
+}
+.card:hover .arrow { transform: translateX(3px) translateY(-3px); }
+
+.primary .arrow {
+  background: #ffffff;
+  color: var(--primary);
+  border: 0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.section-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 36px 0 16px;
+  font-size: 13.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--muted);
+}
+
+.section-title span {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.8px;
+  color: var(--primary);
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 24px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.step { display: flex; gap: 14px; align-items: flex-start; }
+
+.num {
+  border: 1px solid #cce1f5;
+  background: #f2f8fe;
+  color: var(--primary);
+  border-radius: 12px;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.step b { font-size: 13.5px; font-weight: 700; color: var(--ink); }
+.step p { font-size: 12px; margin: 4px 0 0; line-height: 1.45; color: var(--muted); }
+
+.help {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0;
+  margin-top: 14px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.help button {
+  border: 0;
+  background: none;
+  color: var(--primary);
+  padding: 8px 12px;
+  font-weight: 700;
+  font-size: 14px;
+  border-radius: 8px;
+}
+.help button:hover { background: #eaf4fd; }
+
+.footer {
+  border-top: 1px solid var(--border);
+  padding: 20px 5%;
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--muted);
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  background: #fff;
+}
+
+dialog {
+  border: 0;
+  border-radius: 26px;
+  padding: 28px 30px;
+  width: min(680px, 94vw);
+  max-height: min(88vh, 740px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  color: var(--ink);
+  background: #ffffff;
+  box-shadow: 0 25px 60px -15px rgba(15, 23, 42, 0.28), 0 0 0 1px rgba(226, 232, 240, 0.9);
+  animation: dialog-appear .22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes dialog-appear {
+  from { opacity: 0; transform: scale(0.97) translateY(8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+dialog::backdrop {
+  background: rgba(12, 35, 60, 0.55);
+  backdrop-filter: blur(6px);
+}
+
+.dialog-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.dialog-top h2 {
+  margin: 0;
+  font: 700 22px 'Manrope', sans-serif;
+  letter-spacing: -0.5px;
+}
+
+#modal-body {
+  padding: 0;
+}
+
+.close {
+  border: 0;
+  background: #f1f5f9;
+  color: var(--muted);
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  font-size: 20px;
+  display: grid;
+  place-items: center;
+  line-height: 1;
+}
+.close:hover { background: #e2e8f0; color: var(--ink); }
+
+.settings-nav {
+  display: flex;
+  background: #f1f5f9;
+  border-radius: 14px;
+  padding: 4px;
+  gap: 4px;
+  margin-bottom: 20px;
+}
+
+.settings-nav-btn {
+  flex: 1;
+  border: 0;
+  background: transparent;
+  padding: 10px 14px;
+  font-size: 13.5px;
+  font-weight: 700;
+  border-radius: 10px;
+  color: var(--muted);
+  transition: all .18s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.settings-nav-btn.active {
+  background: #ffffff;
+  color: var(--primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 18px;
+  background: #fafcfe;
+  border: 1.5px solid #edf2f7;
+  border-radius: 16px;
+  margin-bottom: 10px;
+  transition: border-color .18s, background .18s;
+}
+
+.setting-row:hover {
+  border-color: #cbd5e1;
+  background: #ffffff;
+}
+
+.setting-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.setting-title {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.setting-sub {
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+.affix-box {
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color .18s, box-shadow .18s;
+  min-height: 44px;
+  width: 140px;
+  flex-shrink: 0;
+}
+
+.affix-box:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.12);
+}
+
+.affix-symbol {
+  padding: 0 10px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+  background: #f8fafc;
+  align-self: stretch;
+  display: grid;
+  place-items: center;
+  border-right: 1.5px solid #f1f5f9;
+}
+
+.affix-symbol.suffix {
+  border-right: 0;
+  border-left: 1.5px solid #f1f5f9;
+}
+
+.affix-box input {
+  border: 0 !important;
+  margin: 0 !important;
+  padding: 8px 12px !important;
+  min-height: 0 !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  text-align: right;
+  background: transparent !important;
+  box-shadow: none !important;
+  width: 100%;
+}
+
+.field {
+  display: block;
+  margin: 18px 0;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+input, select {
+  display: block;
+  width: 100%;
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-top: 8px;
+  background: #fafcfe;
+  color: var(--ink);
+  min-height: 52px;
+  font-size: 15px;
+  transition: border-color .18s, box-shadow .18s, background .18s;
+}
+input:focus, select:focus {
+  background: #fff;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(24, 119, 201, 0.12);
+}
+
+.services {
+  display: grid;
+  gap: 10px;
+  margin: 18px 0;
+}
+
+.service {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 16px 18px;
+  background: #fafcfe;
+  color: var(--ink);
+  text-align: left;
+  min-height: 72px;
+  font-size: 15.5px;
+  gap: 16px;
+}
+.service:hover {
+  background: #f1f7fd;
+  border-color: #beddf9;
+}
+
+.service.selected {
+  border: 2px solid var(--primary);
+  background: #ebf5fe;
+  box-shadow: 0 4px 14px rgba(24, 119, 201, 0.12);
+}
+
+.service small {
+  display: block;
+  color: var(--muted);
+  margin-top: 4px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* Quick Touch Presets */
+.quick-chips {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+.chip-btn {
+  border: 1px solid var(--border);
+  background: #f0f7fe;
+  color: var(--primary);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 12.5px;
+  font-weight: 700;
+}
+.chip-btn:hover { background: #e0f0fd; }
+
+.action {
+  width: 100%;
+  background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+  color: #fff;
+  border: 0;
+  padding: 16px;
+  border-radius: 14px;
+  margin-top: 16px;
+  font-weight: 700;
+  font-size: 15.5px;
+  min-height: 54px;
+  box-shadow: 0 8px 20px rgba(24, 119, 201, 0.28);
+}
+.action:hover { opacity: 0.95; }
+.action.ghost {
+  background: #fff;
+  color: var(--primary);
+  border: 2px solid var(--primary);
+  box-shadow: none;
+}
+.action.ghost:hover { background: #f0f7fe; }
+
+.note {
+  font-size: 13.5px;
+  background: #edf5fc;
+  border-left: 4px solid var(--primary);
+  border-radius: 0 12px 12px 0;
+  padding: 12px 16px;
+  color: #295377;
+  line-height: 1.5;
+  margin: 14px 0;
+}
+
+.receipt {
+  text-align: center;
+  padding: 16px 8px;
+  color: #000000 !important;
+  font-family: 'DM Sans', -apple-system, sans-serif;
+}
+.receipt * { color: #000000 !important; }
+.receipt .shop b { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
+.receipt strong {
+  font: 800 32px 'JetBrains Mono', monospace;
+  display: block;
+  margin: 12px 0;
+  letter-spacing: 1px;
+}
+.receipt .total {
+  background: transparent !important;
+  border-top: 1.5px dashed #000;
+  border-bottom: 1.5px dashed #000;
+  border-radius: 0;
+  padding: 14px 6px;
+  margin: 18px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.receipt .order-qr {
+  display: table;
+  margin: 16px auto 10px;
+  padding: 12px;
+  background: #fff;
+}
+.receipt .pay {
+  display: inline-block;
+  margin: 10px 0 0;
+  padding: 4px 12px;
+  border: 2px solid #000;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+.receipt .paper-cutter-space {
+  height: 48px;
+  border-bottom: 1px dotted #ccc;
+  margin-top: 16px;
+}
+
+.total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 700;
+  padding: 18px 20px;
+  background: #ebf5fe;
+  border-radius: var(--radius-md);
+  margin: 18px 0;
+}
+.total strong { font: 800 28px 'Manrope', sans-serif; color: var(--primary); }
+
+.order-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  margin: 10px 0;
+  background: #fafcfe;
+  transition: border-color .18s;
+}
+.order-row:hover { border-color: #beddf9; }
+.order-row small { display: block; color: var(--muted); margin-top: 4px; font-size: 13px; }
+
+/* Filter Tabs for Orders Modal */
+.filter-tabs {
+  display: flex;
+  gap: 8px;
+  margin: 16px 0;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+.filter-tab {
+  border: 1px solid var(--border);
+  background: #fff;
+  border-radius: 30px;
+  padding: 7px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.filter-tab.active {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+.badge-received { background: #e0f2fe; color: #0369a1; }
+.badge-washing { background: #e0e7ff; color: #4338ca; }
+.badge-drying { background: #fef3c7; color: #b45309; }
+.badge-folding { background: #f3e8ff; color: #7e22ce; }
+.badge-ready { background: #dcfce7; color: #15803d; }
+.badge-released { background: #f1f5f9; color: #475569; }
+
+.status-line {
+  padding: 16px;
+  border-left: 4px solid var(--primary);
+  margin: 14px 0;
+  background: #f0f7fe;
+  border-radius: 0 12px 12px 0;
+  font-size: 14px;
+}
+
+.error { color: var(--danger); font-size: 13px; }
+
+.mini {
+  min-height: 42px;
+  border: 1.5px solid var(--border);
+  background: #fff;
+  color: var(--ink);
+  border-radius: 10px;
+  padding: 0 12px;
+  font-weight: 700;
+  font-size: 12.5px;
+}
+.mini:hover { border-color: var(--primary); color: var(--primary); }
+.mini.print-mini { color: var(--primary); border-color: #bcd9f5; background: #f4f9fe; }
+
+.welcome-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  overflow-y: auto;
+  background: radial-gradient(120% 90% at 50% 0%, #f9fcff 0%, #eaf2fb 60%, #d8e5f8 100%);
+  transition: opacity .4s, visibility .4s;
+}
+.welcome-screen.leaving { opacity: 0; visibility: hidden; }
+
+.bubbles {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.bubbles:before, .bubbles:after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #ffffffb8, #8fb8f033);
+  box-shadow: inset 6px 6px 16px #fff, inset -10px -10px 30px #5b8fe433, 0 20px 50px #5b8fe41f;
+}
+.bubbles:before { width: 320px; height: 320px; left: -110px; top: -110px; }
+.bubbles:after { width: 240px; height: 240px; right: -90px; bottom: -70px; }
+
+.bubbles i {
+  position: absolute;
+  bottom: -200px;
+  left: var(--x);
+  width: var(--s);
+  height: var(--s);
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 28%, #ffffffcc 0, #ffffff55 18%, #5bb0ee1a 55%, #2379c233 100%);
+  border: 1.5px solid #2379c230;
+  animation: rise var(--d) linear infinite;
+  animation-delay: var(--dl);
+}
+@keyframes rise {
+  0% { transform: translate(0, 0) scale(.85); opacity: 0; }
+  8% { opacity: 1; }
+  35% { transform: translate(22px, -38vh) scale(.95); }
+  65% { transform: translate(-18px, -80vh) scale(1.05); }
+  100% { transform: translate(10px, -125vh) scale(1.15); opacity: 0; }
+}
+
+.login {
+  position: relative;
+  z-index: 1;
+  width: min(420px, 100%);
+  margin: auto;
+  display: grid;
+  gap: 24px;
+}
+
+.landing-title-wrap {
+  grid-column: 1/-1;
+  text-align: center;
+  padding: 4px 10px 0;
+}
+
+.landing-title {
+  margin: 0;
+  font: 800 clamp(15px, 2vw, 19px)/1.35 'Manrope', sans-serif;
+  color: var(--ink);
+  letter-spacing: -0.2px;
+}
+.landing-title span {
+  display: block;
+  color: var(--primary);
+  font-size: clamp(23px, 3.2vw, 30px);
+  letter-spacing: 1.5px;
+  margin-bottom: 4px;
+}
+
+.tap { text-align: center; }
+
+.rfid-tile {
+  position: relative;
+  width: 156px;
+  height: 156px;
+  border: 0;
+  border-radius: 46px;
+  background: linear-gradient(145deg, #ffffff, #e1ebfa);
+  color: var(--primary);
+  display: grid;
+  place-items: center;
+  margin: 0 auto;
+  box-shadow: 14px 16px 32px #aebfe0a6, -10px -10px 24px #ffffffe6;
+}
+.rfid-tile svg { width: 84px; height: 84px; stroke-width: 1.8; }
+.rfid-tile:before, .rfid-tile:after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 46px;
+  border: 2px solid #2379c273;
+  animation: pulse 2.8s ease-out infinite;
+  pointer-events: none;
+}
+.rfid-tile:after { animation-delay: 1.4s; }
+@keyframes pulse {
+  from { transform: scale(1); opacity: .9; }
+  to { transform: scale(1.36); opacity: 0; }
+}
+
+.tap h1 {
+  font: 800 32px 'Manrope', sans-serif;
+  letter-spacing: -1px;
+  margin: 24px 0 6px;
+}
+.sub {
+  margin: 0;
+  font-size: 13px;
+  letter-spacing: 2.5px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.alt-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin: 22px 0 0;
+}
+.alt {
+  width: 78px;
+  height: 78px;
+  border-radius: 24px;
+  border: 0;
+  background: linear-gradient(145deg, #ffffff, #e4edfb);
+  color: var(--primary);
+  display: grid;
+  place-items: center;
+  box-shadow: 6px 8px 18px #aebfe07a, -6px -6px 14px #ffffffee;
+}
+.alt svg { width: 34px; height: 34px; }
+.alt .fill { fill: currentColor; stroke: none; }
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 18px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.divider:before, .divider:after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #c9d9ee;
+}
+
+.ifield { position: relative; display: block; margin: 0 0 14px; }
+.ifield input {
+  margin: 0;
+  min-height: 58px;
+  padding: 0 52px 0 54px;
+  border: 0;
+  border-radius: 20px;
+  background: linear-gradient(145deg, #eaf2fc, #f9fcff);
+  box-shadow: inset 3px 3px 8px #c6d5ee, inset -3px -3px 8px #fff;
+  font-size: 15.5px;
+}
+.ifield .lead {
+  position: absolute;
+  left: 18px;
+  top: 17px;
+  width: 22px;
+  height: 22px;
+  color: #4a6f8f;
+  pointer-events: none;
+}
+.eye {
+  position: absolute;
+  right: 6px;
+  top: 5px;
+  width: 48px;
+  height: 48px;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: #6b8499;
+  display: grid;
+  place-items: center;
+}
+.eye[aria-pressed="true"] .slash { display: none; }
+
+.row-opts {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 4px 2px 18px;
+  font-size: 13.5px;
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.check input {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  min-height: 0;
+  margin: 0;
+  border-radius: 6px;
+  border: 2px solid #b4c9e4;
+  background: #fff;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+.check input:checked {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+.check input:checked:after {
+  content: '✓';
+  color: #fff;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.link {
+  border: 0;
+  background: none;
+  color: var(--primary);
+  font-weight: 700;
+  padding: 0;
+  font-size: 13px;
+}
+
+.login-btn {
+  position: relative;
+  width: 100%;
+  min-height: 60px;
+  border: 0;
+  border-radius: 28px;
+  color: #fff;
+  font: 700 18px 'Manrope', sans-serif;
+  background: linear-gradient(180deg, #3aa9f7, #156bc2);
+  box-shadow: 0 12px 26px rgba(24, 119, 201, 0.4), inset 0 2px 0 rgba(255, 255, 255, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.login-btn .go {
+  position: absolute;
+  right: 9px;
+  top: 9px;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.22);
+  display: grid;
+  place-items: center;
+}
+
+.login-msg {
+  min-height: 20px;
+  margin: 12px 0 0;
+  font-size: 13.5px;
+  text-align: center;
+  color: var(--muted);
+}
+
+.service.addon.has { border: 2px solid var(--primary); background: #ebf5fe; }
+.stepper { display: flex; align-items: center; gap: 12px; }
+.stepper button {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  background: #fff;
+  color: var(--primary);
+  font-size: 22px;
+  line-height: 1;
+}
+.stepper output { min-width: 24px; text-align: center; font-weight: 800; font-size: 16px; }
+
+@media print {
+  @page { margin: 2mm; size: 80mm auto; }
+  body > *:not(dialog) { display: none !important; }
+  body { display: block; background: #fff; margin: 0; padding: 0; }
+  dialog {
+    position: static;
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto;
+    max-height: none;
+    padding: 0;
+    box-shadow: none;
+    border: none;
+    overflow: visible;
+    display: block !important;
+  }
+  #modal-body {
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+  dialog::backdrop { display: none; }
+  .close, .print-hide { display: none !important; }
+  .receipt, .receipt * {
+    color: #000000 !important;
+    text-shadow: none !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
+@media (min-width: 900px) and (orientation: landscape) {
+  .login { width: min(920px, 100%); grid-template-columns: 1fr 1fr; gap: 36px 64px; align-items: center; }
+}
+
+@media (max-width: 900px) {
+  .stats-ribbon { grid-template-columns: repeat(2, 1fr); }
+  .cards { grid-template-columns: 1fr; }
+  .steps { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 600px) {
+  main { padding: 24px 18px; }
+  .stats-ribbon { grid-template-columns: 1fr; }
+  .steps { grid-template-columns: 1fr; }
+  .welcome { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .welcome-note { text-align: left; }
+  .header-right time { display: none; }
+}
 </style>
 </head>
 <body>
-<section id="welcome" class="welcome-screen" aria-label="Welcome">
-<div class="welcome-bubbles" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
-<div class="welcome-inner">
-<span class="logo">✳</span>
-<div class="eyebrow">Washing Well Laundry Shop</div>
-<h1>Welcome to Washing Well.</h1>
-<p>Clean clothes, one less thing on your list.</p>
-<button type="button" class="welcome-start" id="start">Tap to begin →</button>
-<p class="welcome-meta">Serving customers since June 3, 2020<br>Blk. 6, Lot 32, Olivarez Homes, Phase 5, Sto. Tomas, Biñan, Laguna</p>
-</div>
+
+<section id="welcome" class="welcome-screen" aria-label="Sign in">
+  <div class="bubbles" aria-hidden="true">
+    <i style="--x:4%;--s:70px;--d:11s;--dl:-2s;"></i>
+    <i style="--x:14%;--s:38px;--d:8s;--dl:-6s;"></i>
+    <i style="--x:22%;--s:110px;--d:15s;--dl:-9s;"></i>
+    <i style="--x:31%;--s:50px;--d:9s;--dl:-1s;"></i>
+    <i style="--x:42%;--s:85px;--d:13s;--dl:-5s;"></i>
+    <i style="--x:54%;--s:60px;--d:12s;--dl:-10s;"></i>
+    <i style="--x:66%;--s:130px;--d:17s;--dl:-7s;"></i>
+    <i style="--x:78%;--s:75px;--d:12s;--dl:-8s;"></i>
+    <i style="--x:89%;--s:95px;--d:14s;--dl:-11s;"></i>
+  </div>
+  <div class="login">
+    <div class="landing-title-wrap">
+      <p class="landing-title"><span>LABADA-LINK</span>A QR CODE-BASED SYSTEM FOR LAUNDRY ORDER RECORDING, VERIFICATION, AND TRACKING</p>
+    </div>
+    <div class="tap">
+      <button type="button" class="rfid-tile" id="rfid" aria-label="Sign in with RFID card">
+        <svg viewBox="0 0 64 64">
+          <rect x="6" y="16" width="38" height="30" rx="6"/>
+          <rect x="13" y="24" width="10" height="8" rx="2"/>
+          <path d="M13 39h18"/>
+          <path d="M50 23c4 5 4 13 0 18"/>
+          <path d="M56 17c7 8 7 22 0 30"/>
+        </svg>
+      </button>
+      <h1>Staff Terminal</h1>
+      <p class="sub">Tap RFID card to sign in</p>
+      <div class="alt-row">
+        <button type="button" class="alt" id="key-btn" aria-label="Sign in with key tag">
+          <svg viewBox="0 0 28 28">
+            <circle cx="14" cy="5" r="3"/>
+            <rect x="7" y="10" width="14" height="15" rx="3.5"/>
+            <circle cx="14" cy="15.5" r="1.6"/>
+            <path d="M14 17.5v3"/>
+          </svg>
+        </button>
+        <button type="button" class="alt" id="pad-btn" aria-label="Sign in with keypad PIN">
+          <svg viewBox="0 0 32 32">
+            <rect x="4" y="4" width="24" height="24" rx="6"/>
+            <circle class="fill" cx="11" cy="11" r="1.8"/>
+            <circle class="fill" cx="16" cy="11" r="1.8"/>
+            <circle class="fill" cx="21" cy="11" r="1.8"/>
+            <circle class="fill" cx="11" cy="16" r="1.8"/>
+            <circle class="fill" cx="16" cy="16" r="1.8"/>
+            <circle class="fill" cx="21" cy="16" r="1.8"/>
+            <circle class="fill" cx="11" cy="21" r="1.8"/>
+            <circle class="fill" cx="16" cy="21" r="1.8"/>
+            <circle class="fill" cx="21" cy="21" r="1.8"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="email-side">
+      <div class="divider">or staff credentials</div>
+      <form id="login-form" novalidate>
+        <label class="ifield">
+          <svg class="lead" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>
+          <input name="email" type="email" autocomplete="username" inputmode="email" placeholder="Staff email or ID" aria-label="Email">
+        </label>
+        <div class="ifield">
+          <svg class="lead" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="3"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/><circle cx="12" cy="16" r="1" fill="currentColor"/></svg>
+          <input name="password" type="password" autocomplete="current-password" placeholder="Passcode" aria-label="Password">
+          <button type="button" class="eye" id="eye" aria-pressed="false" aria-label="Show password">
+            <svg viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/><path class="slash" d="M4 4l16 16"/></svg>
+          </button>
+        </div>
+        <div class="row-opts">
+          <label class="check"><input type="checkbox" name="remember">Remember device</label>
+          <button type="button" class="link" id="forgot">Help</button>
+        </div>
+        <button class="login-btn">Unlock Terminal<span class="go"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></button>
+      </form>
+      <p class="login-msg" id="login-msg" aria-live="polite"></p>
+    </div>
+  </div>
 </section>
-<header><div class="brand"><span class="logo">✳</span><div>Washing Well<small>LAUNDRY SHOP</small></div></div><div class="header-right"><span class="badge"><span class="dot"></span>Staff screen</span><time id="clock"></time></div></header>
-<main><div class="welcome"><div><div class="eyebrow">Orders · Status · Verification</div><h1>Ready for the next load.</h1><p>Record an order, update its status, or verify a pickup.</p></div><div class="welcome-note">Washing Well Laundry Shop<br>Since June 3, 2020</div></div>
-<div class="cards">
-<button class="card primary" data-open="order"><span class="icon"><svg viewBox="0 0 32 32"><rect x="5" y="3" width="22" height="26" rx="4"/><circle cx="16" cy="19" r="7"/><path d="M9 8h1m4 0h9M10 19c3-4 6 4 12 0"/></svg></span><h2>New order</h2><p>Enter the weight and pick a service. The price is computed per load.<br>Then print the receipt with its QR code.</p><span class="card-bottom">Record an order <span class="arrow">↗</span></span></button>
-<button class="card" data-open="orders"><span class="icon"><svg viewBox="0 0 32 32"><rect x="7" y="4" width="18" height="25" rx="3"/><path d="M12 4V2h8v2M12 12h8m-8 5h8m-8 5h4"/><path d="m20 23 2 2 5-5"/></svg></span><h2>Orders & status</h2><p>See every order and update its laundry status.</p><span class="card-bottom">Manage orders <span class="arrow">↗</span></span></button>
-<button class="card" data-open="verify"><span class="icon"><svg viewBox="0 0 32 32"><rect x="4" y="4" width="9" height="9" rx="1"/><rect x="19" y="4" width="9" height="9" rx="1"/><rect x="4" y="19" width="9" height="9" rx="1"/><path d="M19 19h3v3m6-3v9m-9 0h3m3-3h3"/></svg></span><h2>Verify order</h2><p>Scan a receipt's QR code or type the order number before release.</p><span class="card-bottom">Verify a pickup <span class="arrow">↗</span></span></button>
-</div>
-<div class="section-title">How an order flows <span>FROM DROP-OFF TO PICKUP</span></div>
-<div class="steps"><div class="step"><span class="num">01</span><div><b>Weigh & record</b><p>Enter weight, service and add-ons.</p></div></div><div class="step"><span class="num">02</span><div><b>Print receipt</b><p>The receipt carries the order's QR code.</p></div></div><div class="step"><span class="num">03</span><div><b>Update status</b><p>Customers see progress on their phones.</p></div></div><div class="step"><span class="num">04</span><div><b>Verify & release</b><p>Scan the QR, then hand over the laundry.</p></div></div></div>
-<div class="help"><span>ⓘ &nbsp; Need a quick reminder of how this screen works?</span><button data-open="help">Quick guide ↗</button></div>
-</main><footer class="footer"><span>Washing Well Laundry Shop · Blk. 6, Lot 32, Olivarez Homes, Phase 5, Sto. Tomas, Biñan, Laguna</span><span>Est. June 3, 2020 · Prototype · Sample prices</span></footer>
-<dialog id="modal"><div class="dialog-top"><h2 id="modal-title"></h2><button class="close" aria-label="Close dialog">×</button></div><div id="modal-body"></div></dialog>
+
+<header>
+  <div class="brand">
+    <span class="logo">✳</span>
+    <div>Washing Well<small>LAUNDRY SHOP · POS</small></div>
+  </div>
+  <div class="header-right">
+    <div class="badge-staff">
+      <span class="dot-pulse"></span>
+      <span>Terminal Active</span>
+    </div>
+    <time class="time-pill" id="clock"></time>
+    <button type="button" class="lock-btn" id="settings-btn" title="Pricing & Capacities" aria-label="Pricing & Capacities" data-open="settings">
+      <svg viewBox="0 0 24 24" style="width:18px;height:18px;"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+    </button>
+    <button type="button" class="lock-btn" id="lock-screen-btn" title="Lock Terminal" aria-label="Lock screen">
+      <svg viewBox="0 0 24 24" style="width:18px;height:18px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+    </button>
+  </div>
+</header>
+
+<main>
+  <div class="welcome">
+    <div>
+      <div class="eyebrow"><span class="dot-pulse" style="width:6px;height:6px;"></span> Point of Sale · QR Tracking · Order Control</div>
+      <h1>Ready for the next load.</h1>
+    </div>
+    <div class="welcome-note">
+      <b>Washing Well Biñan Branch</b><br>
+      Sto. Tomas, Biñan, Laguna
+    </div>
+  </div>
+
+  <!-- Operational Overview Ribbon -->
+  <div class="stats-ribbon">
+    <div class="stat-chip">
+      <small>Total Active Loads</small>
+      <b id="kpi-active">0</b>
+    </div>
+    <div class="stat-chip">
+      <small>In Wash / Dry / Fold</small>
+      <b id="kpi-processing">0</b>
+    </div>
+    <div class="stat-chip">
+      <small>Ready for Release</small>
+      <b id="kpi-ready" style="color:var(--success);">0</b>
+    </div>
+    <div class="stat-chip">
+      <small>Uncollected Revenue</small>
+      <b id="kpi-unpaid" style="color:var(--warning);">₱0</b>
+    </div>
+  </div>
+
+  <div class="cards">
+    <button class="card primary" data-open="order">
+      <span class="icon">
+        <svg viewBox="0 0 32 32"><rect x="5" y="3" width="22" height="26" rx="4"/><circle cx="16" cy="19" r="7"/><path d="M9 8h1m4 0h9M10 19c3-4 6 4 12 0"/></svg>
+      </span>
+      <h2>New order</h2>
+      <p>Weigh laundry, choose service tier, add detergents, and issue a receipt with QR code.</p>
+      <span class="card-bottom">Create transaction <span class="arrow">↗</span></span>
+    </button>
+    <button class="card" data-open="orders">
+      <span class="icon">
+        <svg viewBox="0 0 32 32"><rect x="7" y="4" width="18" height="25" rx="3"/><path d="M12 4V2h8v2M12 12h8m-8 5h8m-8 5h4"/><path d="m20 23 2 2 5-5"/></svg>
+      </span>
+      <h2>Orders & status</h2>
+      <p>Advance laundry batches, mark payments, and reprint customer receipts on demand.</p>
+      <span class="card-bottom">Manage active loads <span class="arrow">↗</span></span>
+    </button>
+    <button class="card" data-open="verify">
+      <span class="icon">
+        <svg viewBox="0 0 32 32"><rect x="4" y="4" width="9" height="9" rx="1"/><rect x="19" y="4" width="9" height="9" rx="1"/><rect x="4" y="19" width="9" height="9" rx="1"/><path d="M19 19h3v3m6-3v9m-9 0h3m3-3h3"/></svg>
+      </span>
+      <h2>Verify & release</h2>
+      <p>Scan receipt QR or look up order code to verify payment and release clean bundles.</p>
+      <span class="card-bottom">Release laundry <span class="arrow">↗</span></span>
+    </button>
+  </div>
+
+  <div class="help" style="border-top:1px solid var(--border);margin-top:32px;padding:18px 0 0;">
+    <span style="font-weight:600;color:var(--muted);display:flex;align-items:center;gap:8px;">
+      <span class="dot-pulse" style="width:6px;height:6px;"></span> Need assistance with terminal functions?
+    </span>
+    <button data-open="help">Terminal guidelines ↗</button>
+  </div>
+</main>
+
+<footer class="footer">
+  <span>Washing Well Laundry Shop · Blk. 6, Lot 32, Olivarez Homes, Phase 5, Sto. Tomas, Biñan, Laguna</span>
+  <span>Labada-Link Terminal · Laguna System v2.4</span>
+</footer>
+
+<dialog id="modal">
+  <div class="dialog-top">
+    <h2 id="modal-title"></h2>
+    <button class="close" aria-label="Close dialog">×</button>
+  </div>
+  <div id="modal-body"></div>
+</dialog>
+
 <script src="vendor/qrcode.min.js"></script>
 <script>
-const modal=document.querySelector('#modal'),body=document.querySelector('#modal-body'),title=document.querySelector('#modal-title');
-const STATUS_URL='';/* Set to the customer status page, e.g. 'https://your-site/status.html?id=' — until then the QR encodes only the order number */
-const STATUSES=['Received','Washing','Drying','Folding','Ready for pickup','Claimed'];
-const SHOP={name:'Washing Well Laundry Shop',address:'Blk. 6, Lot 32, Olivarez Homes, Phase 5, Sto. Tomas, Biñan, Laguna'};
-/* From the shop's posted price list. A load is up to 7 kg of lightweight clothes or 5 kg of heavyweight; comforters are per piece.
-   Staff can still override the price on each order. */
-const services=[
-{name:'Wash & fold · Lightweight',price:170,kg:7,description:'T-shirts, shorts, sando · up to 7 kg per load'},
-{name:'Wash & fold · Heavyweight',price:170,kg:5,description:'Bedding, pants, towels, jackets, joggers · up to 5 kg per load'},
-{name:'Wash & fold · Comforter',price:200,piece:true,description:'Double / Queen size · per piece'},
-{name:'Wash only · Lightweight',price:85,kg:7,description:'Regular clothes · up to 7 kg per load'},
-{name:'Wash only · Heavyweight',price:85,kg:5,description:'Mixed with heavyweight · up to 5 kg per load'},
-{name:'Dry only',price:90,kg:7,description:'Per load'}];
-const addons=[{name:'Liquid detergent',price:18},{name:'Fab con',price:10},{name:'Excess clothes (up to 1 kg)',price:20}];
-let selected=0,qtys=addons.map(()=>0);
-const peso=n=>'₱'+n.toFixed(2).replace(/\.00$/,'');
-const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function getOrders(){try{return JSON.parse(localStorage.getItem('fresh-orders')||'[]')}catch{return []}}
-function saveOrders(o){try{localStorage.setItem('fresh-orders',JSON.stringify(o));return true}catch{return false}}
-function newId(){const a=new Uint8Array(4);crypto.getRandomValues(a);return 'FR-'+[...a].map(x=>x.toString(16).padStart(2,'0')).join('').toUpperCase()}
-const loadsFor=(w,s)=>s.piece?Math.max(1,Math.round(w)):Math.max(1,Math.ceil(w/s.kg-1e-9));
-const unitWord=s=>s.piece?'piece':'load';
-const plural=(n,u='load')=>n+' '+u+(n===1?'':'s');
-const qty=o=>o.unit==='pc'?plural(o.loads,'piece'):o.weight+' kg'+(o.loads?' ('+plural(o.loads)+')':'');
-function calcTotal(w,s,ppl,qs){return loadsFor(w,s)*ppl+qs.reduce((t,q,i)=>t+q*addons[i].price,0)}
-function serviceRows(){return '<div class="services">'+services.map((s,i)=>`<button class="service ${i===selected?'selected':''}" type="button" data-service="${i}" aria-pressed="${i===selected}"><span><b>${s.name}</b><small>${s.description}</small></span><b>₱${s.price}/${s.piece?'pc':'load'}</b></button>`).join('')+'</div>'}
-function orderForm(){selected=0;qtys=addons.map(()=>0);
-body.innerHTML=`<form id="order-form"><label class="field">Customer name<input name="customer" required maxlength="60" autocomplete="off" placeholder="Customer name"></label><label class="field"><span id="wlabel">Weight (kg)</span> <span class="hint" id="whint"></span><input name="weight" type="number" inputmode="decimal" min="0.1" max="100" step="0.1" required placeholder="e.g. 3.5"></label><b class="lbl">Service</b>${serviceRows()}<label class="field" id="pplabel">Price per load (₱)<input name="ppl" type="number" inputmode="decimal" min="0" step="1" required value="${services[0].price}"></label><b class="lbl">Additional products</b><div class="services">${addons.map((a,i)=>`<div class="service addon"><span><b>${a.name}</b><small>${peso(a.price)} each</small></span><span class="stepper"><button type="button" data-dec="${i}" aria-label="Less ${a.name}">−</button><output id="q${i}">0</output><button type="button" data-inc="${i}" aria-label="More ${a.name}">+</button></span></div>`).join('')}</div><div class="total"><span>Total<small id="breakdown">Enter the weight</small></span><strong id="total">₱0</strong></div><button class="action">Create order</button></form>`;
-const form=body.querySelector('form'),totalEl=body.querySelector('#total'),brk=body.querySelector('#breakdown'),wl=body.querySelector('#wlabel'),wh=body.querySelector('#whint'),pl=body.querySelector('#pplabel');
-let lastPiece=false;
-const update=()=>{const s=services[selected],w=parseFloat(form.elements.weight.value)||0,ppl=parseFloat(form.elements.ppl.value)||0;if(w>0){totalEl.textContent=peso(calcTotal(w,s,ppl,qtys));brk.textContent=`${plural(loadsFor(w,s),unitWord(s))} × ${peso(ppl)}`+(qtys.some(q=>q)?' + add-ons':'')}else{totalEl.textContent='₱0';brk.textContent=s.piece?'Enter the number of pieces':'Enter the weight'}};
-const sync=()=>{const s=services[selected],w=form.elements.weight;wl.textContent=s.piece?'Number of pieces':'Weight (kg)';wh.textContent=s.piece?'· per piece':'· up to '+s.kg+' kg per load';pl.firstChild.textContent=s.piece?'Price per piece (₱)':'Price per load (₱)';w.step=s.piece?'1':'0.1';w.min=s.piece?'1':'0.1';w.placeholder=s.piece?'e.g. 1':'e.g. 3.5';if(!!s.piece!==lastPiece){w.value='';lastPiece=!!s.piece}form.elements.ppl.value=s.price;update()};
-body.querySelectorAll('[data-service]').forEach(b=>b.onclick=()=>{selected=Number(b.dataset.service);body.querySelectorAll('[data-service]').forEach((el,i)=>{el.classList.toggle('selected',i===selected);el.setAttribute('aria-pressed',i===selected)});sync()});
-body.querySelectorAll('[data-inc],[data-dec]').forEach(b=>b.onclick=()=>{const up=b.dataset.inc!==undefined,i=Number(up?b.dataset.inc:b.dataset.dec);qtys[i]=Math.max(0,Math.min(20,qtys[i]+(up?1:-1)));body.querySelector('#q'+i).textContent=qtys[i];b.closest('.addon').classList.toggle('has',qtys[i]>0);update()});
-form.elements.weight.oninput=update;form.elements.ppl.oninput=update;sync();
-form.onsubmit=e=>{e.preventDefault();const s=services[selected],name=form.elements.customer.value.trim(),w=parseFloat(form.elements.weight.value),ppl=parseFloat(form.elements.ppl.value);
-if(!name){form.elements.customer.setCustomValidity('Please enter the customer name.');form.elements.customer.reportValidity();form.elements.customer.oninput=()=>form.elements.customer.setCustomValidity('');return}
-if(!(w>0)){form.elements.weight.setCustomValidity(s.piece?'Please enter the number of pieces.':'Please enter the weight in kg.');form.elements.weight.reportValidity();form.elements.weight.oninput=()=>{form.elements.weight.setCustomValidity('');update()};return}
-if(!(ppl>=0)){form.elements.ppl.setCustomValidity('Please enter the price.');form.elements.ppl.reportValidity();form.elements.ppl.oninput=()=>{form.elements.ppl.setCustomValidity('');update()};return}
-const order={id:newId(),customer:name,weight:s.piece?Math.round(w):w,unit:s.piece?'pc':'kg',loads:loadsFor(w,s),pricePerLoad:ppl,service:s.name,addons:qtys.map((q,i)=>q?addons[i].name+' × '+q:null).filter(Boolean),total:calcTotal(w,s,ppl,qtys),status:STATUSES[0],created:Date.now()};
-const orders=getOrders();orders.push(order);
-if(!saveOrders(orders)){body.innerHTML='<p class="error">This browser cannot save the order.</p>';return}
-receipt(order)}}
-function receipt(order){title.textContent='Order created';
-const when=new Date(order.created).toLocaleString('en-PH',{dateStyle:'medium',timeStyle:'short'});
-body.innerHTML=`<div class="receipt"><div class="shop"><b>${SHOP.name}</b><small>${SHOP.address}</small></div><span class="eyebrow">Order number</span><strong>${order.id}</strong><p>${esc(order.customer)} · ${order.service}<br>${order.unit==='pc'?plural(order.loads,'piece'):order.weight+' kg · '+plural(order.loads)} × ${peso(order.pricePerLoad)}${order.addons.length?'<br>Add-ons: '+esc(order.addons.join(', ')):''}<br>${when}</p><div class="total"><span>Total</span><strong>${peso(order.total)}</strong></div><div id="order-qr" class="order-qr" role="img" aria-label="QR code for order ${order.id}"></div><p class="qr-caption">Scan to check your laundry status.</p></div><button class="action ghost print-hide" id="print" type="button">Print receipt</button><button class="action print-hide" id="done" type="button">Back to home</button>`;
-new QRCode(document.querySelector('#order-qr'),{text:STATUS_URL?STATUS_URL+order.id:order.id,width:200,height:200,colorDark:'#000000',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
-document.querySelector('#print').onclick=()=>window.print();document.querySelector('#done').onclick=()=>modal.close()}
-function ordersView(){const list=getOrders().slice().reverse();
-body.innerHTML=list.length?`<div class="orders">${list.map(o=>`<div class="order-row"><div><b>${esc(o.customer)}</b><small>${o.id} · ${o.service} · ${qty(o)} · ${peso(o.total)}</small></div><select data-status="${o.id}" aria-label="Status for ${o.id}">${STATUSES.map(t=>`<option${t===o.status?' selected':''}>${t}</option>`).join('')}</select></div>`).join('')}</div>`:'<p>No orders yet. Create one from the home screen.</p>';
-body.querySelectorAll('[data-status]').forEach(sel=>sel.onchange=()=>{const os=getOrders(),o=os.find(x=>x.id===sel.dataset.status);if(o){o.status=sel.value;saveOrders(os)}})}
-function verifyView(){body.innerHTML='<p>Scan the receipt’s QR code or type the order number.</p><form id="lookup"><label class="field">Order number<input name="id" required maxlength="120" placeholder="e.g. FR-12AB34CD" autocomplete="off" autofocus></label><button class="action">Verify order</button></form><div id="result" aria-live="polite"></div>';
-body.querySelector('form').onsubmit=e=>{e.preventDefault();const raw=new FormData(e.target).get('id').trim().toUpperCase(),m=raw.match(/FR-[0-9A-F]{8}/),id=m?m[0]:raw;
-const orders=getOrders(),order=orders.find(o=>o.id===id),result=document.querySelector('#result');result.replaceChildren();
-const line=document.createElement('div');line.className=order?'status-line':'error';
-const show=()=>{line.textContent=`${order.customer} · ${order.service} · ${qty(order)} · ${peso(order.total)} · Status: ${order.status}`};
-if(order)show();else line.textContent='Order not found on this device. Check the number and try again.';
-result.append(line);
-if(order&&order.status!=='Claimed'){const btn=document.createElement('button');btn.type='button';btn.className='action';btn.textContent='Mark as claimed';btn.onclick=()=>{order.status='Claimed';saveOrders(orders);show();btn.remove()};result.append(btn)}}}
-function open(view){title.textContent={order:'New order',orders:'Orders & status',verify:'Verify order',help:'Quick guide'}[view];
-if(view==='order')orderForm();
-if(view==='orders')ordersView();
-if(view==='verify')verifyView();
-if(view==='help')body.innerHTML='<p>1. <b>New order</b>: enter the customer name and weight (one load is up to 7 kg of lightweight clothes or 5 kg of heavyweight), choose a service, adjust the price per load if needed, add any extra products, then create the order and print the receipt.<br>2. <b>Orders & status</b>: change an order’s status as it moves from washing to pickup.<br>3. <b>Verify order</b>: scan or type the order number before releasing the laundry.</p><div class="note">Orders are saved on this device only. Customer phone status and camera scanning are connected in a later step.</div>';
-if(!modal.open)modal.showModal();}
-document.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>open(b.dataset.open));document.querySelector('.close').onclick=()=>modal.close();function tick(){document.querySelector('#clock').textContent=new Intl.DateTimeFormat('en-PH',{hour:'numeric',minute:'2-digit',timeZone:'Asia/Manila'}).format(new Date())}tick();setInterval(tick,30000);
-const homeEls=document.querySelectorAll('header,main,.footer'),welcome=document.querySelector('#welcome');
-homeEls.forEach(el=>el.inert=true);
-/* Idle reset: after IDLE_MS with no touch/key, close any dialog, clear it, and return to the welcome screen */
-const IDLE_MS=300000;let idleTimer;
-function resetIdle(){clearTimeout(idleTimer);if(!welcome.classList.contains('leaving'))return;idleTimer=setTimeout(showWelcome,IDLE_MS)}
-function showHome(){homeEls.forEach(el=>el.inert=false);welcome.classList.add('leaving');resetIdle()}
-function showWelcome(){clearTimeout(idleTimer);if(modal.open)modal.close();body.innerHTML='';title.textContent='';homeEls.forEach(el=>el.inert=true);welcome.classList.remove('leaving');window.scrollTo(0,0)}
-welcome.addEventListener('click',showHome);
-['pointerdown','keydown','input'].forEach(t=>document.addEventListener(t,resetIdle,{passive:true}));
+  if (typeof QRCode === 'undefined') {
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
+    document.head.appendChild(s);
+  }
 </script>
-</body></html>
+
+<script>
+const modal = document.querySelector('#modal');
+const body = document.querySelector('#modal-body');
+const title = document.querySelector('#modal-title');
+const STATUSES = ['Received', 'Washing', 'Drying', 'Folding', 'Ready for pickup', 'Released'];
+
+function esc(t) {
+  return String(t || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+function peso(n) {
+  return '₱' + (Number(n) || 0).toFixed(2).replace(/\.00$/, '');
+}
+
+const DEFAULT_CONFIG = {
+  shop: {
+    name: 'WASHING WELL LAUNDRY SHOP',
+    branch: 'Sto. Tomas, Biñan, Laguna',
+    address: 'Blk. 6, Lot 32, Olivarez Homes, Phase 5',
+    contact: '0917-123-4567',
+    footerNote: 'Thank you for choosing Washing Well!\nPlease present this slip when claiming.'
+  },
+  rules: { excessFee: 20, foldMin: 20, foldMax: 30, splitAskKg: 9 },
+  services: [
+    { name: 'Wash, Dry & Fold', price: 170, kg: 7, description: 'Complete cycle · folding included · 6–7 kg/load' },
+    { name: 'Wash & Dry only', price: 170, kg: 7, description: 'Ready to press · 6–7 kg/load' },
+    { name: 'Wash only', price: 85, kg: 7, description: 'Per standard wash cycle' },
+    { name: 'Dry only', price: 90, cats: true, description: 'Tumble drying based on fabric tier' },
+    { name: 'Fold only', fee: true, description: 'Staff custom rate (₱20–₱30)' }
+  ],
+  cats: [
+    { name: 'Lightweight', kg: 7, hint: 'Regular apparel · up to 7 kg' },
+    { name: 'Heavy / Comforter', kg: 5, hint: 'Jackets, duvets, blankets · up to 5 kg' }
+  ],
+  addons: [
+    { name: 'Fabric Conditioner', unit: '24 mL', price: 10 },
+    { name: 'Liquid Detergent', unit: '64 mL', price: 18 }
+  ],
+  statusUrl: ''
+};
+
+function loadSettings() {
+  try {
+    const raw = localStorage.getItem('ww-settings');
+    if (raw) return { ...DEFAULT_CONFIG, ...JSON.parse(raw) };
+  } catch (e) {}
+  return JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+}
+
+let settings = loadSettings();
+let SHOP = settings.shop;
+let RULES = settings.rules;
+let services = settings.services;
+let CATS = settings.cats;
+let addons = settings.addons;
+let STATUS_URL = settings.statusUrl;
+
+function persistSettings(newCfg) {
+  settings = newCfg;
+  SHOP = settings.shop;
+  RULES = settings.rules;
+  services = settings.services;
+  CATS = settings.cats;
+  addons = settings.addons;
+  STATUS_URL = settings.statusUrl;
+  localStorage.setItem('ww-settings', JSON.stringify(settings));
+  applyShopInfo();
+}
+
+function applyShopInfo() {
+  const noteEl = document.querySelector('.welcome-note');
+  if (noteEl) {
+    noteEl.innerHTML = `<b>${esc(SHOP.name)}</b><br>${esc(SHOP.branch)}`;
+  }
+}
+applyShopInfo();
+
+function getOrders() {
+  try {
+    return JSON.parse(localStorage.getItem('fresh-orders') || '[]').map(o => o.status === 'Claimed' ? { ...o, status: 'Released' } : o);
+  } catch {
+    return [];
+  }
+}
+
+function saveOrders(o) {
+  try {
+    localStorage.setItem('fresh-orders', JSON.stringify(o));
+    updateKPIs();
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function updateKPIs() {
+  const orders = getOrders();
+  const active = orders.filter(o => o.status !== 'Released');
+  const processing = orders.filter(o => ['Washing', 'Drying', 'Folding'].includes(o.status));
+  const ready = orders.filter(o => o.status === 'Ready for pickup');
+  const unpaid = orders.filter(o => !o.paid).reduce((sum, o) => sum + (o.total || 0), 0);
+
+  const kActive = document.querySelector('#kpi-active');
+  const kProc = document.querySelector('#kpi-processing');
+  const kReady = document.querySelector('#kpi-ready');
+  const kUnpaid = document.querySelector('#kpi-unpaid');
+
+  if (kActive) kActive.textContent = active.length;
+  if (kProc) kProc.textContent = processing.length;
+  if (kReady) kReady.textContent = ready.length;
+  if (kUnpaid) kUnpaid.textContent = peso(unpaid);
+}
+
+function newId() {
+  const a = new Uint8Array(4);
+  crypto.getRandomValues(a);
+  return 'WW-' + [...a].map(x => x.toString(16).padStart(2, '0')).join('').toUpperCase();
+}
+
+const plural = (n, u = 'load') => n + ' ' + u + (n === 1 ? '' : 's');
+
+let cart = [];
+let customer = '';
+let contact = '';
+let address = '';
+let selected = 0;
+let cat = 0;
+let choice = null;
+let qtys = addons.map(() => 0);
+
+function calcLine(s, catIdx, w, fee, ch) {
+  if (s.fee) return fee >= RULES.foldMin && fee <= RULES.foldMax ? { cap: 0, loads: 1, excess: 0, ask: false, price: fee } : null;
+  if (!(w > 0)) return null;
+  const cap = s.cats ? CATS[catIdx].kg : s.kg;
+  if (w >= RULES.splitAskKg) {
+    const n = Math.max(2, Math.ceil(w / cap - 1e-9));
+    if (ch === 'split') return { cap, loads: n, excess: 0, ask: true, price: n * s.price };
+    if (ch === 'one') return { cap, loads: 1, excess: RULES.excessFee, ask: true, price: s.price + RULES.excessFee };
+    return { cap, loads: n, excess: 0, ask: true, pending: true, price: 0 };
+  }
+  if (w <= cap) return { cap, loads: 1, excess: 0, ask: false, price: s.price };
+  return { cap, loads: 1, excess: RULES.excessFee, ask: false, price: s.price + RULES.excessFee };
+}
+
+function splitWeights(w, n) {
+  const base = Math.floor(w / n * 10) / 10;
+  const arr = Array(n).fill(base);
+  arr[n - 1] = Math.round((w - base * (n - 1)) * 10) / 10;
+  return arr;
+}
+
+const addonTotal = a => a.reduce((t, x) => t + x.price, 0);
+const lineTotal = it => it.price + addonTotal(it.addons);
+const orderTotal = items => items.reduce((t, i) => t + lineTotal(i), 0);
+
+const lineDesc = it => [
+  it.category,
+  it.weight ? it.weight + ' kg' : '',
+  it.loads > 1 ? plural(it.loads) : '',
+  it.excess ? '+ ' + peso(it.excess) + ' excess' : '',
+  ...it.addons.map(a => a.name + ' × ' + a.qty)
+].filter(Boolean).join(' · ');
+
+function lineDetail(it) {
+  const r = [];
+  if (it.category) r.push('Fabric: ' + it.category);
+  if (it.weight) r.push('Scale Weight: ' + it.weight + ' kg');
+  if (it.loads > 1 && it.loadWeights) r.push('Distributed ' + plural(it.loads) + ': ' + it.loadWeights.map((x, i) => 'Load ' + (i + 1) + ' (' + x + ' kg)').join(', '));
+  r.push('Service: ' + peso(it.price) + (it.excess ? ' (inc. ' + peso(it.excess) + ' excess charge)' : ''));
+  it.addons.forEach(a => r.push(esc(a.name) + ' × ' + a.qty + ': ' + peso(a.price)));
+  return r.join('<br>');
+}
+
+const cartRows = () => cart.map(it => `<div class="order-row"><div><b>${it.service}</b><small>${lineDesc(it)}</small></div><b>${peso(lineTotal(it))}</b></div>`).join('');
+const qty = o => o.unit === 'pc' ? plural(o.loads, 'piece') : o.weight + ' kg' + (o.loads ? ' (' + plural(o.loads) + ')' : '');
+const desc = o => o.items ? o.items.map(i => i.service).join(' + ') + ' · ' + peso(o.total) : `${o.service} · ${qty(o)} · ${peso(o.total)}`;
+
+function serviceRows() {
+  return '<div class="services">' + services.map((s, i) =>
+    `<button class="service ${i === selected ? 'selected' : ''}" type="button" data-service="${i}" aria-pressed="${i === selected}"><span><b>${s.name}</b><small>${s.description}</small></span><b>${s.fee ? '₱' + RULES.foldMin + '–' + RULES.foldMax : '₱' + s.price + '/load'}</b></button>`
+  ).join('') + '</div>';
+}
+
+function startOrder() {
+  cart = [];
+  customer = '';
+  contact = '';
+  address = '';
+  infoView();
+}
+
+function infoView() {
+  title.textContent = 'Customer Information';
+  body.innerHTML = `
+    <form id="info">
+      <p style="color:var(--muted);font-size:14px;margin-top:0;">Provide customer name and contact for receipt tracking and pickup verification.</p>
+      <label class="field">Customer Name <input name="customer" maxlength="60" autocomplete="off" placeholder="e.g. Maria Santos (or Walk-in)" value="${esc(customer)}"></label>
+      <label class="field">Phone / Mobile No. <span style="font-weight:400;color:var(--muted);">· optional</span><input name="contact" type="tel" maxlength="20" placeholder="09XX-XXX-XXXX" value="${esc(contact)}"></label>
+      <label class="field">Address / Unit No. <span style="font-weight:400;color:var(--muted);">· optional</span><input name="address" maxlength="120" autocomplete="off" placeholder="Block/Lot, Subdivision" value="${esc(address)}"></label>
+      <button class="action">Proceed to Service Selection</button>
+    </form>`;
+  body.querySelector('form').onsubmit = e => {
+    e.preventDefault();
+    const f = e.target.elements;
+    customer = f.customer.value.trim() || 'Walk-in Customer';
+    contact = f.contact.value.trim();
+    address = f.address.value.trim();
+    serviceStep();
+  };
+}
+
+function serviceStep() {
+  title.textContent = 'New Order · Select Services';
+  selected = 0;
+  cat = 0;
+  choice = null;
+  qtys = addons.map(() => 0);
+
+  body.innerHTML = `
+    <form id="order-form">
+      <div class="note">Customer: <b>${esc(customer)}</b> ${contact ? '· ' + esc(contact) : ''}</div>
+      <b class="lbl" style="display:block;margin:14px 0 6px;font-size:13.5px;">Choose Service</b>
+      ${serviceRows()}
+      <div id="cat-box"></div>
+      <div id="wbox">
+        <label class="field">Scale Weight (kg) <span style="font-weight:400;color:var(--muted);" id="whint"></span>
+          <input name="weight" id="weight-input" type="number" inputmode="decimal" min="0.1" max="100" step="0.1" placeholder="e.g. 5.5">
+        </label>
+        <div class="quick-chips">
+          <button type="button" class="chip-btn" data-addkg="3.5">3.5 kg</button>
+          <button type="button" class="chip-btn" data-addkg="5.0">5.0 kg</button>
+          <button type="button" class="chip-btn" data-addkg="7.0">7.0 kg</button>
+          <button type="button" class="chip-btn" data-addkg="9.0">9.0 kg</button>
+          <button type="button" class="chip-btn" data-addkg="14.0">14.0 kg</button>
+        </div>
+      </div>
+      <label class="field" id="fbox" style="display:none">Folding Fee (₱${RULES.foldMin}–₱${RULES.foldMax})<input name="fee" type="number" inputmode="decimal" min="${RULES.foldMin}" max="${RULES.foldMax}" step="1" value="${RULES.foldMin}"></label>
+      <div id="warn"></div>
+      <b class="lbl" style="display:block;margin:20px 0 6px;font-size:13.5px;">Detergent & Conditioners</b>
+      <div class="services">
+        ${addons.map((a, i) => `
+          <div class="service addon">
+            <span><b>${a.name}</b><small>${peso(a.price)} per ${a.unit}</small></span>
+            <span class="stepper">
+              <button type="button" data-dec="${i}" aria-label="Less ${a.name}">−</button>
+              <output id="q${i}">0</output>
+              <button type="button" data-inc="${i}" aria-label="More ${a.name}">+</button>
+            </span>
+          </div>`).join('')}
+      </div>
+      <div class="total"><span>Current Item<small id="breakdown" style="display:block;color:var(--muted);font-weight:400;">Enter weight</small></span><strong id="total">₱0</strong></div>
+      <button class="action">Add Service to Order</button>
+    </form>
+    ${cart.length ? `<b class="lbl" style="display:block;margin:22px 0 6px;font-size:13.5px;">Pending Cart Items</b>${cartRows()}` : ''}`;
+
+  const form = body.querySelector('form');
+  const $ = q => body.querySelector(q);
+  const cur = () => ({
+    s: services[selected],
+    w: parseFloat(form.elements.weight.value) || 0,
+    fee: parseFloat(form.elements.fee.value) || 0
+  });
+
+  const update = () => {
+    const { s, w, fee } = cur(), c = calcLine(s, cat, w, fee, choice), warn = $('#warn');
+    if (c && c.ask) {
+      const n = Math.max(2, Math.ceil(w / c.cap - 1e-9)), two = n === 2 ? 'two loads' : n + ' loads';
+      warn.innerHTML = `
+        <div class="note">High Capacity Warning: Weight is ${RULES.splitAskKg} kg or higher. Ask customer to split into ${two}?</div>
+        <div class="services">
+          <button type="button" class="service ${choice === 'split' ? 'selected' : ''}" data-choice="split">
+            <span><b>Split into ${two}</b><small>${plural(n)} × ${peso(s.price)}</small></span><b>${peso(n * s.price)}</b>
+          </button>
+          <button type="button" class="service ${choice === 'one' ? 'selected' : ''}" data-choice="one">
+            <span><b>Keep as 1 single load</b><small>Includes ${peso(RULES.excessFee)} excess heavy fee</small></span><b>${peso(s.price + RULES.excessFee)}</b>
+          </button>
+        </div>`;
+      warn.querySelectorAll('[data-choice]').forEach(b => b.onclick = () => { choice = b.dataset.choice; update(); });
+    } else {
+      warn.innerHTML = c && c.excess ? `<div class="note">Over capacity limit (${c.cap} kg): flat ${peso(c.excess)} excess charge included.</div>` : '';
+    }
+
+    if (!c || c.pending) {
+      $('#total').textContent = '₱0';
+      $('#breakdown').textContent = !c ? (s.fee ? 'Enter folding fee' : 'Enter laundry weight') : 'Select 1 or 2 loads';
+      return;
+    }
+
+    const add = qtys.reduce((t, q, i) => t + q * addons[i].price, 0);
+    $('#total').textContent = peso(c.price + add);
+    $('#breakdown').textContent = s.fee ? 'Folding fee' : plural(c.loads) + ' × ' + peso(s.price) + (c.excess ? ' + heavy fee' : '') + (add ? ' + add-ons' : '');
+  };
+
+  const sync = () => {
+    const s = services[selected];
+    $('#cat-box').innerHTML = s.cats ? '<b class="lbl" style="display:block;margin:14px 0 6px;font-size:13.5px;">Fabric Classification</b><div class="services">' + CATS.map((c, i) => `<button class="service ${i === cat ? 'selected' : ''}" type="button" data-cat="${i}"><span><b>${c.name}</b><small>${c.hint}</small></span></button>`).join('') + '</div>' : '';
+    $('#wbox').style.display = s.fee ? 'none' : 'block';
+    $('#fbox').style.display = s.fee ? 'block' : 'none';
+    $('#whint').textContent = s.fee ? '' : '· max ' + (s.cats ? CATS[cat].kg : s.kg) + ' kg per standard load';
+    body.querySelectorAll('[data-cat]').forEach(b => b.onclick = () => { cat = Number(b.dataset.cat); choice = null; sync(); });
+    update();
+  };
+
+  body.querySelectorAll('[data-service]').forEach(b => b.onclick = () => {
+    selected = Number(b.dataset.service);
+    choice = null;
+    body.querySelectorAll('[data-service]').forEach((el, i) => {
+      el.classList.toggle('selected', i === selected);
+      el.setAttribute('aria-pressed', i === selected);
+    });
+    sync();
+  });
+
+  body.querySelectorAll('[data-addkg]').forEach(b => b.onclick = () => {
+    form.elements.weight.value = b.dataset.addkg;
+    choice = null;
+    update();
+  });
+
+  body.querySelectorAll('[data-inc],[data-dec]').forEach(b => b.onclick = () => {
+    const up = b.dataset.inc !== undefined, i = Number(up ? b.dataset.inc : b.dataset.dec);
+    qtys[i] = Math.max(0, Math.min(20, qtys[i] + (up ? 1 : -1)));
+    $('#q' + i).textContent = qtys[i];
+    b.closest('.addon').classList.toggle('has', qtys[i] > 0);
+    update();
+  });
+
+  form.elements.weight.oninput = () => { choice = null; update(); };
+  form.elements.fee.oninput = update;
+
+  form.onsubmit = e => {
+    e.preventDefault();
+    const { s, w, fee } = cur(), c = calcLine(s, cat, w, fee, choice);
+    if (!c) {
+      const el = s.fee ? form.elements.fee : form.elements.weight;
+      el.setCustomValidity(s.fee ? 'Please enter a valid fee.' : 'Please enter valid laundry weight.');
+      el.reportValidity();
+      el.oninput = () => { el.setCustomValidity(''); choice = null; update(); };
+      return;
+    }
+    if (c.pending) {
+      $('#warn').insertAdjacentHTML('beforeend', '<p class="error">Please choose split loads or single load.</p>');
+      return;
+    }
+    cart.push({
+      service: s.name,
+      category: s.cats ? CATS[cat].name : '',
+      weight: s.fee ? 0 : w,
+      loads: c.loads,
+      loadWeights: c.loads > 1 ? splitWeights(w, c.loads) : null,
+      excess: c.excess,
+      price: c.price,
+      addons: addons.map((a, i) => qtys[i] ? { name: a.name, qty: qtys[i], price: a.price * qtys[i] } : null).filter(Boolean)
+    });
+    addedView();
+  };
+
+  sync();
+}
+
+function addedView() {
+  title.textContent = 'Cart Updated';
+  body.innerHTML = `
+    <div class="status-line">✓ Service successfully recorded in cart.</div>
+    ${cartRows()}
+    <div class="total"><span>Order Total</span><strong>${peso(orderTotal(cart))}</strong></div>
+    <div style="display:grid;gap:12px;margin-top:20px;">
+      <button class="action ghost" id="yes" type="button">+ Add Another Service</button>
+      <button class="action" id="no" type="button">Review & Confirm Payment</button>
+    </div>`;
+  body.querySelector('#yes').onclick = serviceStep;
+  body.querySelector('#no').onclick = summaryView;
+}
+
+function summaryView() {
+  title.textContent = 'Order Summary & Payment';
+  let paid = false;
+  body.innerHTML = `
+    <div class="note">
+      Customer: <b>${esc(customer || 'Walk-in')}</b>
+      ${contact ? '<br>Mobile: ' + esc(contact) : ''}
+      ${address ? '<br>Address: ' + esc(address) : ''}
+    </div>
+    ${cart.map((it, i) => `
+      <div class="order-row">
+        <div><b>${it.service}</b><small>${lineDetail(it)}</small></div>
+        <span><b>${peso(lineTotal(it))}</b> <button type="button" class="close" data-rm="${i}" style="width:34px;height:34px;font-size:16px;display:inline-grid;margin-left:8px;" aria-label="Remove item">×</button></span>
+      </div>`).join('')}
+    <div class="total"><span>Grand Total</span><strong>${peso(orderTotal(cart))}</strong></div>
+    <b class="lbl" style="display:block;margin:14px 0 6px;font-size:13.5px;">Payment Status</b>
+    <div class="services">
+      <button type="button" class="service selected" data-pay="0" aria-pressed="true">
+        <span><b>Pay on Pickup (Unpaid)</b><small>Customer settles bill when retrieving garments</small></span>
+      </button>
+      <button type="button" class="service" data-pay="1" aria-pressed="false">
+        <span><b>Paid Now at Drop-Off</b><small>Cash / GCash received and verified</small></span>
+      </button>
+    </div>
+    <div style="display:grid;gap:12px;margin-top:20px;">
+      <button class="action" id="confirm" type="button">Confirm & Print Receipt</button>
+      <button class="action ghost" id="back" type="button">Back / Edit Services</button>
+    </div>`;
+
+  body.querySelectorAll('[data-rm]').forEach(b => b.onclick = () => {
+    cart.splice(Number(b.dataset.rm), 1);
+    if (cart.length) summaryView(); else serviceStep();
+  });
+
+  body.querySelectorAll('[data-pay]').forEach(b => b.onclick = () => {
+    paid = b.dataset.pay === '1';
+    body.querySelectorAll('[data-pay]').forEach(el => {
+      const on = el === b;
+      el.classList.toggle('selected', on);
+      el.setAttribute('aria-pressed', on);
+    });
+  });
+
+  body.querySelector('#back').onclick = serviceStep;
+  body.querySelector('#confirm').onclick = () => {
+    const order = {
+      id: newId(),
+      customer,
+      contact,
+      address,
+      items: cart,
+      total: orderTotal(cart),
+      status: STATUSES[0],
+      paid,
+      paidAt: paid ? Date.now() : null,
+      created: Date.now()
+    };
+    const orders = getOrders();
+    orders.push(order);
+    if (!saveOrders(orders)) {
+      body.innerHTML = '<p class="error">Storage error: Unable to save order.</p>';
+      return;
+    }
+    cart = [];
+    receipt(order);
+  };
+}
+
+function receipt(order) {
+  title.textContent = 'Receipt';
+  const when = new Date(order.created).toLocaleString('en-PH', { dateStyle: 'medium', timeStyle: 'short' });
+  body.innerHTML = `
+    <div class="receipt">
+      <div class="shop">
+        <b>${SHOP.name}</b><br>
+        <span style="font-size:12px;">${SHOP.branch}</span><br>
+        <span style="font-size:11px;">${SHOP.address}</span>
+      </div>
+      <div style="border-top:1px dashed #000;margin:12px 0 8px;"></div>
+      <span style="font-size:11px;letter-spacing:1px;font-weight:700;">ORDER REFERENCE NUMBER</span>
+      <strong>${order.id}</strong>
+      <p style="font-size:13px;line-height:1.45;margin:8px 0;">
+        Customer: <b>${esc(order.customer || 'Walk-in')}</b><br>
+        ${order.contact ? 'Mobile: ' + esc(order.contact) + '<br>' : ''}
+        Date: ${when}
+      </p>
+      <div style="border-top:1px dashed #000;margin:10px 0;"></div>
+      <div style="text-align:left;font-size:13px;line-height:1.4;">
+        ${order.items.map(i => `
+          <div style="display:flex;justify-content:space-between;font-weight:700;margin-top:6px;">
+            <span>${i.service}</span>
+            <span>${peso(lineTotal(i))}</span>
+          </div>
+          <div style="font-size:11px;color:#333;margin-bottom:6px;">${lineDetail(i)}</div>
+        `).join('')}
+      </div>
+      <div class="total">
+        <span>TOTAL DUE:</span>
+        <strong style="font-size:24px;">${peso(order.total)}</strong>
+      </div>
+      <div class="pay">${order.paid ? 'PAID · COMPLETE' : 'UNPAID · BALANCE DUE'}</div>
+      <div id="order-qr" class="order-qr" role="img" aria-label="QR Code"></div>
+      <p style="font-size:11px;margin:4px 0 0;font-weight:600;">Scan QR code to view live status</p>
+      <div style="font-size:11px;margin-top:12px;line-height:1.4;">
+        ${esc(SHOP.footerNote).replace(/\n/g, '<br>')}
+      </div>
+      <div class="paper-cutter-space"></div>
+    </div>
+    <div style="display:grid;gap:10px;" class="print-hide">
+      <button class="action" id="print" type="button">🖨️ Print Receipt</button>
+      <button class="action ghost" id="done" type="button">Close & Return to Dashboard</button>
+    </div>`;
+
+  const qrContainer = document.querySelector('#order-qr');
+  const qrText = STATUS_URL ? STATUS_URL + order.id : order.id;
+
+  if (typeof QRCode !== 'undefined') {
+    new QRCode(qrContainer, {
+      text: qrText,
+      width: 170,
+      height: 170,
+      colorDark: '#000000',
+      colorLight: '#ffffff',
+      correctLevel: QRCode.CorrectLevel.M
+    });
+  } else {
+    qrContainer.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=170x170&data=${encodeURIComponent(qrText)}" alt="QR Code for ${order.id}" width="170" height="170">`;
+  }
+
+  document.querySelector('#print').onclick = () => window.print();
+  document.querySelector('#done').onclick = () => modal.close();
+}
+
+function ordersView() {
+  let filter = 'all';
+  let searchTerm = '';
+
+  const renderList = () => {
+    let list = getOrders().slice().reverse();
+    if (searchTerm) {
+      const q = searchTerm.toLowerCase();
+      list = list.filter(o => o.id.toLowerCase().includes(q) || (o.customer && o.customer.toLowerCase().includes(q)));
+    }
+    if (filter === 'active') list = list.filter(o => o.status !== 'Released');
+    if (filter === 'ready') list = list.filter(o => o.status === 'Ready for pickup');
+    if (filter === 'unpaid') list = list.filter(o => !o.paid);
+
+    const container = body.querySelector('#orders-container');
+    if (!container) return;
+
+    if (!list.length) {
+      container.innerHTML = '<div style="text-align:center;padding:32px;color:var(--muted);font-size:14px;">No matching orders found.</div>';
+      return;
+    }
+
+    const badgeCls = s => ({
+      'Received': 'badge-received',
+      'Washing': 'badge-washing',
+      'Drying': 'badge-drying',
+      'Folding': 'badge-folding',
+      'Ready for pickup': 'badge-ready',
+      'Released': 'badge-released'
+    }[s] || 'badge-received');
+
+    container.innerHTML = list.map(o => `
+      <div class="order-row">
+        <div style="flex:1;">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <b>${esc(o.customer || 'Walk-in')}</b>
+            <span class="status-badge ${badgeCls(o.status)}">${o.status}</span>
+            <span style="font-size:12px;font-weight:700;color:${o.paid ? 'var(--success)' : 'var(--danger)'};">${o.paid ? '● Paid' : '○ Unpaid'}</span>
+          </div>
+          <small>${o.id} · ${desc(o)}</small>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <select data-status="${o.id}" style="width:auto;min-height:42px;padding:6px 10px;font-size:13px;border-radius:10px;" aria-label="Status">
+            ${STATUSES.map(t => `<option${t === o.status ? ' selected' : ''}>${t}</option>`).join('')}
+          </select>
+          <button type="button" class="mini print-mini" data-reprint="${o.id}" title="Reprint receipt">Print</button>
+          ${o.paid ? '' : `<button type="button" class="mini" data-markpaid="${o.id}" style="color:var(--success);border-color:#bcf0d3;">Pay</button>`}
+        </div>
+      </div>
+    `).join('');
+
+    container.querySelectorAll('[data-status]').forEach(sel => sel.onchange = () => {
+      const os = getOrders(), o = os.find(x => x.id === sel.dataset.status);
+      if (!o) return;
+      if (sel.value === 'Released' && !o.paid) {
+        sel.value = o.status;
+        alert('Order balance must be marked as Paid before releasing laundry.');
+        return;
+      }
+      o.status = sel.value;
+      saveOrders(os);
+      renderList();
+    });
+
+    container.querySelectorAll('[data-markpaid]').forEach(b => b.onclick = () => {
+      const os = getOrders(), o = os.find(x => x.id === b.dataset.markpaid);
+      if (o) {
+        o.paid = true;
+        o.paidAt = Date.now();
+        saveOrders(os);
+        renderList();
+      }
+    });
+
+    container.querySelectorAll('[data-reprint]').forEach(b => b.onclick = () => {
+      const os = getOrders(), o = os.find(x => x.id === b.dataset.reprint);
+      if (o) receipt(o);
+    });
+  };
+
+  body.innerHTML = `
+    <div>
+      <input id="order-search" placeholder="🔍 Search by Order ID or customer name..." style="margin-top:0;">
+      <div class="filter-tabs">
+        <button type="button" class="filter-tab active" data-tab="all">All Orders</button>
+        <button type="button" class="filter-tab" data-tab="active">In Progress</button>
+        <button type="button" class="filter-tab" data-tab="ready">Ready for Pickup</button>
+        <button type="button" class="filter-tab" data-tab="unpaid">Unpaid Balance</button>
+      </div>
+      <div id="orders-container"></div>
+    </div>`;
+
+  body.querySelector('#order-search').oninput = e => {
+    searchTerm = e.target.value.trim();
+    renderList();
+  };
+
+  body.querySelectorAll('[data-tab]').forEach(btn => btn.onclick = () => {
+    filter = btn.dataset.tab;
+    body.querySelectorAll('[data-tab]').forEach(b => b.classList.toggle('active', b === btn));
+    renderList();
+  });
+
+  renderList();
+}
+
+function verifyView() {
+  body.innerHTML = `
+    <p style="font-size:14px;color:var(--muted);margin-top:0;">Scan the receipt QR code with a barcode scanner or enter the tracking reference code.</p>
+    <form id="lookup">
+      <label class="field">Order ID Reference
+        <input name="id" required maxlength="120" placeholder="e.g. WW-8C2A5B10" autocomplete="off" autofocus>
+      </label>
+      <button class="action">Verify Order & Payment</button>
+    </form>
+    <div id="result" style="margin-top:18px;" aria-live="polite"></div>`;
+
+  body.querySelector('form').onsubmit = e => {
+    e.preventDefault();
+    const raw = new FormData(e.target).get('id').trim().toUpperCase();
+    const m = raw.match(/WW-[0-9A-F]{8}/) || raw.match(/FR-[0-9A-F]{8}/);
+    const id = m ? m[0] : raw;
+    const orders = getOrders();
+    const order = orders.find(o => o.id === id);
+    const result = document.querySelector('#result');
+
+    const add = (cls, text) => {
+      const d = document.createElement('div');
+      d.className = cls;
+      d.innerHTML = text;
+      result.append(d);
+    };
+
+    const btn = (text, fn, cls = 'action') => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = cls;
+      b.textContent = text;
+      b.onclick = fn;
+      result.append(b);
+    };
+
+    const render = () => {
+      result.replaceChildren();
+      if (!order) {
+        add('error', '⚠️ Order ID not found on this terminal. Verify the slip code and try again.');
+        return;
+      }
+
+      add('status-line', `
+        <b>Customer:</b> ${esc(order.customer || 'Walk-in')}<br>
+        <b>Summary:</b> ${desc(order)}<br>
+        <b>Current Status:</b> <span style="font-weight:700;">${order.status}</span><br>
+        <b>Payment:</b> <span style="font-weight:700;color:${order.paid ? 'var(--success)' : 'var(--danger)'};">${order.paid ? 'PAID' : 'UNPAID'}</span>
+      `);
+
+      if (order.status === 'Released') {
+        add('note', '✓ This bundle has already been released to the customer.');
+        return;
+      }
+
+      if (!order.paid) {
+        add('error', '⚠️ Unpaid balance: Collect payment before releasing garments.');
+        btn('Mark as Paid (Receive Cash/GCash)', () => {
+          order.paid = true;
+          order.paidAt = Date.now();
+          saveOrders(orders);
+          render();
+        });
+      } else {
+        if (order.status !== 'Ready for pickup') {
+          add('note', 'Notice: Laundry is currently marked as ' + order.status + '. Ensure bundles are clean before release.');
+        }
+        btn('Confirm Release to Customer', () => {
+          order.status = 'Released';
+          saveOrders(orders);
+          render();
+        });
+      }
+    };
+
+    render();
+  };
+}
+
+function settingsView() {
+  body.innerHTML = `
+    <div id="settings-feedback"></div>
+    <form id="pricing-settings-form">
+      <div class="settings-nav">
+        <button type="button" class="settings-nav-btn active" data-tab="rates">
+          <span>🧺</span> Service & Product Rates
+        </button>
+        <button type="button" class="settings-nav-btn" data-tab="capacities">
+          <span>⚖️</span> Capacities & Rules
+        </button>
+      </div>
+
+      <!-- Tab 1: Service & Product Rates -->
+      <div id="tab-rates" class="settings-tab-panel">
+        <div class="setting-row">
+          <div class="setting-info">
+            <span class="setting-title">${services[0].name}</span>
+            <span class="setting-sub">Complete cycle per load (wash, tumble dry, fold)</span>
+          </div>
+          <div class="affix-box">
+            <span class="affix-symbol">₱</span>
+            <input name="wdf" type="number" step="1" min="1" value="${services[0].price}" required>
+          </div>
+        </div>
+
+        <div class="setting-row">
+          <div class="setting-info">
+            <span class="setting-title">${services[1].name}</span>
+            <span class="setting-sub">Washed and tumble dried (no folding)</span>
+          </div>
+          <div class="affix-box">
+            <span class="affix-symbol">₱</span>
+            <input name="wd" type="number" step="1" min="1" value="${services[1].price}" required>
+          </div>
+        </div>
+
+        <div class="setting-row">
+          <div class="setting-info">
+            <span class="setting-title">${services[2].name}</span>
+            <span class="setting-sub">Single wash cycle only</span>
+          </div>
+          <div class="affix-box">
+            <span class="affix-symbol">₱</span>
+            <input name="wo" type="number" step="1" min="1" value="${services[2].price}" required>
+          </div>
+        </div>
+
+        <div class="setting-row">
+          <div class="setting-info">
+            <span class="setting-title">${services[3].name}</span>
+            <span class="setting-sub">Tumble dry cycle based on fabric tier</span>
+          </div>
+          <div class="affix-box">
+            <span class="affix-symbol">₱</span>
+            <input name="do" type="number" step="1" min="1" value="${services[3].price}" required>
+          </div>
+        </div>
+
+        <div class="setting-row">
+          <div class="setting-info">
+            <span class="setting-title">${addons[0].name}</span>
+            <span class="setting-sub">Per ${addons[0].unit} sachet</span>
+          </div>
+          <div class="affix-box">
+            <span class="affix-symbol">₱</span>
+            <input name="addon0" type="number" step="1" min="0" value="${addons[0].price}" required>
+          </div>
+        </div>
+
+        <div class="setting-row">
+          <div class="setting-info">
+            <span class="setting-title">${addons[1].name}</span>
+            <span class="setting-sub">Per ${addons[1].unit} sachet</span>
+          </div>
+          <div class="affix-box">
+            <span class="affix-symbol">₱</span>
+            <input name="addon1" type="number" step="1" min="0" value="${addons[1].price}" required>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 2: Capacities & High-Weight Rules -->
+      <div id="tab-capacities" class="settings-tab-panel" style="display:none;">
+        <div class="setting-row">
+          <div class="setting-info">
+            <span class="setting-title">Regular Load Capacity</span>
+            <span class="setting-sub">Standard apparel drum limit</span>
+          </div>
+          <div class="affix-box">
+            <input name="regKg" type="number" step="0.5" min="1" value="${services[0].kg}" required>
+            <span class="affix-symbol suffix">kg</span>
+          </div>
+        </div>
+
+        <div class="setting-row">
+          <div class="setting-info">
+            <span class="setting-title">Heavy / Comforter Capacity</span>
+            <span class="setting-sub">Limit for blankets, jackets, and duvets</span>
+          </div>
+          <div class="affix-box">
+            <input name="heavyKg" type="number" step="0.5" min="1" value="${CATS[1].kg}" required>
+            <span class="affix-symbol suffix">kg</span>
+          </div>
+        </div>
+
+        <div class="setting-row">
+          <div class="setting-info">
+            <span class="setting-title">Over-Capacity Excess Fee</span>
+            <span class="setting-sub">Flat charge when exceeding drum limit</span>
+          </div>
+          <div class="affix-box">
+            <span class="affix-symbol">₱</span>
+            <input name="excessFee" type="number" step="1" min="0" value="${RULES.excessFee}" required>
+          </div>
+        </div>
+
+        <div class="setting-row">
+          <div class="setting-info">
+            <span class="setting-title">Split Load Prompt Threshold</span>
+            <span class="setting-sub">Weight that triggers 2-load split proposal</span>
+          </div>
+          <div class="affix-box">
+            <input name="splitAskKg" type="number" step="0.5" min="1" value="${RULES.splitAskKg}" required>
+            <span class="affix-symbol suffix">kg</span>
+          </div>
+        </div>
+
+        <div class="setting-row">
+          <div class="setting-info">
+            <span class="setting-title">Fold Only Minimum Fee</span>
+            <span class="setting-sub">Staff baseline folding charge</span>
+          </div>
+          <div class="affix-box">
+            <span class="affix-symbol">₱</span>
+            <input name="foldMin" type="number" step="1" min="1" value="${RULES.foldMin}" required>
+          </div>
+        </div>
+
+        <div class="setting-row">
+          <div class="setting-info">
+            <span class="setting-title">Fold Only Maximum Fee</span>
+            <span class="setting-sub">Staff ceiling folding charge</span>
+          </div>
+          <div class="affix-box">
+            <span class="affix-symbol">₱</span>
+            <input name="foldMax" type="number" step="1" min="1" value="${RULES.foldMax}" required>
+          </div>
+        </div>
+      </div>
+
+      <button class="action" type="submit" style="margin-top:16px;">Save Pricing & Capacities</button>
+    </form>
+  `;
+
+  const tabs = body.querySelectorAll('.settings-nav-btn');
+  const panelRates = body.querySelector('#tab-rates');
+  const panelCaps = body.querySelector('#tab-capacities');
+
+  tabs.forEach(btn => {
+    btn.onclick = () => {
+      tabs.forEach(b => b.classList.toggle('active', b === btn));
+      const isRates = btn.dataset.tab === 'rates';
+      panelRates.style.display = isRates ? 'block' : 'none';
+      panelCaps.style.display = isRates ? 'none' : 'block';
+    };
+  });
+
+  const renderFeedback = (msg, isErr = false) => {
+    const box = body.querySelector('#settings-feedback');
+    if (!box) return;
+    box.innerHTML = `<div class="${isErr ? 'note' : 'status-line'}" style="${isErr ? 'border-left-color:var(--danger);background:var(--danger-soft);' : ''}">${esc(msg)}</div>`;
+    setTimeout(() => { if (box) box.innerHTML = ''; }, 3500);
+  };
+
+  body.querySelector('#pricing-settings-form').onsubmit = e => {
+    e.preventDefault();
+    const f = e.target.elements;
+    const newServices = [...services];
+    newServices[0].price = Number(f.wdf.value);
+    newServices[0].kg = Number(f.regKg.value);
+    newServices[1].price = Number(f.wd.value);
+    newServices[1].kg = Number(f.regKg.value);
+    newServices[2].price = Number(f.wo.value);
+    newServices[2].kg = Number(f.regKg.value);
+    newServices[3].price = Number(f.do.value);
+
+    const newCats = [...CATS];
+    newCats[0].kg = Number(f.regKg.value);
+    newCats[1].kg = Number(f.heavyKg.value);
+
+    const newAddons = [...addons];
+    newAddons[0].price = Number(f.addon0.value);
+    newAddons[1].price = Number(f.addon1.value);
+
+    const updated = {
+      ...settings,
+      services: newServices,
+      cats: newCats,
+      addons: newAddons,
+      rules: {
+        excessFee: Number(f.excessFee.value),
+        foldMin: Number(f.foldMin.value),
+        foldMax: Number(f.foldMax.value),
+        splitAskKg: Number(f.splitAskKg.value)
+      }
+    };
+    persistSettings(updated);
+    renderFeedback('✓ Pricing rates and load capacity rules saved successfully.');
+  };
+}
+
+function open(view) {
+  title.textContent = {
+    order: 'New Order Entry',
+    orders: 'Active Orders & Dispatch',
+    verify: 'Scan / Verify Order',
+    settings: 'Pricing & Capacities',
+    help: 'Staff Terminal Guide'
+  }[view];
+
+  if (view === 'order') startOrder();
+  if (view === 'orders') ordersView();
+  if (view === 'verify') verifyView();
+  if (view === 'settings') settingsView();
+  if (view === 'help') {
+    body.innerHTML = `
+      <div style="font-size:14px;line-height:1.6;color:var(--ink);">
+        <p><b>1. Creating Orders:</b> Weigh clothes on the scale. High weight loads (9 kg+) trigger an automatic prompt to split into two loads or add an excess heavy charge.</p>
+        <p><b>2. Printing Receipts:</b> When printed, the receipt includes customer details and the encoded tracking QR code.</p>
+        <p><b>3. Managing Loads:</b> Transition orders from Washing → Drying → Folding → Ready for Pickup. Unpaid orders cannot be set to Released until marked as paid.</p>
+        <p><b>4. QR Verification:</b> Use a barcode scanner or type the ID to verify pickup release instantly.</p>
+      </div>`;
+  }
+  if (!modal.open) modal.showModal();
+}
+
+document.querySelectorAll('[data-open]').forEach(b => b.onclick = () => open(b.dataset.open));
+document.querySelector('.close').onclick = () => modal.close();
+
+function tick() {
+  const d = new Date();
+  document.querySelector('#clock').textContent = new Intl.DateTimeFormat('en-PH', {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    timeZone: 'Asia/Manila'
+  }).format(d);
+}
+tick();
+setInterval(tick, 30000);
+
+const homeEls = document.querySelectorAll('header, main, .footer');
+const welcome = document.querySelector('#welcome');
+homeEls.forEach(el => el.inert = true);
+
+const IDLE_MS = 300000;
+let idleTimer;
+
+function resetIdle() {
+  clearTimeout(idleTimer);
+  if (!welcome.classList.contains('leaving')) return;
+  idleTimer = setTimeout(showWelcome, IDLE_MS);
+}
+
+function showHome() {
+  homeEls.forEach(el => el.inert = false);
+  welcome.classList.add('leaving');
+  updateKPIs();
+  resetIdle();
+}
+
+function showWelcome() {
+  clearTimeout(idleTimer);
+  if (modal.open) modal.close();
+  body.innerHTML = '';
+  title.textContent = '';
+  cart = [];
+  customer = '';
+  address = '';
+  contact = '';
+  loginForm.reset();
+  pwInput.type = 'password';
+  eyeBtn.setAttribute('aria-pressed', 'false');
+  loadRemembered();
+  setMsg('');
+  homeEls.forEach(el => el.inert = true);
+  welcome.classList.remove('leaving');
+  window.scrollTo(0, 0);
+}
+
+document.querySelector('#lock-screen-btn').onclick = showWelcome;
+['pointerdown', 'keydown', 'input'].forEach(t => document.addEventListener(t, resetIdle, { passive: true }));
+
+const loginForm = document.querySelector('#login-form');
+const loginMsg = document.querySelector('#login-msg');
+const pwInput = loginForm.elements.password;
+const eyeBtn = document.querySelector('#eye');
+
+function setMsg(t, err) {
+  loginMsg.textContent = t;
+  loginMsg.classList.toggle('error', !!err);
+}
+
+function loadRemembered() {
+  try {
+    const v = localStorage.getItem('ww-email');
+    loginForm.elements.email.value = v || '';
+    loginForm.elements.remember.checked = !!v;
+  } catch {}
+}
+
+function signIn() {
+  loginForm.reset();
+  pwInput.type = 'password';
+  eyeBtn.setAttribute('aria-pressed', 'false');
+  loadRemembered();
+  setMsg('');
+  showHome();
+}
+
+loadRemembered();
+updateKPIs();
+
+document.querySelector('#rfid').onclick = signIn;
+document.querySelector('#key-btn').onclick = document.querySelector('#pad-btn').onclick = () => setMsg('Access method simulated: Tap the RFID card or enter any credentials to proceed.');
+document.querySelector('#forgot').onclick = () => setMsg('Default staff access is enabled for this prototype terminal.');
+
+eyeBtn.onclick = () => {
+  const show = pwInput.type === 'password';
+  pwInput.type = show ? 'text' : 'password';
+  eyeBtn.setAttribute('aria-pressed', show);
+  eyeBtn.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+};
+
+loginForm.onsubmit = e => {
+  e.preventDefault();
+  const f = loginForm.elements;
+  const email = f.email.value.trim();
+  const pw = f.password.value;
+
+  if (!email || !f.email.checkValidity()) {
+    setMsg('Enter a valid staff email or ID.', true);
+    f.email.focus();
+    return;
+  }
+  if (!pw) {
+    setMsg('Enter your terminal password.', true);
+    f.password.focus();
+    return;
+  }
+  try {
+    f.remember.checked ? localStorage.setItem('ww-email', email) : localStorage.removeItem('ww-email');
+  } catch {}
+  signIn();
+};
+</script>
+</body>
+</html>
