@@ -531,8 +531,8 @@ header {
   color: var(--primary-dark);
 }
 .brand-logo-icon {
-  width: 44px;
-  height: 44px;
+  width: clamp(60px, 5.5vw, 88px);
+  height: clamp(60px, 5.5vw, 88px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1346,20 +1346,26 @@ main {
   stroke-linejoin: round;
 }
 
-/* Orders table (matches design) */
-#view-orders .data-table-card {
+/* Orders, Completed and Deleted tables (matches design) */
+#view-orders .data-table-card,
+#view-completed .data-table-card,
+#view-deleted .data-table-card {
   border: 2px solid #0558a0;
   border-radius: 0;
   box-shadow: none;
   overflow-x: auto;
 }
-#view-orders .data-table {
+#view-orders .data-table,
+#view-completed .data-table,
+#view-deleted .data-table {
   min-width: 880px;
   border-collapse: collapse;
   text-align: center;
   font-size: 14px;
 }
-#view-orders .data-table th {
+#view-orders .data-table th,
+#view-completed .data-table th,
+#view-deleted .data-table th {
   background: #0558a0;
   color: #fff;
   text-align: center;
@@ -1369,14 +1375,36 @@ main {
   padding: 20px 12px;
   border-bottom: 0;
 }
-#view-orders .data-table td {
+#view-orders .data-table td,
+#view-completed .data-table td,
+#view-deleted .data-table td {
   border: 1.5px solid #0558a0;
   padding: 10px;
   height: 62px;
   text-align: center;
   color: var(--ink);
 }
-#view-orders .data-table tr:hover td { background: #f4faff; }
+#view-orders .data-table tr:hover td,
+#view-completed .data-table tr:hover td,
+#view-deleted .data-table tr:hover td { background: #f4faff; }
+
+/* Colored label (same look as the dropdowns, but not clickable) */
+.pill-badge {
+  display: inline-block;
+  min-width: 150px;
+  padding: 9px 16px;
+  border-radius: 6px;
+  color: #fff;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 15px;
+  text-align: center;
+}
+.pill-badge.paid, .pill-badge.received { background: #44bd82; }
+.pill-badge.unpaid { background: #e24b3c; }
+.pill-badge.processing { background: #eeb347; }
+.pill-badge.pickup { background: #4fb0e6; }
+.pill-badge.claimed { background: #6b7c93; }
 
 .pill-select {
   position: relative;
@@ -1494,8 +1522,14 @@ main {
   border-radius: 12px;
   box-shadow: none;
 }
-#btn-pay-on-claim:hover,
-#btn-pay-now:hover { background: #3f9fda; }
+#btn-pay-now { border: 2px solid #52aee6; }
+#btn-pay-on-claim {
+  background: #fff;
+  color: #52aee6;
+  border: 2px solid #52aee6;
+}
+#btn-pay-on-claim:hover { background: #eaf6fd; }
+#btn-pay-now:hover { background: #3f9fda; border-color: #3f9fda; }
 
 /* Receipts: no scrolling (they shrink to fit instead) */
 #modal-cust-receipt .modal-window,
@@ -1751,6 +1785,7 @@ main {
             <th>NAME</th>
             <th>ORDER NO.</th>
             <th>SUBTOTAL</th>
+            <th>PAYMENT</th>
             <th>STATUS</th>
           </tr>
         </thead>
@@ -1906,8 +1941,8 @@ main {
         <span id="cr-subtotal">₱0.00</span>
       </div>
       <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:10px;">
-        <span>TOTAL LOADS:</span>
-        <span id="cr-loads">1</span>
+        <span style="font-weight:800;">TOTAL LOADS:</span>
+        <span id="cr-loads" style="font-weight:800;">1</span>
       </div>
       <div style="font-size:12px;font-weight:700;" id="cr-pay-status">[ PAID ]</div>
 
@@ -2749,7 +2784,9 @@ document.getElementById('btn-confirm-pay-yes').onclick = () => {
 function renderOrdersTables() {
   // Page 10: Active Orders
   const ordersTbody = document.getElementById('orders-table-body');
-    ordersTbody.innerHTML = orders.map((o, idx) => {
+    // Orders that are For Pick-up or Claimed leave this tab and show only in Completed
+    const activeOrders = orders.filter(o => o.status !== 'For Pick-up' && o.status !== 'Claimed');
+    ordersTbody.innerHTML = activeOrders.map((o, idx) => {
     // Delete is only allowed while the order is still "Received" (paid or unpaid)
     const canDelete = o.status === 'Received';
     const payCls = o.payment === 'Paid' ? 'paid' : 'unpaid';
@@ -2815,20 +2852,33 @@ function renderOrdersTables() {
   // (stricter version: o.payment === 'Paid' && (o.status === 'For Pick-up' || o.status === 'Claimed'))
   const completedList = orders.filter(o => o.payment === 'Paid' || o.status === 'For Pick-up' || o.status === 'Claimed');
   const completedTbody = document.getElementById('completed-table-body');
-    completedTbody.innerHTML = completedList.map((o, idx) => `
+    completedTbody.innerHTML = completedList.map((o, idx) => {
+    const payCls = o.payment === 'Paid' ? 'paid' : 'unpaid';
+    const statCls = { 'Received': 'received', 'Processing': 'processing', 'For Pick-up': 'pickup', 'Claimed': 'claimed' }[o.status] || 'received';
+    return `
     <tr>
       <td>${idx + 1}</td>
-      <td><b>${o.customer}</b></td>
-      <td><span class="order-num-tag">${o.id}</span></td>
-      <td><b>${peso(o.subtotal)}</b></td>
+      <td>${o.customer}</td>
+      <td>${o.id}</td>
+      <td>${peso(o.subtotal)}</td>
       <td>
-        <span class="badge-pay ${o.payment === 'Paid' ? 'paid' : 'unpaid'}" style="margin-right:10px;">${o.payment}</span>
-        <select class="status-select" data-completed-status="${o.id}">
-          ${['Received', 'Processing', 'For Pick-up', 'Claimed'].filter(s => s !== 'Claimed' || o.payment === 'Paid' || o.status === 'Claimed').map(s => `<option value="${s}" ${o.status === s ? 'selected' : ''}>${s}</option>`).join('')}
-        </select>
+        <div class="pill-select ${payCls}">
+          <select data-order-payment="${o.id}" aria-label="Payment for ${o.id}">
+            <option value="Paid" ${o.payment === 'Paid' ? 'selected' : ''}>Paid</option>
+            <option value="Unpaid" ${o.payment === 'Unpaid' ? 'selected' : ''}>Unpaid</option>
+          </select>
+        </div>
+      </td>
+      <td>
+        <div class="pill-select ${statCls}">
+          <select data-completed-status="${o.id}" aria-label="Status for ${o.id}">
+            ${['Received', 'Processing', 'For Pick-up', 'Claimed'].filter(s => s !== 'Claimed' || o.payment === 'Paid' || o.status === 'Claimed').map(s => `<option value="${s}" ${o.status === s ? 'selected' : ''}>${s}</option>`).join('')}
+          </select>
+        </div>
       </td>
     </tr>
-  `).join('');
+  `;
+  }).join('');
 
   completedTbody.querySelectorAll('[data-completed-status]').forEach(sel => {
     sel.onchange = () => {
@@ -2837,18 +2887,30 @@ function renderOrdersTables() {
     };
   });
 
+  // Payment can also be changed here (always asks for confirmation first)
+  completedTbody.querySelectorAll('[data-order-payment]').forEach(sel => {
+    sel.onchange = () => {
+      const target = orders.find(x => x.id === sel.dataset.orderPayment);
+      if (target) askPaymentConfirm(target, sel.value);
+    };
+  });
+
   // Page 13: Deleted Orders
   const deletedTbody = document.getElementById('deleted-table-body');
-    deletedTbody.innerHTML = deletedOrders.map((o, idx) => `
+    deletedTbody.innerHTML = deletedOrders.map((o, idx) => {
+    const payCls = o.payment === 'Paid' ? 'paid' : 'unpaid';
+    const statCls = { 'Received': 'received', 'Processing': 'processing', 'For Pick-up': 'pickup', 'Claimed': 'claimed' }[o.status] || 'received';
+    return `
     <tr>
       <td>${idx + 1}</td>
-      <td><b>${o.customer}</b></td>
-      <td><span class="order-num-tag">${o.id}</span></td>
-      <td><b>${peso(o.subtotal)}</b></td>
-      <td><span class="badge-pay ${o.payment === 'Paid' ? 'paid' : 'unpaid'}">${o.payment}</span></td>
-      <td>${o.status}</td>
+      <td>${o.customer}</td>
+      <td>${o.id}</td>
+      <td>${peso(o.subtotal)}</td>
+      <td><span class="pill-badge ${payCls}">${o.payment}</span></td>
+      <td><span class="pill-badge ${statCls}">${o.status}</span></td>
     </tr>
-  `).join('');
+  `;
+  }).join('');
 
 }
 
