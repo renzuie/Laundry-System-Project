@@ -2026,6 +2026,20 @@ main {
   </div>
 </div>
 
+<div id="modal-confirm-logout" class="modal-overlay hidden">
+  <div class="modal-window" style="max-width:440px;text-align:center;padding:40px 26px 28px;">
+    <button type="button" class="modal-back-btn" id="btn-confirm-logout-back" aria-label="Back">
+      <svg viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+    </button>
+    <h3 style="font-family:'Manrope',sans-serif;font-size:22px;margin:8px 0 10px;">Are you sure you want to log out?</h3>
+    <p id="confirm-logout-detail" style="color:var(--muted);font-size:15px;margin:0 0 24px;"></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <button type="button" class="btn-modal-addmore" id="btn-confirm-logout-no">NO, STAY</button>
+      <button type="button" class="btn-modal-placeorder" id="btn-confirm-logout-yes">YES, LOG OUT</button>
+    </div>
+  </div>
+</div>
+
 <div id="modal-cancel-confirm" class="modal-overlay hidden">
   <div class="modal-window" style="max-width:420px;text-align:center;padding:32px 24px;">
     <h3 style="font-family:'Manrope',sans-serif;font-size:20px;margin:0 0 14px;color:var(--danger);">
@@ -3016,7 +3030,18 @@ document.getElementById('login-eye').onclick = () => {
   eye.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
 };
 
+// Log out asks for confirmation first
 document.getElementById('btn-logout').onclick = () => {
+  document.getElementById('confirm-logout-detail').textContent =
+    cart.length ? 'Your current cart will be cleared.' : '';
+  openModal('modal-confirm-logout');
+};
+
+function closeLogoutConfirm() { closeModal('modal-confirm-logout'); }
+document.getElementById('btn-confirm-logout-no').onclick = closeLogoutConfirm;
+document.getElementById('btn-confirm-logout-back').onclick = closeLogoutConfirm;
+document.getElementById('btn-confirm-logout-yes').onclick = () => {
+  closeModal('modal-confirm-logout');
   cart = [];
   document.getElementById('screen-login').classList.add('hidden');
   document.getElementById('screen-splash').classList.remove('hidden');
