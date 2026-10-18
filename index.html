@@ -2175,7 +2175,7 @@ let pendingOrderForReceipt = null;
 let slipCarouselIndex = 0;
 
 // Where the customer page lives. Leave '' to use status.html next to this page,
-const STATUS_PAGE_URL = '';
+const STATUS_PAGE_URL = 'https://labada-link.cvsu.workers.dev/';
 
 function orderQrText(order) {
   let base = STATUS_PAGE_URL;
@@ -2782,8 +2782,9 @@ document.getElementById('btn-confirm-pay-yes').onclick = () => {
 function renderOrdersTables() {
   // Page 10: Active Orders
   const ordersTbody = document.getElementById('orders-table-body');
-    // Orders that are For Pick-up or Claimed leave this tab and show only in Completed
-    const activeOrders = orders.filter(o => o.status !== 'For Pick-up' && o.status !== 'Claimed');
+    // An order leaves this tab only when it is Paid AND (For Pick-up or Claimed).
+    // Unpaid orders stay here even if they are already For Pick-up.
+    const activeOrders = orders.filter(o => !(o.payment === 'Paid' && (o.status === 'For Pick-up' || o.status === 'Claimed')));
     ordersTbody.innerHTML = activeOrders.map((o, idx) => {
     // Delete is only allowed while the order is still "Received" (paid or unpaid)
     const canDelete = o.status === 'Received';
@@ -2846,9 +2847,7 @@ function renderOrdersTables() {
 
   // Page 11: Completed Orders
   // Rule: Qualified only if (Paid & For Pick-up) OR (Paid & Claimed)
-  // Completed = payment is Paid OR the laundry is Claimed
-  // (stricter version: o.payment === 'Paid' && (o.status === 'For Pick-up' || o.status === 'Claimed'))
-  const completedList = orders.filter(o => o.payment === 'Paid' || o.status === 'For Pick-up' || o.status === 'Claimed');
+  const completedList = orders.filter(o => o.payment === 'Paid' && (o.status === 'For Pick-up' || o.status === 'Claimed'));
   const completedTbody = document.getElementById('completed-table-body');
     completedTbody.innerHTML = completedList.map((o, idx) => {
     const payCls = o.payment === 'Paid' ? 'paid' : 'unpaid';
