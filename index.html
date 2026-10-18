@@ -3,73 +3,63 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Washing Well Laundry Shop · Staff Screen</title>
-<!-- Modern Fonts -->
+<title>LABADA LINK · Laundry POS & Tracking System</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..700&family=JetBrains+Mono:wght@400;600&family=Manrope:wght@400..800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..800;1,9..40,400..800&family=JetBrains+Mono:wght@400;600;700&family=Manrope:wght@500;700;800&display=swap" rel="stylesheet">
+<!-- QRCode generator -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
-/* Font Fallbacks */
-@font-face{font-family:'DM Sans';font-style:normal;font-weight:400;font-display:swap;src:url('vendor/fonts/dm-sans-latin-400-normal.woff2') format('woff2')}
-@font-face{font-family:'DM Sans';font-style:normal;font-weight:500;font-display:swap;src:url('vendor/fonts/dm-sans-latin-500-normal.woff2') format('woff2')}
-@font-face{font-family:'DM Sans';font-style:normal;font-weight:600;font-display:swap;src:url('vendor/fonts/dm-sans-latin-600-normal.woff2') format('woff2')}
-@font-face{font-family:'DM Sans';font-style:normal;font-weight:700;font-display:swap;src:url('vendor/fonts/dm-sans-latin-700-normal.woff2') format('woff2')}
-@font-face{font-family:'Manrope';font-style:normal;font-weight:400;font-display:swap;src:url('vendor/fonts/manrope-latin-400-normal.woff2') format('woff2')}
-@font-face{font-family:'Manrope';font-style:normal;font-weight:600;font-display:swap;src:url('vendor/fonts/manrope-latin-600-normal.woff2') format('woff2')}
-@font-face{font-family:'Manrope';font-style:normal;font-weight:700;font-display:swap;src:url('vendor/fonts/manrope-latin-700-normal.woff2') format('woff2')}
-@font-face{font-family:'Manrope';font-style:normal;font-weight:800;font-display:swap;src:url('vendor/fonts/manrope-latin-800-normal.woff2') format('woff2')}
+
+/* Logo fallback: used on splash, header and receipt when logo.jfif can't load */
+.img-fallback img { display: none; }
+.img-fallback::before {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%232ea3f8'/><stop offset='1' stop-color='%231877c9'/></linearGradient></defs><rect x='14' y='6' width='36' height='42' rx='8' fill='url(%23g)'/><circle cx='21' cy='13' r='2' fill='white'/><circle cx='28' cy='13' r='2' fill='white'/><circle cx='32' cy='31' r='12' fill='white'/><circle cx='32' cy='31' r='8' fill='%23cfe9fc'/><path d='M25 33c3-4 6 3 14-1' fill='none' stroke='white' stroke-width='2' stroke-linecap='round'/><path d='M5 47c8 12 46 12 54 0' fill='none' stroke='%232ea3f8' stroke-width='3' stroke-linecap='round'/><circle cx='9' cy='27' r='3.5' fill='none' stroke='%232ea3f8' stroke-width='1.6'/><circle cx='56' cy='22' r='2.6' fill='none' stroke='%232ea3f8' stroke-width='1.6'/><circle cx='54' cy='34' r='1.6' fill='%232ea3f8'/></svg>") center / contain no-repeat;
+}
+.splash-logo.img-fallback::before { width: 82%; height: 82%; }
+@media print {
+  .img-fallback::before { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
 
 :root {
-  --ink: #0f172a;
-  --muted: #475569;
-  --primary: #0284c7;
-  --primary-hover: #0369a1;
-  --primary-soft: #e0f2fe;
+  --primary-blue: #1877c9;
+  --primary-dark: #0f5c9e;
+  --primary-light: #e0f0fd;
+  --brand-cyan: #2ea3f8;
+  --bg-gradient: radial-gradient(120% 90% at 50% 0%, #f9fcff 0%, #ebf4fc 60%, #dbe9f8 100%);
   --surface: #ffffff;
-  --paper: #f8fafc;
-  --border: #cbd5e1;
-  --border-focus: #38bdf8;
+  --ink: #0f2438;
+  --muted: #5a738e;
+  --border: #cde0f1;
+  --border-focus: #2ea3f8;
+  --danger: #e11d48;
+  --danger-soft: #ffe4e6;
   --success: #059669;
   --success-soft: #d1fae5;
   --warning: #d97706;
   --warning-soft: #fef3c7;
-  --danger: #e11d48;
-  --danger-soft: #ffe4e6;
-  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
-  --shadow-md: 0 10px 25px -4px rgba(2, 132, 199, 0.15), 0 4px 10px -2px rgba(15, 23, 42, 0.04);
-  --shadow-lg: 0 20px 45px -8px rgba(15, 23, 42, 0.18);
+  --shadow-sm: 0 2px 6px rgba(15, 36, 56, 0.05);
+  --shadow-md: 0 10px 25px -4px rgba(24, 119, 201, 0.16);
+  --shadow-lg: 0 24px 50px -12px rgba(15, 36, 56, 0.22);
   --radius-sm: 10px;
   --radius-md: 16px;
   --radius-lg: 24px;
 }
 
 * { box-sizing: border-box; }
-
-* {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(148, 163, 184, 0.4) transparent;
-}
-::-webkit-scrollbar {
-  width: 4px;
-  height: 4px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.35);
-  border-radius: 999px;
-  transition: background .18s ease;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(100, 116, 139, 0.65);
-}
+* { scrollbar-width: thin; scrollbar-color: rgba(148, 163, 184, 0.4) transparent; }
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.4); border-radius: 999px; }
 
 body {
   margin: 0;
-  background: var(--paper);
+  background: var(--bg-gradient);
   color: var(--ink);
-  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: 'DM Sans', -apple-system, sans-serif;
   min-height: 100svh;
   display: flex;
   flex-direction: column;
@@ -83,2488 +73,2879 @@ button {
   -webkit-tap-highlight-color: transparent;
   transition: all .18s cubic-bezier(0.16, 1, 0.3, 1);
 }
-button:active { transform: scale(0.98); }
-button:focus-visible, input:focus-visible, select:focus-visible {
-  outline: 3px solid var(--border-focus);
-  outline-offset: 2px;
-}
+button:active { transform: scale(0.97); }
 
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 18px 5%;
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(14px);
-  border-bottom: 1px solid var(--border);
-  position: sticky;
-  top: 0;
-  z-index: 20;
-}
-
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-family: 'Manrope', sans-serif;
-  font-size: 21px;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-}
-
-.logo {
-  background: linear-gradient(135deg, #2ea3f8, #1877c9);
-  color: #fff;
-  width: 44px;
-  height: 44px;
-  border-radius: 14px;
-  display: grid;
-  place-items: center;
-  font-size: 24px;
-  box-shadow: 0 6px 14px rgba(24, 119, 201, 0.28);
-}
-
-.brand small {
-  display: block;
-  font: 700 9.5px 'DM Sans', sans-serif;
-  letter-spacing: 2.2px;
-  color: var(--primary);
-  margin-top: 1px;
-}
-
-.header-right {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  font-size: 13px;
-}
-
-.badge-staff {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 30px;
-  padding: 7px 15px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 600;
-  color: var(--ink);
-  box-shadow: var(--shadow-sm);
-}
-
-.dot-pulse {
-  position: relative;
-  width: 8px;
-  height: 8px;
-  background: #10b981;
-  border-radius: 50%;
-}
-.dot-pulse::after {
-  content: '';
-  position: absolute;
-  inset: -3px;
-  border-radius: 50%;
-  border: 2px solid #10b981;
-  animation: pulse-ring 2s infinite;
-}
-@keyframes pulse-ring {
-  0% { transform: scale(0.8); opacity: 1; }
-  100% { transform: scale(2.2); opacity: 0; }
-}
-
-.time-pill {
-  background: #f0f6fc;
-  border-radius: 30px;
-  padding: 8px 14px;
-  font-weight: 600;
-  font-feature-settings: 'tnum';
-  color: var(--muted);
-}
-
-.lock-btn {
-  background: transparent;
-  border: 1px solid var(--border);
-  border-radius: 50%;
-  width: 38px;
-  height: 38px;
-  display: grid;
-  place-items: center;
-  color: var(--muted);
-}
-.lock-btn:hover { background: #eef5fc; color: var(--ink); }
-
-main {
-  width: 100%;
-  flex: 1;
-  max-width: 1280px;
-  margin: auto;
-  padding: 36px 32px 30px;
-}
-
-.welcome {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  margin-bottom: 24px;
-}
-
-.eyebrow {
-  font-size: 11px;
-  letter-spacing: 2px;
-  font-weight: 800;
-  text-transform: uppercase;
-  color: var(--primary);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-h1 {
-  font-family: 'Manrope', sans-serif;
-  font-size: clamp(28px, 3.6vw, 42px);
-  font-weight: 700;
-  letter-spacing: -1.5px;
-  margin: 6px 0 0;
-  color: var(--ink);
-}
-
-.welcome-note {
-  font-size: 13px;
-  color: var(--muted);
-  text-align: right;
-  line-height: 1.5;
-}
-
-/* Stats Ribbon */
-.stats-ribbon {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  margin-bottom: 28px;
-}
-
-.stat-chip {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 16px 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  box-shadow: var(--shadow-sm);
-  transition: transform .18s;
-}
-.stat-chip:hover { transform: translateY(-2px); }
-.stat-chip small {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  font-weight: 700;
-  color: var(--muted);
-}
-.stat-chip b {
-  font-family: 'Manrope', sans-serif;
-  font-size: 26px;
-  font-weight: 800;
-  color: var(--ink);
-  letter-spacing: -0.5px;
-}
-
-.cards {
-  display: grid;
-  grid-template-columns: 1.35fr 1fr 1fr;
-  gap: 22px;
-}
-
-.card {
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 30px;
-  text-align: left;
-  min-height: 310px;
-  background: var(--surface);
-  display: flex;
-  flex-direction: column;
-  box-shadow: var(--shadow-sm);
-  transition: transform .22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow .22s cubic-bezier(0.16, 1, 0.3, 1), border-color .22s;
-  color: var(--ink);
-  position: relative;
-  overflow: hidden;
-}
-
-.card:hover {
-  transform: translateY(-6px);
-  box-shadow: var(--shadow-md);
-  border-color: #bcd9f5;
-}
-
-.primary {
-  background: linear-gradient(145deg, #1877c9, #0f5c9e);
-  color: #fff;
-  border-color: #1263ab;
-  box-shadow: 0 16px 36px -6px rgba(24, 119, 201, 0.35);
-}
-.primary:hover {
-  box-shadow: 0 20px 42px -6px rgba(24, 119, 201, 0.45);
-  border-color: #4aa7f2;
-}
-
-.primary:after {
-  content: '';
-  position: absolute;
-  width: 240px;
-  height: 240px;
-  border: 40px solid rgba(255, 255, 255, 0.05);
-  border-radius: 50%;
-  right: -70px;
-  top: 50px;
-  pointer-events: none;
-}
-
-.icon {
-  width: 58px;
-  height: 58px;
-  border-radius: 18px;
-  background: var(--primary-soft);
-  color: var(--primary);
-  display: grid;
-  place-items: center;
-  margin-bottom: 30px;
-  transition: transform .2s ease;
-}
-.card:hover .icon { transform: scale(1.06); }
-
-.primary .icon {
-  background: rgba(255, 255, 255, 0.2);
-  color: #ffffff;
-}
-
-svg {
-  width: 28px;
-  height: 28px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.8;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.card h2 {
-  font: 700 24px 'Manrope', sans-serif;
-  letter-spacing: -0.6px;
-  margin: 0 0 10px;
-}
-
-.card p {
-  font-size: 14.5px;
-  line-height: 1.55;
-  margin: 0;
-  color: var(--muted);
-}
-.primary p { color: #d7ebfc; }
-
-.card-bottom {
-  margin-top: auto;
-  padding-top: 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.2px;
-}
-
-.arrow {
-  border: 1px solid var(--border);
-  border-radius: 50%;
-  width: 36px;
-  height: 36px;
-  display: grid;
-  place-items: center;
-  font-size: 18px;
-  transition: transform .18s ease, background-color .18s;
-  background: #f8fcff;
-}
-.card:hover .arrow { transform: translateX(3px) translateY(-3px); }
-
-.primary .arrow {
-  background: #ffffff;
-  color: var(--primary);
-  border: 0;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-}
-
-.help {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 0;
-  margin-top: 14px;
-  font-size: 13px;
-  color: var(--muted);
-}
-
-.help button {
-  border: 0;
-  background: none;
-  color: var(--primary);
-  padding: 8px 12px;
-  font-weight: 700;
-  font-size: 14px;
-  border-radius: 8px;
-}
-.help button:hover { background: #eaf4fd; }
-
-.footer {
-  border-top: 1px solid var(--border);
-  padding: 20px 5%;
-  display: flex;
-  justify-content: space-between;
-  font-size: 11px;
-  color: var(--muted);
-  flex-wrap: wrap;
-  gap: 8px 24px;
-  background: #fff;
-}
-
-dialog {
-  border: 0;
-  border-radius: 26px;
-  padding: 28px 30px;
-  width: min(680px, 94vw);
-  max-height: min(88vh, 740px);
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  color: var(--ink);
-  background: #ffffff;
-  box-shadow: 0 25px 60px -15px rgba(15, 23, 42, 0.28), 0 0 0 1px rgba(226, 232, 240, 0.9);
-  animation: dialog-appear .22s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-@keyframes dialog-appear {
-  from { opacity: 0; transform: scale(0.97) translateY(8px); }
-  to { opacity: 1; transform: scale(1) translateY(0); }
-}
-
-dialog::backdrop {
-  background: rgba(12, 35, 60, 0.55);
-  backdrop-filter: blur(6px);
-}
-
-.dialog-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 20px;
-}
-
-.dialog-top h2 {
-  margin: 0;
-  font: 700 22px 'Manrope', sans-serif;
-  letter-spacing: -0.5px;
-}
-
-#modal-body {
-  padding: 0;
-}
-
-.close {
-  border: 0;
-  background: #f1f5f9;
-  color: var(--muted);
-  border-radius: 50%;
-  width: 38px;
-  height: 38px;
-  flex-shrink: 0;
-  font-size: 20px;
-  display: grid;
-  place-items: center;
-  line-height: 1;
-}
-.close:hover { background: #e2e8f0; color: var(--ink); }
-
-.settings-nav {
-  display: flex;
-  background: #f1f5f9;
-  border-radius: 14px;
-  padding: 4px;
-  gap: 4px;
-  margin-bottom: 20px;
-}
-
-.settings-nav-btn {
-  flex: 1;
-  border: 0;
-  background: transparent;
-  padding: 10px 14px;
-  font-size: 13.5px;
-  font-weight: 700;
-  border-radius: 10px;
-  color: var(--muted);
-  transition: all .18s ease;
+.screen-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  background: var(--bg-gradient);
+  padding: 24px;
+  transition: opacity .35s ease, visibility .35s ease;
+}
+.screen-layer.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
 }
 
-.settings-nav-btn.active {
-  background: #ffffff;
-  color: var(--primary);
-  box-shadow: var(--shadow-sm);
-}
-
-.setting-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 14px 18px;
-  background: #fafcfe;
-  border: 1.5px solid #edf2f7;
-  border-radius: 16px;
-  margin-bottom: 10px;
-  transition: border-color .18s, background .18s;
-}
-
-.setting-row:hover {
-  border-color: #cbd5e1;
-  background: #ffffff;
-}
-
-.setting-info {
+/* Page 1: Splash */
+.splash-box {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  max-width: 440px;
+  width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 2px;
-}
-
-.setting-title {
-  font-size: 14.5px;
-  font-weight: 700;
-  color: var(--ink);
-}
-
-.setting-sub {
-  font-size: 12.5px;
-  color: var(--muted);
-}
-
-.affix-box {
-  display: flex;
   align-items: center;
-  background: #ffffff;
-  border: 1.5px solid var(--border);
-  border-radius: 12px;
+  gap: clamp(20px, 4vh, 36px);
+}
+.splash-logo {
+  width: clamp(170px, 38vmin, 270px);
+  height: clamp(170px, 38vmin, 270px);
+  display: grid;
+  place-items: center;
+  animation: logo-float 5s ease-in-out infinite;
+  border-radius: 28%;
   overflow: hidden;
-  transition: border-color .18s, box-shadow .18s;
-  min-height: 44px;
-  width: 140px;
-  flex-shrink: 0;
+  border: 3px solid transparent;
+  background:
+    linear-gradient(#fff, #fff) padding-box,
+    linear-gradient(135deg, var(--brand-cyan), var(--primary-blue)) border-box;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.8),
+    0 0 22px rgba(46, 163, 248, 0.55),
+    0 14px 28px rgba(24, 119, 201, 0.28);
 }
-
-.affix-box:focus-within {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.12);
-}
-
-.affix-symbol {
-  padding: 0 10px;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--muted);
-  background: #f8fafc;
-  align-self: stretch;
-  display: grid;
-  place-items: center;
-  border-right: 1.5px solid #f1f5f9;
-}
-
-.affix-symbol.suffix {
-  border-right: 0;
-  border-left: 1.5px solid #f1f5f9;
-}
-
-.affix-box input {
-  border: 0 !important;
-  margin: 0 !important;
-  padding: 8px 12px !important;
-  min-height: 0 !important;
-  font-size: 15px !important;
-  font-weight: 700 !important;
-  text-align: right;
-  background: transparent !important;
-  box-shadow: none !important;
+.splash-logo img {
   width: 100%;
-}
-
-.field {
+  height: 100%;
+  object-fit: contain;
   display: block;
-  margin: 18px 0;
-  font-size: 13.5px;
-  font-weight: 700;
-  color: var(--ink);
 }
 
-input, select {
-  display: block;
-  width: 100%;
-  border: 1.5px solid var(--border);
-  border-radius: 14px;
-  padding: 14px 16px;
-  margin-top: 8px;
-  background: #fafcfe;
-  color: var(--ink);
-  min-height: 52px;
-  font-size: 15px;
-  transition: border-color .18s, box-shadow .18s, background .18s;
+@keyframes logo-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
 }
-input:focus, select:focus {
-  background: #fff;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 4px rgba(24, 119, 201, 0.12);
-}
-
-.services {
-  display: grid;
-  gap: 10px;
-  margin: 18px 0;
-}
-
-.service {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border: 1.5px solid var(--border);
-  border-radius: 14px;
-  padding: 16px 18px;
-  background: #fafcfe;
-  color: var(--ink);
-  text-align: left;
-  min-height: 72px;
-  font-size: 15.5px;
-  gap: 16px;
-}
-.service:hover {
-  background: #f1f7fd;
-  border-color: #beddf9;
-}
-
-.service.selected {
-  border: 2px solid var(--primary);
-  background: #ebf5fe;
-  box-shadow: 0 4px 14px rgba(24, 119, 201, 0.12);
-}
-
-.service small {
-  display: block;
-  color: var(--muted);
-  margin-top: 4px;
-  font-size: 13px;
-  font-weight: 500;
-}
-
-/* Quick Touch Presets */
-.quick-chips {
-  display: flex;
-  gap: 8px;
-  margin-top: 8px;
-  flex-wrap: wrap;
-}
-.chip-btn {
-  border: 1px solid var(--border);
-  background: #f0f7fe;
-  color: var(--primary);
-  border-radius: 20px;
-  padding: 6px 14px;
-  font-size: 12.5px;
-  font-weight: 700;
-}
-.chip-btn:hover { background: #e0f0fd; }
-
-.action {
-  width: 100%;
-  background: linear-gradient(135deg, var(--primary), var(--primary-hover));
-  color: #fff;
-  border: 0;
-  padding: 16px;
-  border-radius: 14px;
-  margin-top: 16px;
-  font-weight: 700;
-  font-size: 15.5px;
-  min-height: 54px;
-  box-shadow: 0 8px 20px rgba(24, 119, 201, 0.28);
-}
-.action:hover { opacity: 0.95; }
-.action.ghost {
-  background: #fff;
-  color: var(--primary);
-  border: 2px solid var(--primary);
-  box-shadow: none;
-}
-.action.ghost:hover { background: #f0f7fe; }
-
-.note {
-  font-size: 13.5px;
-  background: #edf5fc;
-  border-left: 4px solid var(--primary);
-  border-radius: 0 12px 12px 0;
-  padding: 12px 16px;
-  color: #295377;
-  line-height: 1.5;
-  margin: 14px 0;
-}
-
-.receipt {
-  text-align: center;
-  padding: 16px 8px;
-  color: #000000 !important;
-  font-family: 'DM Sans', -apple-system, sans-serif;
-}
-.receipt * { color: #000000 !important; }
-.receipt .shop b { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
-.receipt strong {
-  font: 800 32px 'JetBrains Mono', monospace;
-  display: block;
-  margin: 12px 0;
-  letter-spacing: 1px;
-}
-.receipt .total {
-  background: transparent !important;
-  border-top: 1.5px dashed #000;
-  border-bottom: 1.5px dashed #000;
-  border-radius: 0;
-  padding: 14px 6px;
-  margin: 18px 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.receipt .order-qr {
-  display: table;
-  margin: 16px auto 10px;
-  padding: 12px;
-  background: #fff;
-}
-.receipt .pay {
-  display: inline-block;
-  margin: 10px 0 0;
-  padding: 4px 12px;
-  border: 2px solid #000;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 800;
-  letter-spacing: 1px;
-}
-.receipt .paper-cutter-space {
-  height: 48px;
-  border-bottom: 1px dotted #ccc;
-  margin-top: 16px;
-}
-
-/* Load Slip / Bag Tag Styling */
-.load-slip {
-  text-align: center;
-  padding: 14px 8px;
-  color: #000000 !important;
-  font-family: 'DM Sans', -apple-system, sans-serif;
-  border-top: 2px dashed #000;
-  margin-top: 14px;
-}
-.load-slip * { color: #000000 !important; }
-.load-badge {
-  display: inline-block;
-  border: 2px solid #000;
-  border-radius: 6px;
-  font-weight: 800;
-  font-size: 14px;
-  padding: 3px 12px;
-  letter-spacing: 0.5px;
-  margin: 6px 0;
-}
-.slip-qr {
-  display: table;
-  margin: 10px auto;
-  padding: 8px;
-  background: #fff;
-}
-
-.total {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-weight: 700;
-  padding: 18px 20px;
-  background: #ebf5fe;
-  border-radius: var(--radius-md);
-  margin: 18px 0;
-}
-.total strong { font: 800 28px 'Manrope', sans-serif; color: var(--primary); }
-
-.order-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 14px;
-  border: 1.5px solid var(--border);
-  border-radius: 14px;
-  padding: 16px;
-  margin: 10px 0;
-  background: #fafcfe;
-  transition: border-color .18s;
-}
-.order-row:hover { border-color: #beddf9; }
-.order-row small { display: block; color: var(--muted); margin-top: 4px; font-size: 13px; }
-
-/* Filter Tabs for Orders Modal */
-.filter-tabs {
-  display: flex;
-  gap: 8px;
-  margin: 16px 0;
-  overflow-x: auto;
-  padding-bottom: 4px;
-}
-.filter-tab {
-  border: 1px solid var(--border);
-  background: #fff;
-  border-radius: 30px;
-  padding: 7px 16px;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--muted);
-  white-space: nowrap;
-}
-.filter-tab.active {
-  background: var(--primary);
-  color: #fff;
-  border-color: var(--primary);
-}
-
-.status-badge {
-  display: inline-block;
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 11.5px;
-  font-weight: 700;
-  letter-spacing: 0.3px;
-}
-.badge-received { background: #e0f2fe; color: #0369a1; }
-.badge-washing { background: #e0e7ff; color: #4338ca; }
-.badge-drying { background: #fef3c7; color: #b45309; }
-.badge-folding { background: #f3e8ff; color: #7e22ce; }
-.badge-ready { background: #dcfce7; color: #15803d; }
-.badge-released { background: #f1f5f9; color: #475569; }
-
-.status-line {
-  padding: 16px;
-  border-left: 4px solid var(--primary);
-  margin: 14px 0;
-  background: #f0f7fe;
-  border-radius: 0 12px 12px 0;
-  font-size: 14px;
-}
-
-.error { color: var(--danger); font-size: 13px; }
-
-.mini {
-  min-height: 42px;
-  border: 1.5px solid var(--border);
-  background: #fff;
-  color: var(--ink);
-  border-radius: 10px;
-  padding: 0 12px;
-  font-weight: 700;
-  font-size: 12.5px;
-}
-.mini:hover { border-color: var(--primary); color: var(--primary); }
-.mini.print-mini { color: var(--primary); border-color: #bcd9f5; background: #f4f9fe; }
-
-.welcome-screen {
-  position: fixed;
-  inset: 0;
-  z-index: 50;
-  display: grid;
-  place-items: center;
-  padding: 24px;
-  overflow-y: auto;
-  background: radial-gradient(120% 90% at 50% 0%, #f9fcff 0%, #eaf2fb 60%, #d8e5f8 100%);
-  transition: opacity .4s, visibility .4s;
-}
-.welcome-screen.leaving { opacity: 0; visibility: hidden; }
-
-.bubbles {
-  position: fixed;
+/* Splash bubbles */
+.splash-bubbles {
+  position: absolute;
   inset: 0;
   overflow: hidden;
   pointer-events: none;
 }
-.bubbles:before, .bubbles:after {
-  content: '';
+.splash-bubbles i {
   position: absolute;
-  border-radius: 50%;
-  background: linear-gradient(145deg, #ffffffb8, #8fb8f033);
-  box-shadow: inset 6px 6px 16px #fff, inset -10px -10px 30px #5b8fe433, 0 20px 50px #5b8fe41f;
-}
-.bubbles:before { width: 320px; height: 320px; left: -110px; top: -110px; }
-.bubbles:after { width: 240px; height: 240px; right: -90px; bottom: -70px; }
-
-.bubbles i {
-  position: absolute;
-  bottom: -200px;
+  bottom: -160px;
   left: var(--x);
   width: var(--s);
   height: var(--s);
   border-radius: 50%;
-  background: radial-gradient(circle at 30% 28%, #ffffffcc 0, #ffffff55 18%, #5bb0ee1a 55%, #2379c233 100%);
-  border: 1.5px solid #2379c230;
-  animation: rise var(--d) linear infinite;
+  background: radial-gradient(circle at 30% 28%, rgba(255,255,255,.85) 0, rgba(255,255,255,.35) 18%, rgba(91,176,238,.12) 55%, rgba(35,121,194,.22) 100%);
+  border: 2px solid rgba(35, 121, 194, .22);
+  box-shadow: inset -6px -8px 14px rgba(35, 121, 194, .1);
+  animation: bubble-rise var(--d) linear infinite;
   animation-delay: var(--dl);
 }
-@keyframes rise {
-  0% { transform: translate(0, 0) scale(.85); opacity: 0; }
-  8% { opacity: 1; }
-  35% { transform: translate(22px, -38vh) scale(.95); }
-  65% { transform: translate(-18px, -80vh) scale(1.05); }
+@keyframes bubble-rise {
+  0%   { transform: translate(0, 0) scale(.85); opacity: 0; }
+  8%   { opacity: 1; }
+  35%  { transform: translate(22px, -38vh) scale(.95); }
+  65%  { transform: translate(-18px, -80vh) scale(1.05); }
   100% { transform: translate(10px, -125vh) scale(1.15); opacity: 0; }
 }
-
-.login {
-  position: relative;
-  z-index: 1;
-  width: min(420px, 100%);
-  margin: auto;
-  display: grid;
-  gap: 24px;
-}
-
-.landing-title-wrap {
-  grid-column: 1/-1;
-  text-align: center;
-  padding: 4px 10px 0;
-}
-
-.landing-title {
-  margin: 0;
-  font: 800 clamp(15px, 2vw, 19px)/1.35 'Manrope', sans-serif;
-  color: var(--ink);
-  letter-spacing: -0.2px;
-}
-.landing-title span {
-  display: block;
-  color: var(--primary);
-  font-size: clamp(23px, 3.2vw, 30px);
-  letter-spacing: 1.5px;
-  margin-bottom: 4px;
-}
-
-.tap { text-align: center; }
-
-.rfid-tile {
-  position: relative;
-  width: 156px;
-  height: 156px;
-  border: 0;
-  border-radius: 46px;
-  background: linear-gradient(145deg, #ffffff, #e1ebfa);
-  color: var(--primary);
-  display: grid;
-  place-items: center;
-  margin: 0 auto;
-  box-shadow: 14px 16px 32px #aebfe0a6, -10px -10px 24px #ffffffe6;
-}
-.rfid-tile svg { width: 84px; height: 84px; stroke-width: 1.8; }
-.rfid-tile:before, .rfid-tile:after {
-  content: '';
+@media (prefers-reduced-motion: reduce) {
+  .splash-bubbles i { animation: none; bottom: auto; top: var(--y, 60%); opacity: .7; }
+} 
+/* Splash bubbles */
+.splash-bubbles {
   position: absolute;
   inset: 0;
-  border-radius: 46px;
-  border: 2px solid #2379c273;
-  animation: pulse 2.8s ease-out infinite;
+  overflow: hidden;
   pointer-events: none;
 }
-.rfid-tile:after { animation-delay: 1.4s; }
-@keyframes pulse {
-  from { transform: scale(1); opacity: .9; }
-  to { transform: scale(1.36); opacity: 0; }
-}
-
-.tap h1 {
-  font: 800 32px 'Manrope', sans-serif;
-  letter-spacing: -1px;
-  margin: 24px 0 6px;
-}
-.sub {
-  margin: 0;
-  font-size: 13px;
-  letter-spacing: 2.5px;
-  font-weight: 600;
-  color: var(--muted);
-  text-transform: uppercase;
-}
-
-.alt-row {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 16px;
-  margin: 22px 0 0;
-}
-.alt {
-  width: 78px;
-  height: 78px;
-  border-radius: 24px;
-  border: 0;
-  background: linear-gradient(145deg, #ffffff, #e4edfb);
-  color: var(--primary);
-  display: grid;
-  place-items: center;
-  box-shadow: 6px 8px 18px #aebfe07a, -6px -6px 14px #ffffffee;
-}
-.alt svg { width: 34px; height: 34px; }
-.alt .fill { fill: currentColor; stroke: none; }
-
-.divider {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin: 0 0 18px;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 2.5px;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-.divider:before, .divider:after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: #c9d9ee;
-}
-
-.ifield { position: relative; display: block; margin: 0 0 14px; }
-.ifield input {
-  margin: 0;
-  min-height: 58px;
-  padding: 0 52px 0 54px;
-  border: 0;
-  border-radius: 20px;
-  background: linear-gradient(145deg, #eaf2fc, #f9fcff);
-  box-shadow: inset 3px 3px 8px #c6d5ee, inset -3px -3px 8px #fff;
-  font-size: 15.5px;
-}
-.ifield .lead {
+.splash-bubbles i {
   position: absolute;
-  left: 18px;
-  top: 17px;
-  width: 22px;
-  height: 22px;
-  color: #4a6f8f;
-  pointer-events: none;
-}
-.eye {
-  position: absolute;
-  right: 6px;
-  top: 5px;
-  width: 48px;
-  height: 48px;
-  border: 0;
+  bottom: -160px;
+  left: var(--x);
+  width: var(--s);
+  height: var(--s);
   border-radius: 50%;
-  background: none;
-  color: #6b8499;
-  display: grid;
-  place-items: center;
+  background: radial-gradient(circle at 30% 28%, rgba(255,255,255,.85) 0, rgba(255,255,255,.35) 18%, rgba(91,176,238,.12) 55%, rgba(35,121,194,.22) 100%);
+  border: 2px solid rgba(35, 121, 194, .22);
+  box-shadow: inset -6px -8px 14px rgba(35, 121, 194, .1);
+  animation: bubble-rise var(--d) linear infinite;
+  animation-delay: var(--dl);
 }
-.eye[aria-pressed="true"] .slash { display: none; }
+@keyframes bubble-rise {
+  0%   { transform: translate(0, 0) scale(.85); opacity: 0; }
+  8%   { opacity: 1; }
+  35%  { transform: translate(22px, -38vh) scale(.95); }
+  65%  { transform: translate(-18px, -80vh) scale(1.05); }
+  100% { transform: translate(10px, -125vh) scale(1.15); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .splash-bubbles i { animation: none; bottom: auto; top: var(--y, 60%); opacity: .7; }
+}
+/* Splash bubbles */
+.splash-bubbles {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.splash-bubbles i {
+  position: absolute;
+  bottom: -160px;
+  left: var(--x);
+  width: var(--s);
+  height: var(--s);
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 28%, rgba(255,255,255,.85) 0, rgba(255,255,255,.35) 18%, rgba(91,176,238,.12) 55%, rgba(35,121,194,.22) 100%);
+  border: 2px solid rgba(35, 121, 194, .22);
+  box-shadow: inset -6px -8px 14px rgba(35, 121, 194, .1);
+  animation: bubble-rise var(--d) linear infinite;
+  animation-delay: var(--dl);
+}
+@keyframes bubble-rise {
+  0%   { transform: translate(0, 0) scale(.85); opacity: 0; }
+  8%   { opacity: 1; }
+  35%  { transform: translate(22px, -38vh) scale(.95); }
+  65%  { transform: translate(-18px, -80vh) scale(1.05); }
+  100% { transform: translate(10px, -125vh) scale(1.15); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .splash-bubbles i { animation: none; bottom: auto; top: var(--y, 60%); opacity: .7; }
+}
+/* Splash bubbles */
+.splash-bubbles {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.splash-bubbles i {
+  position: absolute;
+  bottom: -160px;
+  left: var(--x);
+  width: var(--s);
+  height: var(--s);
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 28%, rgba(255,255,255,.85) 0, rgba(255,255,255,.35) 18%, rgba(91,176,238,.12) 55%, rgba(35,121,194,.22) 100%);
+  border: 2px solid rgba(35, 121, 194, .22);
+  box-shadow: inset -6px -8px 14px rgba(35, 121, 194, .1);
+  animation: bubble-rise var(--d) linear infinite;
+  animation-delay: var(--dl);
+}
+@keyframes bubble-rise {
+  0%   { transform: translate(0, 0) scale(.85); opacity: 0; }
+  8%   { opacity: 1; }
+  35%  { transform: translate(22px, -38vh) scale(.95); }
+  65%  { transform: translate(-18px, -80vh) scale(1.05); }
+  100% { transform: translate(10px, -125vh) scale(1.15); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .splash-bubbles i { animation: none; bottom: auto; top: var(--y, 60%); opacity: .7; }
+}
 
-.row-opts {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 4px 2px 18px;
-  font-size: 13.5px;
+.splash-title {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 38px;
+  letter-spacing: 2.5px;
+  color: var(--primary-dark);
+  margin: 0 0 28px;
 }
-
-.check {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 600;
-  cursor: pointer;
-}
-.check input {
-  appearance: none;
-  -webkit-appearance: none;
-  width: 22px;
-  height: 22px;
-  min-height: 0;
-  margin: 0;
-  border-radius: 6px;
-  border: 2px solid #b4c9e4;
-  background: #fff;
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-}
-.check input:checked {
-  background: var(--primary);
-  border-color: var(--primary);
-}
-.check input:checked:after {
-  content: '✓';
-  color: #fff;
-  font-size: 14px;
-  line-height: 1;
-}
-
-.link {
-  border: 0;
-  background: none;
-  color: var(--primary);
-  font-weight: 700;
-  padding: 0;
-  font-size: 13px;
-}
-
-.login-btn {
+.btn-get-started {
   position: relative;
-  width: 100%;
-  min-height: 60px;
-  border: 0;
-  border-radius: 28px;
-  color: #fff;
-  font: 700 18px 'Manrope', sans-serif;
-  background: linear-gradient(180deg, #3aa9f7, #156bc2);
-  box-shadow: 0 12px 26px rgba(24, 119, 201, 0.4), inset 0 2px 0 rgba(255, 255, 255, 0.4);
   display: flex;
   align-items: center;
   justify-content: center;
+  width: min(320px, 100%);
+  min-height: 64px;
+  padding: 0 64px;
+  background: linear-gradient(135deg, var(--brand-cyan), var(--primary-blue));
+  color: #fff;
+  border: 0;
+  border-radius: 36px;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 19px;
+  letter-spacing: 0.5px;
+  box-shadow: 0 12px 28px rgba(24, 119, 201, 0.35), inset 0 2px 0 rgba(255, 255, 255, 0.35);
 }
-.login-btn .go {
+.btn-get-started .go {
   position: absolute;
-  right: 9px;
-  top: 9px;
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.22);
-  display: grid;
-  place-items: center;
-}
-
-.login-msg {
-  min-height: 20px;
-  margin: 12px 0 0;
-  font-size: 13.5px;
-  text-align: center;
-  color: var(--muted);
-}
-
-.service.addon.has { border: 2px solid var(--primary); background: #ebf5fe; }
-.stepper { display: flex; align-items: center; gap: 12px; }
-.stepper button {
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  border: 1.5px solid var(--border);
+  background: rgba(255, 255, 255, 0.25);
+  display: grid;
+  place-items: center;
+}
+.btn-get-started .go svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.btn-get-started:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 32px rgba(24, 119, 201, 0.45), inset 0 2px 0 rgba(255, 255, 255, 0.35);
+}
+.btn-get-started:focus-visible {
+  outline: 3px solid #5bb0ee;
+  outline-offset: 4px;
+}
+@media (hover: none) {
+  .btn-get-started:hover { transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .splash-logo { animation: none; }
+}
+
+/* Page 2: Sign-in Options */
+.login-wrap {
+  position: relative;
+  z-index: 1;
+  width: min(1040px, 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(18px, 4vh, 34px);
+}
+.login-title {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: clamp(32px, 5vw, 50px);
+  letter-spacing: -1px;
+  margin: 0;
+  text-align: center;
+  background: linear-gradient(90deg, var(--primary-dark), #2fb0c0);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+.login-card {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(28px, 6vw, 72px);
+  align-items: center;
+  padding: clamp(24px, 4vw, 44px);
+  border: 2px solid transparent;
+  border-radius: 36px;
+  background:
+    linear-gradient(rgba(248, 252, 254, 0.92), rgba(248, 252, 254, 0.92)) padding-box,
+    linear-gradient(135deg, #9fe3ef, var(--primary-blue)) border-box;
+  box-shadow: var(--shadow-lg);
+}
+@media (max-width: 860px) {
+  .login-card { grid-template-columns: 1fr; }
+}
+.login-col-title {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 17px;
+  color: var(--primary-dark);
+  text-align: center;
+  margin: 0 0 16px;
+}
+.rfid-box {
+  display: grid;
+  place-items: center;
+  min-height: 210px;
   background: #fff;
-  color: var(--primary);
+  border: 2px solid var(--primary-dark);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all .2s;
+}
+.rfid-box:hover {
+  background: #f4faff;
+  border-color: var(--brand-cyan);
+  box-shadow: 0 8px 22px rgba(46, 163, 248, 0.2);
+}
+.rfid-icon { color: var(--brand-cyan); display: block; }
+.rfid-icon svg {
+  width: 110px;
+  height: 110px;
+  display: block;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 6;
+  stroke-linecap: round;
+}
+.rfid-icon svg .dot { fill: currentColor; stroke: none; }
+.rfid-hint {
+  display: block;
+  text-align: center;
+  color: var(--muted);
+  font-size: 12.5px;
+  margin-top: 12px;
+}
+
+/* Sign-in fields (scoped so the order modal inputs stay unchanged) */
+.login-card .form-field { margin-bottom: 22px; }
+.login-card .form-field label {
+  font-family: 'Manrope', sans-serif;
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--primary-dark);
+  margin-bottom: 8px;
+}
+.input-wrap { position: relative; }
+.login-card .form-field input {
+  min-height: 56px;
+  padding: 14px 52px 14px 52px;
+  border: 2px solid var(--primary-dark);
+  border-radius: 10px;
+  background: #fff;
+  font-size: 16px;
+}
+.login-card .form-field input:focus {
+  border-color: var(--brand-cyan);
+  box-shadow: 0 0 0 3px rgba(46, 163, 248, 0.18);
+}
+.in-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
+  color: var(--brand-cyan);
+  pointer-events: none;
+}
+.eye-btn {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--muted);
+  display: grid;
+  place-items: center;
+}
+.eye-btn:active { transform: translateY(-50%) scale(0.95); }
+.eye-btn svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.eye-btn[aria-pressed="true"] .slash { display: none; }
+.login-card .btn-login {
+  min-height: 58px;
+  margin-top: 26px;
+  border-radius: 16px;
+  font-family: 'Manrope', sans-serif;
+  font-size: 24px;
+  background: linear-gradient(90deg, #5fdde8, var(--primary-blue) 60%, #0a4aa8);
+  box-shadow: 0 12px 26px rgba(24, 119, 201, 0.3);
+}
+.form-field {
+  text-align: left;
+  margin-bottom: 14px;
+}
+.form-field label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: var(--ink);
+}
+.form-field input {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1.5px solid var(--border);
+  background: #fafcfe;
+  font-size: 15px;
+}
+.form-field input:focus {
+  outline: 0;
+  border-color: var(--brand-cyan);
+  box-shadow: 0 0 0 3px rgba(46, 163, 248, 0.18);
+}
+.btn-login {
+  width: 100%;
+  background: var(--primary-blue);
+  color: #fff;
+  border: 0;
+  padding: 15px;
+  border-radius: 14px;
+  font-weight: 800;
+  font-size: 16px;
+  margin-top: 10px;
+}
+.login-status {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 10px;
+  min-height: 18px;
+}
+
+header {
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(14px);
+  border-bottom: 1.5px solid var(--border);
+  padding: 14px 4%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.brand-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
   font-size: 22px;
-  line-height: 1;
+  letter-spacing: -0.5px;
+  color: var(--primary-dark);
 }
-.stepper output { min-width: 24px; text-align: center; font-weight: 800; font-size: 16px; }
+.brand-logo-icon {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.brand-logo-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+.brand-link-symbol {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 3px;
+  color: #2ea3f8;
+  vertical-align: middle;
+}
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.nav-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 18px;
+  border-radius: 28px;
+  border: 1.5px solid var(--border);
+  background: #ffffff;
+  color: var(--ink);
+  font-weight: 700;
+  font-size: 13.5px;
+  letter-spacing: 0.3px;
+}
+.nav-tab-btn:hover {
+  background: #f0f7fe;
+  border-color: #bcd9f5;
+}
+.nav-tab-btn.active {
+  background: var(--primary-blue);
+  color: #ffffff;
+  border-color: var(--primary-blue);
+  box-shadow: 0 4px 12px rgba(24, 119, 201, 0.24);
+}
+.btn-current-order {
+  background: #f59e0b;
+  color: #fff;
+  border: 0;
+  padding: 9px 18px;
+  border-radius: 28px;
+  font-weight: 800;
+  font-size: 13.5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+  animation: pulse-order 1.8s infinite;
+}
+@keyframes pulse-order {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+}
+.order-badge-count {
+  background: #fff;
+  color: #d97706;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 800;
+}
+.btn-edit-services {
+  background: #0284c7;
+  color: #fff;
+  border: 0;
+  padding: 9px 18px;
+  border-radius: 28px;
+  font-weight: 700;
+  font-size: 13.5px;
+}
+.btn-logout {
+  background: #e2e8f0;
+  color: #334155;
+  border: 0;
+  padding: 9px 16px;
+  border-radius: 28px;
+  font-weight: 700;
+  font-size: 13.5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-logout:hover {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
 
-@media print {
-  @page { margin: 2mm; size: 80mm auto; }
-  body > *:not(dialog) { display: none !important; }
-  body { display: block; background: #fff; margin: 0; padding: 0; }
-  dialog {
-    position: static;
-    width: 100%;
-    max-width: 320px;
-    margin: 0 auto;
-    max-height: none;
-    padding: 0;
-    box-shadow: none;
-    border: none;
-    overflow: visible;
-    display: block !important;
-  }
-  #modal-body {
-    padding: 0 !important;
-    overflow: visible !important;
-  }
-  dialog::backdrop { display: none; }
-  .close, .print-hide { display: none !important; }
-  .receipt, .receipt *, .load-slip, .load-slip * {
-    color: #000000 !important;
-    text-shadow: none !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-  .receipt-page-break {
-    page-break-after: always;
-    break-after: page;
-  }
+/* Header pills (scoped, so the checkout modal button is unaffected) */
+.header-nav { gap: 14px; }
+.header-nav .nav-tab-btn {
+  gap: 12px;
+  min-height: 54px;
+  padding: 0 30px;
+  border: 2.5px solid transparent;
+  border-radius: 30px;
+  background:
+    linear-gradient(#fff, #fff) padding-box,
+    linear-gradient(90deg, #5fdde8, var(--primary-blue)) border-box;
+  color: #2f3a8f;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 16px;
+  box-shadow: none;
+}
+.header-nav .nav-tab-btn:hover {
+  background:
+    linear-gradient(#f2f9ff, #f2f9ff) padding-box,
+    linear-gradient(90deg, #5fdde8, var(--primary-blue)) border-box;
+}
+.header-nav .nav-tab-btn.active {
+  background: linear-gradient(90deg, #4fb6e8, var(--primary-blue));
+  color: #fff;
+}
+.header-nav .nav-tab-btn svg,
+.header-nav .btn-logout svg,
+.btn-edit-services svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: var(--brand-cyan);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex-shrink: 0;
+}
+.header-nav .nav-tab-btn.active svg { stroke: #fff; }
+
+.header-nav .btn-logout {
+  gap: 12px;
+  min-height: 54px;
+  padding: 0 30px;
+  border-radius: 30px;
+  background: #1a5ea6;
+  color: #fff;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 16px;
+}
+.header-nav .btn-logout svg { stroke: #fff; }
+.header-nav .btn-logout:hover { background: #0f4a85; color: #fff; }
+
+.header-nav .btn-current-order {
+  min-height: 54px;
+  padding: 0 26px;
+  font-family: 'Manrope', sans-serif;
+  font-size: 16px;
 }
 
-@media (min-width: 900px) and (orientation: landscape) {
-  .login { width: min(920px, 100%); grid-template-columns: 1fr 1fr; gap: 36px 64px; align-items: center; }
+.btn-edit-services {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 46px;
+  padding: 0 28px;
+  background: #1a5ea6;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 16px;
 }
+.btn-edit-services svg { stroke: #fff; width: 20px; height: 20px; }
 
 @media (max-width: 900px) {
-  .stats-ribbon { grid-template-columns: repeat(2, 1fr); }
-  .cards { grid-template-columns: 1fr; }
+  .header-nav .nav-tab-btn,
+  .header-nav .btn-logout,
+  .header-nav .btn-current-order { min-height: 46px; padding: 0 18px; font-size: 14px; }
 }
 
+/* Header pills (scoped, so the checkout modal button is unaffected) */
+.header-nav { gap: 14px; }
+.header-nav .nav-tab-btn {
+  gap: 12px;
+  min-height: 54px;
+  padding: 0 30px;
+  border: 2.5px solid transparent;
+  border-radius: 30px;
+  background:
+    linear-gradient(#fff, #fff) padding-box,
+    linear-gradient(90deg, #5fdde8, var(--primary-blue)) border-box;
+  color: #2f3a8f;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 16px;
+  box-shadow: none;
+}
+.header-nav .nav-tab-btn:hover {
+  background:
+    linear-gradient(#f2f9ff, #f2f9ff) padding-box,
+    linear-gradient(90deg, #5fdde8, var(--primary-blue)) border-box;
+}
+.header-nav .nav-tab-btn.active {
+  background: linear-gradient(90deg, #4fb6e8, var(--primary-blue));
+  color: #fff;
+}
+
+.header-nav .nav-tab-btn svg,
+.header-nav .btn-logout svg,
+.btn-edit-services svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: var(--brand-cyan);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex-shrink: 0;
+}
+.header-nav .nav-tab-btn.active svg { stroke: #fff; }
+
+.header-nav .btn-logout {
+  gap: 12px;
+  min-height: 54px;
+  padding: 0 30px;
+  border-radius: 30px;
+  background: #1a5ea6;
+  color: #fff;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 16px;
+}
+.header-nav .btn-logout svg { stroke: #fff; }
+.header-nav .btn-logout:hover { background: #0f4a85; color: #fff; }
+
+.header-nav .btn-current-order {
+  min-height: 54px;
+  padding: 0 26px;
+  font-family: 'Manrope', sans-serif;
+  font-size: 16px;
+}
+
+.btn-edit-services {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 46px;
+  padding: 0 28px;
+  background: #1a5ea6;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 16px;
+}
+.btn-edit-services svg { stroke: #fff; width: 20px; height: 20px; }
+
+@media (max-width: 900px) {
+  .header-nav .nav-tab-btn,
+  .header-nav .btn-logout,
+  .header-nav .btn-current-order { min-height: 46px; padding: 0 18px; font-size: 14px; }
+}
+
+main {
+  flex: 1;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 24px 4% 40px;
+}
+
+.view-section {
+  display: none;
+}
+.view-section.active {
+  display: block;
+}
+
+.section-head-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.section-head-bar h2 {
+  font-family: 'Manrope', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  margin: 0;
+  color: #2f3a8f;
+  letter-spacing: -0.2px;
+  display: inline-block;
+}
+.section-head-bar h2::after {
+  content: '';
+  display: block;
+  height: 3px;
+  margin-top: 6px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #5fdde8, var(--primary-blue));
+}
+.section-head-bar small {
+  color: var(--muted);
+  font-size: 13.5px;
+}
+
+/* Services Grid (Pages 3 & 5) */
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 18px;
+}
+@media (max-width: 1200px) {
+  .services-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 760px) {
+  .services-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 480px) {
+  .services-grid { grid-template-columns: 1fr; }
+}
+
+.service-card {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 22px 16px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 220px;
+  box-shadow: var(--shadow-sm);
+  transition: all .2s;
+}
+.service-card:hover {
+  border-color: #7bc0f7;
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+.service-card.highlight-added {
+  border-color: #f59e0b;
+  background: #fffdf5;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.22);
+}
+.service-card-icon {
+  width: 58px;
+  height: 58px;
+  border-radius: 18px;
+  background: var(--primary-light);
+  color: var(--primary-blue);
+  display: grid;
+  place-items: center;
+  font-size: 26px;
+  margin-bottom: 12px;
+}
+.service-card-title {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 16px;
+  margin: 0 0 6px;
+  color: var(--ink);
+}
+.service-card-price {
+  background: var(--brand-cyan);
+  color: #fff;
+  font-weight: 800;
+  font-size: 14.5px;
+  padding: 7px 18px;
+  border-radius: 20px;
+  margin-top: 10px;
+  width: 100%;
+}
+
+/* Services grid: icon, name, full-width price bar */
+.services-grid { gap: 22px 28px; }
+.service-card {
+  padding: 0;
+  overflow: hidden;
+  border: 2px solid #55b0e6;
+  border-radius: 12px;
+  min-height: 240px;
+  justify-content: flex-start;
+  box-shadow: none;
+}
+.service-card-icon {
+  flex: 1;
+  width: 100%;
+  height: auto;
+  margin: 0;
+  border-radius: 0;
+  background: none;
+  font-size: clamp(40px, 4.2vw, 58px);
+  padding-top: 18px;
+}
+.service-card-title {
+  font-size: 15px;
+  color: #2f3a8f;
+  margin: 0 0 14px;
+  padding: 0 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+.service-card small { display: none; }
+.service-card-price {
+  margin: 0;
+  border-radius: 0;
+  padding: 9px 0;
+  font-size: 19px;
+  background: #52aee6;
+}
+
+.data-table-card {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 14px;
+}
+.data-table th {
+  background: #f1f7fd;
+  padding: 14px 18px;
+  font-weight: 800;
+  font-size: 12.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--muted);
+  border-bottom: 1.5px solid var(--border);
+}
+.data-table td {
+  padding: 16px 18px;
+  border-bottom: 1px solid #edf3f9;
+  color: var(--ink);
+  vertical-align: middle;
+}
+.data-table tr:hover td {
+  background: #fafcfe;
+}
+.order-num-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  color: var(--primary-blue);
+  background: #f0f7fe;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+.badge-pay {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.badge-pay.paid { background: var(--success-soft); color: var(--success); }
+.badge-pay.unpaid { background: var(--danger-soft); color: var(--danger); }
+
+.status-select {
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 10px;
+  background: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.btn-del-action {
+  background: #fff;
+  color: var(--danger);
+  border: 1.5px solid #fecdd3;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+}
+.btn-del-action:hover {
+  background: var(--danger);
+  color: #fff;
+  border-color: var(--danger);
+}
+.btn-restore-action {
+  background: #fff;
+  color: var(--primary-blue);
+  border: 1.5px solid #bcd9f5;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+  margin-right: 6px;
+}
+.btn-restore-action:hover {
+  background: var(--primary-blue);
+  color: #fff;
+}
+
+.btn-compute-total {
+  background: var(--primary-blue);
+  color: #fff;
+  border: 0;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 14px;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  background: rgba(15, 36, 56, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  transition: opacity .25s ease, visibility .25s ease;
+}
+.modal-overlay.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.modal-window {
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 25px 60px -15px rgba(15, 36, 56, 0.35);
+  width: min(600px, 96vw);
+  max-height: min(90vh, 760px);
+  overflow-y: auto;
+  position: relative;
+  padding: 28px 30px;
+}
+.modal-close-btn {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 0;
+  background: #f1f5f9;
+  color: var(--muted);
+  font-size: 20px;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+}
+.modal-close-btn:hover {
+  background: #e2e8f0;
+  color: var(--ink);
+}
+
+/* Page 4: Service Order Modal elements */
+.service-modal-header {
+  border-bottom: 1.5px solid var(--border);
+  padding-bottom: 14px;
+  margin-bottom: 18px;
+}
+.service-modal-header h3 {
+  font-family: 'Manrope', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  margin: 0;
+}
+.service-modal-header p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+.dial-kg-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin: 16px 0;
+}
+.dial-btn {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: #fff;
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--primary-blue);
+}
+.dial-btn:hover { background: #f0f7fe; border-color: var(--brand-cyan); }
+.kg-input-box {
+  width: 140px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 32px;
+  font-weight: 800;
+  text-align: center;
+  border: 2px solid var(--border);
+  border-radius: 14px;
+  padding: 8px 10px;
+}
+.addons-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 16px 0;
+}
+.addon-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: #f8fafc;
+  border: 1px solid var(--border);
+}
+.addon-stepper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.addon-step-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: #fff;
+  font-weight: 800;
+  color: var(--primary-blue);
+}
+.calc-summary-box {
+  background: #edf5fe;
+  border-radius: 14px;
+  padding: 16px;
+  margin: 18px 0;
+  border: 1.5px solid #c8e1f8;
+}
+.calc-summary-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+.calc-summary-row.total-bold {
+  border-top: 1.5px dashed #adcfe8;
+  padding-top: 8px;
+  margin-top: 8px;
+  font-weight: 800;
+  font-size: 18px;
+  color: var(--primary-dark);
+}
+.modal-actions-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 18px;
+}
+.btn-modal-addmore {
+  background: #ffffff;
+  color: var(--primary-blue);
+  border: 2px solid var(--primary-blue);
+  border-radius: 12px;
+  padding: 14px;
+  font-weight: 800;
+  font-size: 15px;
+}
+.btn-modal-placeorder {
+  background: linear-gradient(135deg, var(--brand-cyan), var(--primary-blue));
+  color: #ffffff;
+  border: 0;
+  border-radius: 12px;
+  padding: 14px;
+  font-weight: 800;
+  font-size: 15px;
+}
+
+.receipt-paper {
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 20px 16px;
+  font-family: 'DM Sans', -apple-system, sans-serif;
+  color: #000000 !important;
+  text-align: center;
+}
+.receipt-paper * { color: #000000 !important; }
+.receipt-logo-mark {
+  font-size: 26px;
+  display: block;
+  margin-bottom: 2px;
+}
+.receipt-claim-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 28px;
+  font-weight: 800;
+  margin: 8px 0;
+  letter-spacing: 1px;
+}
+.receipt-items-table {
+  width: 100%;
+  border-top: 1.5px dashed #000;
+  border-bottom: 1.5px dashed #000;
+  padding: 10px 0;
+  margin: 12px 0;
+  font-size: 13px;
+  text-align: left;
+}
+.receipt-items-table div {
+  margin-bottom: 6px;
+}
+.receipt-qr-center {
+  display: table;
+  margin: 12px auto;
+  padding: 6px;
+  background: #fff;
+}
+
+/* Page 8 Carousel for Employee Slips */
+.slips-carousel-container {
+  position: relative;
+  overflow: hidden;
+  margin: 16px 0;
+}
+.slips-viewport {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
 @media (max-width: 600px) {
-  main { padding: 24px 18px; }
-  .stats-ribbon { grid-template-columns: 1fr; }
-  .welcome { flex-direction: column; align-items: flex-start; gap: 8px; }
-  .welcome-note { text-align: left; }
-  .header-right time { display: none; }
+  .slips-viewport { grid-template-columns: 1fr; }
+}
+.carousel-nav-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+.carousel-btn {
+  background: #f1f5f9;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* Fabric type buttons (Dry only) */
+.cat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 10px 0 4px;
+}
+.cat-btn {
+  text-align: left;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  background: #fafcfe;
+  color: var(--ink);
+  padding: 12px 14px;
+}
+.cat-btn small {
+  display: block;
+  color: var(--muted);
+  margin-top: 3px;
+  font-size: 12px;
+}
+.cat-btn.selected {
+  border-color: var(--primary-blue);
+  background: var(--primary-light);
+}
+
+/* Fabric type buttons (Dry only) */
+.cat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 10px 0 4px;
+}
+.cat-btn {
+  text-align: left;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  background: #fafcfe;
+  color: var(--ink);
+  padding: 12px 14px;
+}
+.cat-btn small {
+  display: block;
+  color: var(--muted);
+  margin-top: 3px;
+  font-size: 12px;
+}
+.cat-btn.selected {
+  border-color: var(--primary-blue);
+  background: var(--primary-light);
+}
+
+/* Service card icons (line icons instead of emoji) */
+.service-card-icon svg {
+  width: clamp(44px, 4.6vw, 62px);
+  height: clamp(44px, 4.6vw, 62px);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Orders table (matches design) */
+#view-orders .data-table-card {
+  border: 2px solid #0558a0;
+  border-radius: 0;
+  box-shadow: none;
+  overflow-x: auto;
+}
+#view-orders .data-table {
+  min-width: 880px;
+  border-collapse: collapse;
+  text-align: center;
+  font-size: 14px;
+}
+#view-orders .data-table th {
+  background: #0558a0;
+  color: #fff;
+  text-align: center;
+  font-family: 'Manrope', sans-serif;
+  font-size: 13px;
+  letter-spacing: 1.4px;
+  padding: 20px 12px;
+  border-bottom: 0;
+}
+#view-orders .data-table td {
+  border: 1.5px solid #0558a0;
+  padding: 10px;
+  height: 62px;
+  text-align: center;
+  color: var(--ink);
+}
+#view-orders .data-table tr:hover td { background: #f4faff; }
+
+.pill-select {
+  position: relative;
+  display: inline-block;
+  min-width: 150px;
+}
+.pill-select select {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  border: 0;
+  border-radius: 6px;
+  padding: 9px 40px 9px 16px;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 15px;
+  color: #fff;
+  text-align: left;
+  cursor: pointer;
+}
+.pill-select::after {
+  content: '';
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 12px solid #fff;
+  pointer-events: none;
+}
+.pill-select select option {
+  color: var(--ink);
+  background: #fff;
+  font-weight: 600;
+}
+.pill-select.paid select,
+.pill-select.received select { background: #44bd82; }
+.pill-select.unpaid select { background: #e24b3c; }
+.pill-select.processing select { background: #eeb347; }
+.pill-select.pickup select { background: #4fb0e6; }
+.pill-select.claimed select { background: #6b7c93; }
+
+#view-orders .btn-del-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #e24b3c;
+  color: #fff;
+  border: 0;
+  border-radius: 6px;
+  padding: 10px 16px;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 15px;
+}
+#view-orders .btn-del-action:hover { background: #c63a2c; color: #fff; }
+#view-orders .btn-del-action svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.form-field input[readonly] {
+  background: #eef4fa;
+  color: var(--muted);
+  cursor: not-allowed;
+}
+
+/* Nav buttons: no outline when pressed */
+.header-nav button,
+.header-nav button:focus,
+.header-nav button:focus-visible,
+.header-nav button:active {
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.header-nav .nav-tab-btn.active {
+  background: linear-gradient(90deg, #4fb6e8, var(--primary-blue)) border-box;
+  border-color: transparent;
+}
+
+/* Bigger service cards that scale with the screen */
+@media (min-width: 1500px) {
+  main { max-width: 1800px; }
+}
+.services-grid { gap: clamp(14px, 2vw, 32px); }
+.service-card {
+  min-height: clamp(280px, 50vh, 560px);
+  border-radius: clamp(12px, 1.2vw, 20px);
+}
+.service-card-icon svg {
+  width: clamp(52px, 6vw, 104px);
+  height: clamp(52px, 6vw, 104px);
+}
+.service-card-title {
+  font-size: clamp(15px, 1.35vw, 24px);
+  margin-bottom: clamp(14px, 1.6vw, 26px);
+}
+.service-card-price {
+  font-size: clamp(18px, 1.6vw, 28px);
+  padding: clamp(10px, 1.1vw, 16px) 0;
+}
+
+/* Checkout buttons: same light blue */
+#btn-pay-on-claim,
+#btn-pay-now {
+  background: #52aee6;
+  color: #fff;
+  border: 0;
+  border-radius: 12px;
+  box-shadow: none;
+}
+#btn-pay-on-claim:hover,
+#btn-pay-now:hover { background: #3f9fda; }
+
+/* Receipts: no scrolling (they shrink to fit instead) */
+#modal-cust-receipt .modal-window,
+#modal-emp-receipt .modal-window {
+  max-height: none;
+  overflow: visible;
+}
+
+/* Back arrow on the receipt */
+.modal-back-btn {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 0;
+  background: #f1f5f9;
+  color: var(--muted);
+  display: grid;
+  place-items: center;
+}
+.modal-back-btn:hover { background: #e2e8f0; color: var(--ink); }
+.modal-back-btn svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@media print {
+  .modal-window { transform: none !important; }
+  .modal-back-btn { display: none !important; }
+}
+
+/* Print thermal overrides */
+@media print {
+  @page { margin: 2mm; size: 80mm auto; }
+  body > *:not(.modal-overlay:not(.hidden)) { display: none !important; }
+  .modal-overlay { position: static; background: none; padding: 0; }
+  .modal-window { box-shadow: none; border: none; padding: 0; width: 100%; max-width: 320px; }
+  .modal-close-btn, .print-hide-btn, .carousel-nav-bar { display: none !important; }
+  .receipt-paper, .receipt-paper * { color: #000000 !important; }
 }
 </style>
 </head>
 <body>
 
-<section id="welcome" class="welcome-screen" aria-label="Sign in">
-  <div class="bubbles" aria-hidden="true">
-    <i style="--x:4%;--s:70px;--d:11s;--dl:-2s;"></i>
-    <i style="--x:14%;--s:38px;--d:8s;--dl:-6s;"></i>
-    <i style="--x:22%;--s:110px;--d:15s;--dl:-9s;"></i>
-    <i style="--x:31%;--s:50px;--d:9s;--dl:-1s;"></i>
-    <i style="--x:42%;--s:85px;--d:13s;--dl:-5s;"></i>
-    <i style="--x:54%;--s:60px;--d:12s;--dl:-10s;"></i>
-    <i style="--x:66%;--s:130px;--d:17s;--dl:-7s;"></i>
-    <i style="--x:78%;--s:75px;--d:12s;--dl:-8s;"></i>
-    <i style="--x:89%;--s:95px;--d:14s;--dl:-11s;"></i>
+<section id="screen-splash" class="screen-layer">
+  <div class="splash-bubbles" aria-hidden="true">
+    <i style="--x:4%;--s:70px;--d:11s;--dl:-2s;--y:70%"></i>
+    <i style="--x:12%;--s:34px;--d:8s;--dl:-6s;--y:40%"></i>
+    <i style="--x:20%;--s:120px;--d:15s;--dl:-9s;--y:55%"></i>
+    <i style="--x:29%;--s:46px;--d:9s;--dl:-1s;--y:80%"></i>
+    <i style="--x:37%;--s:90px;--d:13s;--dl:-5s;--y:30%"></i>
+    <i style="--x:45%;--s:28px;--d:7s;--dl:-3s;--y:65%"></i>
+    <i style="--x:53%;--s:64px;--d:12s;--dl:-10s;--y:20%"></i>
+    <i style="--x:61%;--s:140px;--d:17s;--dl:-7s;--y:75%"></i>
+    <i style="--x:69%;--s:40px;--d:8.5s;--dl:-4s;--y:45%"></i>
+    <i style="--x:77%;--s:80px;--d:12s;--dl:-8s;--y:60%"></i>
+    <i style="--x:84%;--s:30px;--d:7.5s;--dl:-2.5s;--y:25%"></i>
+    <i style="--x:90%;--s:104px;--d:14s;--dl:-11s;--y:85%"></i>
+    <i style="--x:95%;--s:52px;--d:10s;--dl:-6.5s;--y:35%"></i>
   </div>
-  <div class="login">
-    <div class="landing-title-wrap">
-      <p class="landing-title"><span>LABADA-LINK</span>A QR CODE-BASED SYSTEM FOR LAUNDRY ORDER RECORDING, VERIFICATION, AND TRACKING</p>
+  <div class="splash-bubbles" aria-hidden="true">
+    <i style="--x:4%;--s:70px;--d:11s;--dl:-2s;--y:70%"></i>
+    <i style="--x:12%;--s:34px;--d:8s;--dl:-6s;--y:40%"></i>
+    <i style="--x:20%;--s:120px;--d:15s;--dl:-9s;--y:55%"></i>
+    <i style="--x:29%;--s:46px;--d:9s;--dl:-1s;--y:80%"></i>
+    <i style="--x:37%;--s:90px;--d:13s;--dl:-5s;--y:30%"></i>
+    <i style="--x:45%;--s:28px;--d:7s;--dl:-3s;--y:65%"></i>
+    <i style="--x:53%;--s:64px;--d:12s;--dl:-10s;--y:20%"></i>
+    <i style="--x:61%;--s:140px;--d:17s;--dl:-7s;--y:75%"></i>
+    <i style="--x:69%;--s:40px;--d:8.5s;--dl:-4s;--y:45%"></i>
+    <i style="--x:77%;--s:80px;--d:12s;--dl:-8s;--y:60%"></i>
+    <i style="--x:84%;--s:30px;--d:7.5s;--dl:-2.5s;--y:25%"></i>
+    <i style="--x:90%;--s:104px;--d:14s;--dl:-11s;--y:85%"></i>
+    <i style="--x:95%;--s:52px;--d:10s;--dl:-6.5s;--y:35%"></i>
+  </div>
+  <div class="splash-box">
+    <div class="splash-logo">
+      <!-- REPLACE 'logo.png' WITH YOUR IMAGE PATH OR URL HERE -->
+      <img src="logo.jfif" alt="Labada Link Logo" class="brand-img-src" onerror="this.onerror=null; this.parentElement.classList.add('img-fallback');">
     </div>
-    <div class="tap">
-      <button type="button" class="rfid-tile" id="rfid" aria-label="Sign in with RFID card">
-        <svg viewBox="0 0 64 64">
-          <rect x="6" y="16" width="38" height="30" rx="6"/>
-          <rect x="13" y="24" width="10" height="8" rx="2"/>
-          <path d="M13 39h18"/>
-          <path d="M50 23c4 5 4 13 0 18"/>
-          <path d="M56 17c7 8 7 22 0 30"/>
-        </svg>
-      </button>
-      <h1>Staff Terminal</h1>
-      <p class="sub">Tap RFID card to sign in</p>
-      <div class="alt-row">
-        <button type="button" class="alt" id="key-btn" aria-label="Sign in with key tag">
-          <svg viewBox="0 0 28 28">
-            <circle cx="14" cy="5" r="3"/>
-            <rect x="7" y="10" width="14" height="15" rx="3.5"/>
-            <circle cx="14" cy="15.5" r="1.6"/>
-            <path d="M14 17.5v3"/>
-          </svg>
-        </button>
-        <button type="button" class="alt" id="pad-btn" aria-label="Sign in with keypad PIN">
-          <svg viewBox="0 0 32 32">
-            <rect x="4" y="4" width="24" height="24" rx="6"/>
-            <circle class="fill" cx="11" cy="11" r="1.8"/>
-            <circle class="fill" cx="16" cy="11" r="1.8"/>
-            <circle class="fill" cx="21" cy="11" r="1.8"/>
-            <circle class="fill" cx="11" cy="16" r="1.8"/>
-            <circle class="fill" cx="16" cy="16" r="1.8"/>
-            <circle class="fill" cx="21" cy="16" r="1.8"/>
-            <circle class="fill" cx="11" cy="21" r="1.8"/>
-            <circle class="fill" cx="16" cy="21" r="1.8"/>
-            <circle class="fill" cx="21" cy="21" r="1.8"/>
-          </svg>
-        </button>
+    <button type="button" class="btn-get-started" id="btn-get-started"><span>Get Started</span><span class="go"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></button>
+  </div>
+</section>
+
+<section id="screen-login" class="screen-layer hidden">
+  <div class="splash-bubbles" aria-hidden="true">
+    <i style="--x:4%;--s:70px;--d:11s;--dl:-2s;--y:70%"></i>
+    <i style="--x:12%;--s:34px;--d:8s;--dl:-6s;--y:40%"></i>
+    <i style="--x:20%;--s:120px;--d:15s;--dl:-9s;--y:55%"></i>
+    <i style="--x:29%;--s:46px;--d:9s;--dl:-1s;--y:80%"></i>
+    <i style="--x:37%;--s:90px;--d:13s;--dl:-5s;--y:30%"></i>
+    <i style="--x:45%;--s:28px;--d:7s;--dl:-3s;--y:65%"></i>
+    <i style="--x:53%;--s:64px;--d:12s;--dl:-10s;--y:20%"></i>
+    <i style="--x:61%;--s:140px;--d:17s;--dl:-7s;--y:75%"></i>
+    <i style="--x:69%;--s:40px;--d:8.5s;--dl:-4s;--y:45%"></i>
+    <i style="--x:77%;--s:80px;--d:12s;--dl:-8s;--y:60%"></i>
+    <i style="--x:84%;--s:30px;--d:7.5s;--dl:-2.5s;--y:25%"></i>
+    <i style="--x:90%;--s:104px;--d:14s;--dl:-11s;--y:85%"></i>
+    <i style="--x:95%;--s:52px;--d:10s;--dl:-6.5s;--y:35%"></i>
+  </div>
+
+  <div class="login-wrap">
+    <h2 class="login-title">Sign-in Options</h2>
+
+    <div class="login-card">
+      <div class="login-col">
+        <h3 class="login-col-title">Tap RFID key tag to sign-in</h3>
+        <div class="rfid-box" id="rfid-tap-area" title="Tap RFID Key Tag to sign-in">
+          <span class="rfid-icon"><svg viewBox="0 0 100 100"><circle class="dot" cx="50" cy="50" r="7"/><path d="M38 38a17 17 0 0 0 0 24"/><path d="M62 38a17 17 0 0 1 0 24"/><path d="M30 30a29 29 0 0 0 0 40"/><path d="M70 30a29 29 0 0 1 0 40"/><path d="M22 22a41 41 0 0 0 0 56"/><path d="M78 22a41 41 0 0 1 0 56"/></svg></span>
+        </div>
+        <small class="rfid-hint">RFID reader active · Click to simulate tap</small>
       </div>
-    </div>
-    <div class="email-side">
-      <div class="divider">or staff credentials</div>
-      <form id="login-form" novalidate>
-        <label class="ifield">
-          <svg class="lead" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>
-          <input name="email" type="email" autocomplete="username" inputmode="email" placeholder="Staff email or ID" aria-label="Email">
-        </label>
-        <div class="ifield">
-          <svg class="lead" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="3"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/><circle cx="12" cy="16" r="1" fill="currentColor"/></svg>
-          <input name="password" type="password" autocomplete="current-password" placeholder="Passcode" aria-label="Password">
-          <button type="button" class="eye" id="eye" aria-pressed="false" aria-label="Show password">
-            <svg viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/><path class="slash" d="M4 4l16 16"/></svg>
-          </button>
-        </div>
-        <div class="row-opts">
-          <label class="check"><input type="checkbox" name="remember">Remember device</label>
-          <button type="button" class="link" id="forgot">Help</button>
-        </div>
-        <button class="login-btn">Unlock Terminal<span class="go"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></button>
-      </form>
-      <p class="login-msg" id="login-msg" aria-live="polite"></p>
+
+      <div class="login-col">
+        <form id="login-form">
+          <div class="form-field">
+            <label for="login-user">Username:</label>
+            <div class="input-wrap">
+              <svg class="in-icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4.5"/><path d="M3.5 21c0-4.7 3.8-7.5 8.5-7.5s8.5 2.8 8.5 7.5z"/></svg>
+              <input type="text" id="login-user" placeholder="Enter username" autocomplete="username" required value="staff">
+            </div>
+          </div>
+          <div class="form-field">
+            <label for="login-pass">Password:</label>
+            <div class="input-wrap">
+              <svg class="in-icon" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+              <input type="password" id="login-pass" placeholder="Enter password" autocomplete="current-password" required value="1234">
+              <button type="button" class="eye-btn" id="login-eye" aria-pressed="false" aria-label="Show password"><svg viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/><path class="slash" d="M4 4l16 16"/></svg></button>
+            </div>
+          </div>
+          <button type="submit" class="btn-login">Login</button>
+        </form>
+        <div class="login-status" id="login-status-msg"></div>
+      </div>
     </div>
   </div>
 </section>
 
 <header>
-  <div class="brand">
-    <span class="logo">✳</span>
-    <div>Washing Well<small>LAUNDRY SHOP · POS</small></div>
-  </div>
-  <div class="header-right">
-    <div class="badge-staff">
-      <span class="dot-pulse"></span>
-      <span>Terminal Active</span>
+  <div class="brand-wrap">
+    <div class="brand-logo-icon">
+      <!-- REPLACE 'logo.png' WITH YOUR IMAGE PATH OR URL HERE -->
+      <img src="logo.jfif" alt="Labada Link" class="brand-img-src" onerror="this.onerror=null; this.parentElement.classList.add('img-fallback');">
     </div>
-    <time class="time-pill" id="clock"></time>
-    <button type="button" class="lock-btn" id="settings-btn" title="Pricing & Capacities" aria-label="Pricing & Capacities" data-open="settings">
-      <svg viewBox="0 0 24 24" style="width:18px;height:18px;"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83-2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-    </button>
-    <button type="button" class="lock-btn" id="lock-screen-btn" title="Lock Terminal" aria-label="Lock screen">
-      <svg viewBox="0 0 24 24" style="width:18px;height:18px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-    </button>
+    <span>
+      <span style="color:#2ea3f8;">LABADA</span>
+      <span class="brand-link-symbol">
+        <svg viewBox="0 0 24 24" style="width:20px;height:20px;stroke:#2ea3f8;fill:none;stroke-width:2.5;stroke-linecap:round;">
+          <rect x="2" y="8" width="11" height="8" rx="4"/>
+          <rect x="11" y="8" width="11" height="8" rx="4"/>
+        </svg>
+      </span>
+      <span style="color:#1877c9;">LINK</span>
+    </span>
   </div>
+
+    <nav class="header-nav">
+    <button type="button" class="nav-tab-btn active" data-tab="services">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+      <span>SERVICES</span>
+    </button>
+    <button type="button" class="nav-tab-btn" data-tab="orders">
+      <svg viewBox="0 0 24 24"><path d="M9 6h12M9 12h12M9 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg>
+      <span>ORDERS</span>
+    </button>
+    <button type="button" class="nav-tab-btn" data-tab="completed">
+      <svg viewBox="0 0 24 24"><path d="m4 12 5 5L20 6"/></svg>
+      <span>COMPLETED</span>
+    </button>
+    <button type="button" class="nav-tab-btn" data-tab="deleted">
+      <svg viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>
+      <span>DELETED</span>
+    </button>
+
+    <!-- Pop-up button when customer adds to cart (PDF Page 5) -->
+    <button type="button" class="btn-current-order" id="btn-current-order" style="display:none;">
+      <span class="order-badge-count" id="cart-badge-count">0</span>
+      <span>CURRENT ORDER</span>
+    </button>
+
+    <button type="button" class="btn-logout" id="btn-logout" title="Sign out to splash">
+      <svg viewBox="0 0 24 24"><path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h10"/></svg>
+      <span>LOG OUT</span>
+    </button>
+  </nav>
 </header>
 
 <main>
-  <div class="welcome">
-    <div>
-      <div class="eyebrow"><span class="dot-pulse" style="width:6px;height:6px;"></span> Point of Sale · QR Tracking · Order Control</div>
-      <h1>Ready for the next load.</h1>
+  <section id="view-services" class="view-section active">
+    <div class="section-head-bar">
+      <h2>SERVICES</h2>
+      <button type="button" class="btn-edit-services" id="btn-edit-services" title="Edit services and prices">
+        <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+        <span>EDIT</span>
+      </button>
     </div>
-    <div class="welcome-note">
-      <b>Washing Well Biñan Branch</b><br>
-      Sto. Tomas, Biñan, Laguna
+    <div class="services-grid" id="services-grid-container">
+      <!-- Dynamic service cards render here -->
     </div>
-  </div>
+  </section>
 
-  <!-- Operational Overview Ribbon -->
-  <div class="stats-ribbon">
-    <div class="stat-chip">
-      <small>Total Active Loads</small>
-      <b id="kpi-active">0</b>
+  <section id="view-orders" class="view-section">
+    <div class="section-head-bar">
+      <h2>ORDERS</h2>
     </div>
-    <div class="stat-chip">
-      <small>In Wash / Dry / Fold</small>
-      <b id="kpi-processing">0</b>
+    <div class="data-table-card">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>NO.</th>
+            <th>NAME</th>
+            <th>ORDER NO.</th>
+            <th>SUBTOTAL</th>
+            <th>PAYMENT</th>
+            <th>STATUS</th>
+            <th>ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody id="orders-table-body">
+          <!-- Active orders render here -->
+        </tbody>
+      </table>
     </div>
-    <div class="stat-chip">
-      <small>Ready for Release</small>
-      <b id="kpi-ready" style="color:var(--success);">0</b>
-    </div>
-    <div class="stat-chip">
-      <small>Uncollected Revenue</small>
-      <b id="kpi-unpaid" style="color:var(--warning);">₱0</b>
-    </div>
-  </div>
+  </section>
 
-  <div class="cards">
-    <button class="card primary" data-open="order">
-      <span class="icon">
-        <svg viewBox="0 0 32 32"><rect x="5" y="3" width="22" height="26" rx="4"/><circle cx="16" cy="19" r="7"/><path d="M9 8h1m4 0h9M10 19c3-4 6 4 12 0"/></svg>
-      </span>
-      <h2>New order</h2>
-      <p>Weigh laundry, choose service tier, add detergents, and issue a receipt with QR code.</p>
-      <span class="card-bottom">Create transaction <span class="arrow">↗</span></span>
-    </button>
-    <button class="card" data-open="orders">
-      <span class="icon">
-        <svg viewBox="0 0 32 32"><rect x="7" y="4" width="18" height="25" rx="3"/><path d="M12 4V2h8v2M12 12h8m-8 5h8m-8 5h4"/><path d="m20 23 2 2 5-5"/></svg>
-      </span>
-      <h2>Orders & status</h2>
-      <p>Advance laundry batches, mark payments, and reprint customer receipts on demand.</p>
-      <span class="card-bottom">Manage active loads <span class="arrow">↗</span></span>
-    </button>
-    <button class="card" data-open="verify">
-      <span class="icon">
-        <svg viewBox="0 0 32 32"><rect x="4" y="4" width="9" height="9" rx="1"/><rect x="19" y="4" width="9" height="9" rx="1"/><rect x="4" y="19" width="9" height="9" rx="1"/><path d="M19 19h3v3m6-3v9m-9 0h3m3-3h3"/></svg>
-      </span>
-      <h2>Verify & release</h2>
-      <p>Scan receipt QR or look up order code to verify payment and release clean bundles.</p>
-      <span class="card-bottom">Release laundry <span class="arrow">↗</span></span>
-    </button>
-  </div>
+  <section id="view-completed" class="view-section">
+    <div class="section-head-bar">
+      <div>
+        <h2>COMPLETED</h2>
+        <small>Orders that are Paid, For Pick-up or Claimed</small>
+      </div>
+      <button type="button" class="btn-compute-total" id="btn-open-compute-total">COMPUTE TOTAL</button>
+    </div>
+    <div class="data-table-card">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>NO.</th>
+            <th>NAME</th>
+            <th>ORDER NO.</th>
+            <th>SUBTOTAL</th>
+            <th>STATUS</th>
+          </tr>
+        </thead>
+        <tbody id="completed-table-body">
+          <!-- Completed orders render here -->
+        </tbody>
+      </table>
+    </div>
+  </section>
 
-  <div class="help" style="border-top:1px solid var(--border);margin-top:32px;padding:18px 0 0;">
-    <span style="font-weight:600;color:var(--muted);display:flex;align-items:center;gap:8px;">
-      <span class="dot-pulse" style="width:6px;height:6px;"></span> Need assistance with terminal functions?
-    </span>
-    <button data-open="help">Terminal guidelines ↗</button>
-  </div>
+  <section id="view-deleted" class="view-section">
+    <div class="section-head-bar">
+      <div>
+        <h2>DELETED</h2>
+        <small>Orders cancelled/deleted while in "Received" state</small>
+      </div>
+    </div>
+    <div class="data-table-card">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>NO.</th>
+            <th>NAME</th>
+            <th>ORDER NO.</th>
+            <th>SUBTOTAL</th>
+            <th>PAYMENT</th>
+            <th>STATUS</th>
+          </tr>
+        </thead>
+        <tbody id="deleted-table-body">
+          <!-- Deleted orders render here -->
+        </tbody>
+      </table>
+    </div>
+  </section>
 </main>
 
-<footer class="footer">
-  <span>Washing Well Laundry Shop · Blk. 6, Lot 32, Olivarez Homes, Phase 5, Sto. Tomas, Biñan, Laguna</span>
-  <span>Labada-Link Terminal · Laguna System v2.4</span>
-</footer>
+<div id="modal-service" class="modal-overlay hidden">
+  <div class="modal-window">
+    <button type="button" class="modal-close-btn" data-close-modal="service">✕</button>
+    <div class="service-modal-header">
+      <h3 id="modal-service-name">Service Name</h3>
+      <p id="modal-service-desc">Initial Base: ₱90 · 7kg Standard</p>
+    </div>
 
-<dialog id="modal">
-  <div class="dialog-top">
-    <h2 id="modal-title"></h2>
-    <button class="close" aria-label="Close dialog">×</button>
+    <!-- Customer identifier -->
+    <div class="form-field" style="margin-bottom:12px;">
+      <label>Customer Name:</label>
+      <input type="text" id="modal-cust-name" placeholder="e.g. Hannah (or Walk-in)" value="Hannah">
+    </div>
+
+    <!-- Fabric type (Dry only) -->
+    <div id="modal-cat-box"></div>
+
+    <!-- Fold only: staff-entered fee -->
+    <div id="modal-fee-box" style="display:none;">
+      <label style="font-size:13px;font-weight:700;display:block;margin-top:14px;">FOLDING FEE (₱20–₱30):</label>
+      <input type="number" id="modal-fee-input" class="kg-input-box" style="width:100%;font-size:24px;margin:10px 0 14px;" step="1" min="20" max="30" value="20">
+    </div>
+
+    <!-- Weight input: Dial & Manual -->
+    <div id="modal-weight-box">
+      <label style="font-size:13px;font-weight:700;display:block;margin-top:14px;">ENTER KG:</label>
+      <div class="dial-kg-wrap">
+        <button type="button" class="dial-btn" id="dial-minus">−</button>
+        <input type="number" id="dial-weight-input" class="kg-input-box" step="0.5" min="0.5" max="60" value="7.0">
+        <button type="button" class="dial-btn" id="dial-plus">+</button>
+      </div>
+      <small id="modal-cap-hint" style="display:block;text-align:center;color:var(--muted);margin-bottom:14px;"></small>
+    </div>
+
+    <!-- Add ons (wash services only) -->
+    <div id="modal-addons-box">
+      <label style="font-size:13px;font-weight:700;display:block;margin-top:14px;">ADD ONS:</label>
+      <div class="addons-list" id="modal-addons-list">
+        <!-- Add-on rows render here -->
+      </div>
+    </div>
+
+    <!-- Live Calculation Box -->
+    <div class="calc-summary-box">
+      <div class="calc-summary-row">
+        <span>Calculated Physical Loads:</span>
+        <b id="summary-loads">1 Load</b>
+      </div>
+      <div class="calc-summary-row">
+        <span>Service Fee:</span>
+        <span id="summary-service-fee">₱0.00</span>
+      </div>
+      <div class="calc-summary-row">
+        <span>Add-ons Fee:</span>
+        <span id="summary-addons-fee">₱0.00</span>
+      </div>
+      <div class="calc-summary-row total-bold">
+        <span>AUTOMATIC TOTAL:</span>
+        <span id="summary-total-calc">₱0.00</span>
+      </div>
+    </div>
+
+    <div class="modal-actions-row">
+      <button type="button" class="btn-modal-addmore" id="btn-modal-addmore">ADD MORE</button>
+      <button type="button" class="btn-modal-placeorder" id="btn-modal-placeorder">PLACE ORDER</button>
+    </div>
   </div>
-  <div id="modal-body"></div>
-</dialog>
+</div>
 
-<script src="vendor/qrcode.min.js"></script>
+<div id="modal-payment" class="modal-overlay hidden">
+  <div class="modal-window" style="text-align:center;">
+    <button type="button" class="modal-close-btn" data-close-modal="payment">✕</button>
+    <h3 style="font-family:'Manrope',sans-serif;font-size:24px;margin:10px 0 6px;">ORDER CHECKOUT</h3>
+    <p style="color:var(--muted);font-size:14px;margin-bottom:24px;">Please choose customer payment timing:</p>
+
+    <div style="background:#f1f7fd;border:1.5px solid var(--border);border-radius:16px;padding:22px;margin-bottom:28px;">
+      <span style="font-size:12px;font-weight:800;letter-spacing:1px;color:var(--muted);display:block;margin-bottom:4px;">SHOW SUBTOTAL ONLY</span>
+      <b style="font-family:'Manrope',sans-serif;font-size:36px;color:var(--primary-dark);" id="checkout-subtotal-display">₱0.00</b>
+      <div id="checkout-order-summary-lines" style="font-size:13px;color:var(--muted);margin-top:8px;"></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+      <button type="button" class="nav-tab-btn" id="btn-pay-on-claim" style="justify-content:center;padding:16px;font-size:16px;font-weight:800;">PAY ON CLAIM</button>
+      <button type="button" class="btn-modal-placeorder" id="btn-pay-now" style="justify-content:center;padding:16px;font-size:16px;font-weight:800;">PAY NOW</button>
+    </div>
+  </div>
+</div>
+
+<div id="modal-cust-receipt" class="modal-overlay hidden">
+  <div class="modal-window">
+    <button type="button" class="modal-close-btn" data-close-modal="cust-receipt">✕</button>
+    <button type="button" class="modal-back-btn print-hide-btn" id="btn-receipt-back" aria-label="Back to checkout">
+      <svg viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+    </button>
+    <div class="receipt-paper" id="customer-receipt-paper">
+      <div style="width:58px;height:58px;margin:0 auto 4px;" class="receipt-logo-wrap">
+        <!-- REPLACE 'logo.png' WITH YOUR IMAGE PATH OR URL HERE -->
+        <img src="logo.jfif" alt="Logo" class="brand-img-src" style="width:100%;height:100%;object-fit:contain;display:block;" onerror="this.onerror=null; this.parentElement.classList.add('img-fallback');">
+      </div>
+      <b style="font-size:18px;letter-spacing:1px;display:block;">LABADA-LINK</b>
+      <div style="font-size:11px;color:#333;margin:4px 0 8px;">
+        DATE: <span id="cr-date">-</span> &nbsp;|&nbsp; TIME: <span id="cr-time">-</span>
+      </div>
+      <div style="font-size:11px;font-weight:700;">CUSTOMER: <span id="cr-cust-name">-</span></div>
+      <div class="receipt-claim-num" id="cr-claim-no">#1001</div>
+
+      <div class="receipt-items-table" id="cr-items-list">
+        <!-- Item lines -->
+      </div>
+
+      <div style="display:flex;justify-content:space-between;font-weight:800;font-size:15px;margin:8px 0 4px;">
+        <span>SUBTOTAL:</span>
+        <span id="cr-subtotal">₱0.00</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:10px;">
+        <span>TOTAL LOADS:</span>
+        <span id="cr-loads">1</span>
+      </div>
+      <div style="font-size:12px;font-weight:700;" id="cr-pay-status">[ PAID ]</div>
+
+      <p style="font-size:11px;margin:12px 0 4px;">Scan the QR code to check your laundry status.</p>
+      <div class="receipt-qr-center" id="cr-qr-code"></div>
+    </div>
+
+    <button type="button" class="btn-modal-placeorder print-hide-btn" id="btn-print-cust-receipt" style="width:100%;margin-top:16px;">
+      PRINT CUSTOMER RECEIPT
+    </button>
+  </div>
+</div>
+
+<div id="modal-emp-receipt" class="modal-overlay hidden">
+  <div class="modal-window" style="width:min(720px, 96vw);">
+    <button type="button" class="modal-close-btn" data-close-modal="emp-receipt">✕</button>
+    <button type="button" class="modal-back-btn print-hide-btn" id="btn-emp-back" aria-label="Back to customer receipt">
+      <svg viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+    </button>
+    <div style="text-align:center;margin-bottom:12px;">
+      <h3 style="margin:0;font-family:'Manrope',sans-serif;">PRINT EMPLOYEE RECEIPTS</h3>
+      <small style="color:var(--muted);">Same QR code on each bag tag · Max 2 visible per page</small>
+    </div>
+
+    <!-- 2 receipts per page carousel -->
+    <div class="slips-carousel-container">
+      <div class="slips-viewport" id="employee-slips-container">
+        <!-- Dynamic load slips rendered here -->
+      </div>
+    </div>
+
+    <div class="carousel-nav-bar" id="carousel-nav-bar" style="display:none;">
+      <button type="button" class="carousel-btn" id="slip-prev-btn">← Previous</button>
+      <span style="font-size:13px;font-weight:700;" id="slip-page-indicator">Slips 1–2 of 3</span>
+      <button type="button" class="carousel-btn" id="slip-next-btn">Next →</button>
+    </div>
+
+    <button type="button" class="btn-modal-placeorder print-hide-btn" id="btn-print-emp-receipt" style="width:100%;margin-top:16px;">
+      PRINT EMPLOYEE RECEIPT
+    </button>
+  </div>
+</div>
+
+<div id="modal-confirm-status" class="modal-overlay hidden">
+  <div class="modal-window" style="max-width:440px;text-align:center;padding:40px 26px 28px;">
+    <button type="button" class="modal-back-btn" id="btn-confirm-status-back" aria-label="Back">
+      <svg viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+    </button>
+    <h3 id="confirm-status-title" style="font-family:'Manrope',sans-serif;font-size:22px;margin:8px 0 10px;">Change the status?</h3>
+    <p id="confirm-status-detail" style="color:var(--muted);font-size:15px;line-height:1.6;margin:0 0 24px;white-space:pre-line;"></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <button type="button" class="btn-modal-addmore" id="btn-confirm-status-no">NO, CANCEL</button>
+      <button type="button" class="btn-modal-placeorder" id="btn-confirm-status-yes">YES, CHANGE</button>
+    </div>
+  </div>
+</div>
+
+<div id="modal-confirm-pay" class="modal-overlay hidden">
+  <div class="modal-window" style="max-width:440px;text-align:center;padding:40px 26px 28px;">
+    <button type="button" class="modal-back-btn" id="btn-confirm-pay-back" aria-label="Back">
+      <svg viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+    </button>
+    <h3 id="confirm-pay-title" style="font-family:'Manrope',sans-serif;font-size:22px;margin:8px 0 10px;">Did the customer really pay?</h3>
+    <p id="confirm-pay-detail" style="color:var(--muted);font-size:15px;margin:0 0 24px;"></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <button type="button" class="btn-modal-addmore" id="btn-confirm-pay-no">NO, NOT YET</button>
+      <button type="button" class="btn-modal-placeorder" id="btn-confirm-pay-yes">YES, PAID</button>
+    </div>
+  </div>
+</div>
+
+<div id="modal-cancel-confirm" class="modal-overlay hidden">
+  <div class="modal-window" style="max-width:420px;text-align:center;padding:32px 24px;">
+    <h3 style="font-family:'Manrope',sans-serif;font-size:20px;margin:0 0 14px;color:var(--danger);">
+      ARE YOU SURE YOU WANT TO CANCEL YOUR ORDER?
+    </h3>
+    <p style="color:var(--muted);font-size:14px;margin-bottom:24px;">
+      Canceling will discard currently pending items in your cart.
+    </p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <button type="button" class="btn-del-action" id="btn-confirm-cancel-order" style="padding:14px;font-size:14px;">CANCEL ORDER</button>
+      <button type="button" class="btn-modal-placeorder" id="btn-keep-order" style="padding:14px;font-size:14px;">KEEP ORDER</button>
+    </div>
+  </div>
+</div>
+
+<div id="modal-compute-total" class="modal-overlay hidden">
+  <div class="modal-window" style="max-width:460px;">
+    <button type="button" class="modal-close-btn" data-close-modal="compute-total">✕</button>
+    <div style="border-bottom:1.5px solid var(--border);padding-bottom:12px;margin-bottom:16px;">
+      <h3 style="font-family:'Manrope',sans-serif;font-size:22px;margin:0;">COMPLETED TOTAL SUMMARY</h3>
+      <small style="color:var(--muted);">Total revenue breakdown for qualified completed laundry</small>
+    </div>
+
+    <div style="display:grid;gap:14px;font-size:14.5px;">
+      <div style="display:flex;justify-content:space-between;padding:12px 14px;background:#f8fafc;border-radius:10px;">
+        <span>Paid and not yet claimed =</span>
+        <b id="summary-val-pickup" style="color:var(--primary-blue);">₱0.00</b>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:12px 14px;background:#f8fafc;border-radius:10px;">
+        <span>Paid and already claimed =</span>
+        <b id="summary-val-claimed" style="color:var(--success);">₱0.00</b>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:14px 16px;background:var(--primary-light);border-radius:12px;font-weight:800;font-size:17px;color:var(--primary-dark);">
+        <span>Subtotal =</span>
+        <span id="summary-val-subtotal">₱0.00</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="modal-edit-services" class="modal-overlay hidden">
+  <div class="modal-window">
+    <button type="button" class="modal-close-btn" data-close-modal="edit-services">✕</button>
+    <h3 style="font-family:'Manrope',sans-serif;font-size:22px;margin:0 0 16px;">EDIT SERVICES & PRICES</h3>
+    <form id="edit-services-form">
+      <div id="edit-services-list" style="display:grid;gap:12px;margin-bottom:18px;">
+        <!-- Dynamic edit inputs -->
+      </div>
+      <button type="submit" class="btn-modal-placeorder" style="width:100%;">Save Changes</button>
+    </form>
+  </div>
+</div>
+
 <script>
-  if (typeof QRCode === 'undefined') {
-    const s = document.createElement('script');
-    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
-    document.head.appendChild(s);
+const RULES = { excessFee: 20, foldMin: 20, foldMax: 30 };
+
+const CATS = [
+  { name: 'Lightweight', cap: 7, hint: 'Regular apparel · up to 7 kg' },
+  { name: 'Heavy / Comforter', cap: 5, hint: 'Jackets, duvets, blankets · up to 5 kg' }
+];
+
+const DEFAULT_SERVICES = [
+  { id: 'wdf', name: 'Wash, Dry & Fold', price: 170, cap: 7, desc: 'Complete cycle · folding included · 6–7 kg/load' },
+  { id: 'wd', name: 'Wash & Dry only', price: 170, cap: 7, desc: 'Ready to press · 6–7 kg/load' },
+  { id: 'wo', name: 'Wash only', price: 85, cap: 7, desc: 'Per standard wash cycle' },
+  { id: 'do', name: 'Dry only', price: 90, cap: 7, cats: true, desc: 'Tumble drying based on fabric tier' },
+  { id: 'fo', name: 'Fold only', price: 20, cap: 7, perKg: true, desc: 'Fixed rate per kg' }
+];
+
+// Line icons, one per service id
+const SERVICE_ICONS = {
+  wdf: '<svg viewBox="0 0 24 24"><rect x="4" y="2.5" width="16" height="19" rx="3"/><circle cx="12" cy="13.5" r="4.5"/><path d="M8 6.5h.01M11 6.5h.01"/><path d="M9.5 14c1-1.2 2-1.2 3 0s2 1.2 2.5 0"/></svg>',
+  wd: '<svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>',
+  wo: '<svg viewBox="0 0 24 24"><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/><path d="M9.5 15a2.6 2.6 0 0 0 2.5 2.4"/></svg>',
+  do: '<svg viewBox="0 0 24 24"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/><path d="M9.6 4.6A2 2 0 1 1 11 8H2"/><path d="M12.6 19.4A2 2 0 1 0 14 16H2"/></svg>',
+  fo: '<svg viewBox="0 0 24 24"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/></svg>'
+};
+
+const DEFAULT_ADDONS = [
+  { name: 'Fabric Conditioner', unit: '24 mL', price: 10 },
+  { name: 'Liquid Detergent', unit: '64 mL', price: 18 }
+];
+
+// Realtime Database address from Step 1, e.g.
+// 'https://labada-link-default-rtdb.asia-southeast1.firebasedatabase.app'
+const FIREBASE_DB = 'https://labada-link-default-rtdb.asia-southeast1.firebasedatabase.app/';
+const syncCache = {};
+
+function makeToken() {
+  const a = new Uint8Array(9);
+  crypto.getRandomValues(a);
+  return [...a].map(x => x.toString(16).padStart(2, '0')).join('');
+}
+
+// Sends each order's details to the database (only when something changed)
+function syncOrders(list, deleted) {
+  const db = FIREBASE_DB.replace(/\/+$/, '');
+  if (!db) return;
+  list.forEach(o => {
+    if (!o.token) return;
+    const data = {
+      id: o.id,
+      name: o.customer && o.customer !== 'Walk-in' ? o.customer : '',
+      loads: o.totalLoads || 0,
+      paid: o.payment === 'Paid',
+      status: o.status,
+      deleted: !!deleted
+    };
+    const body = JSON.stringify(data);
+    if (syncCache[o.token] === body) return;
+    syncCache[o.token] = body;
+    fetch(db + '/status/' + o.token + '.json', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...data, updated: Date.now() })
+    })
+      .then(r => { if (!r.ok) delete syncCache[o.token]; })
+      .catch(() => { delete syncCache[o.token]; });
+  });
+}
+
+function loadStored(key, def) {
+  try {
+    const val = localStorage.getItem(key);
+    return val ? JSON.parse(val) : def;
+  } catch { return def; }
+}
+
+function saveStored(key, val) {
+  try { localStorage.setItem(key, JSON.stringify(val)); } catch {}
+  if (key === 'll_orders') syncOrders(val, false);
+  if (key === 'll_deleted') syncOrders(val, true);
+}
+
+let services = loadStored('ll_services_v2', DEFAULT_SERVICES);
+let addons = loadStored('ll_addons_v2', DEFAULT_ADDONS);
+let orders = loadStored('ll_orders', []);
+let deletedOrders = loadStored('ll_deleted', []);
+
+// Current Cart state
+let cart = [];
+let activeService = null;
+let activeKg = 7.0;
+let addonQtys = {};
+let nextOrderCounter = loadStored('ll_counter', 1001);
+let pendingOrderForReceipt = null;
+let slipCarouselIndex = 0;
+
+// Where the customer page lives. Leave '' to use status.html next to this page,
+const STATUS_PAGE_URL = 'https://gentle-kringle-226ebc.netlify.app/status.html';
+
+function orderQrText(order) {
+  let base = STATUS_PAGE_URL;
+  if (!base && /^https?:/.test(location.protocol)) {
+    base = new URL('status.html', location.href).href;
   }
-</script>
+  if (base && !/^https?:\/\//i.test(base)) base = 'https://' + base;
+  if (!base) return 'LL-' + order.id;
 
-<script>
-const modal = document.querySelector('#modal');
-const body = document.querySelector('#modal-body');
-const title = document.querySelector('#modal-title');
-const STATUSES = ['Received', 'Washing', 'Drying', 'Folding', 'Ready for pickup', 'Released'];
+  // Live mode: short link, the page reads the order from the database in real time
+  if (FIREBASE_DB && order.token) {
+    return base + '?o=' + encodeURIComponent(order.id) + '&k=' + order.token;
+  }
 
-function esc(t) {
-  return String(t || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  // Fallback: details are stored inside the QR (not live)
+  const p = new URLSearchParams({
+    o: order.id,
+    l: order.totalLoads,
+    p: order.payment === 'Paid' ? 1 : 0,
+    s: order.status,
+    t: order.created
+  });
+  if (order.customer && order.customer !== 'Walk-in') p.set('n', order.customer);
+  return base + '?' + p.toString();
 }
 
 function peso(n) {
-  return '₱' + (Number(n) || 0).toFixed(2).replace(/\.00$/, '');
+  return '₱' + (Number(n) || 0).toFixed(2);
 }
 
-const DEFAULT_CONFIG = {
-  shop: {
-    name: 'WASHING WELL LAUNDRY SHOP',
-    branch: 'Sto. Tomas, Biñan, Laguna',
-    address: 'Blk. 6, Lot 32, Olivarez Homes, Phase 5',
-    contact: '0917-123-4567',
-    footerNote: 'Thank you for choosing Washing Well!\nPlease present this slip when claiming.'
-  },
-  rules: { excessFee: 20, foldMin: 20, foldMax: 30, splitAskKg: 8.001 },
-  services: [
-    { name: 'Wash, Dry & Fold', price: 170, kg: 7, description: 'Complete cycle · folding included · 6–7 kg/load' },
-    { name: 'Wash & Dry only', price: 170, kg: 7, description: 'Ready to press · 6–7 kg/load' },
-    { name: 'Wash only', price: 85, kg: 7, description: 'Per standard wash cycle' },
-    { name: 'Dry only', price: 90, cats: true, description: 'Tumble drying based on fabric tier' },
-    { name: 'Fold only', fee: true, description: 'Staff custom rate (₱20–₱30)' }
-  ],
-  cats: [
-    { name: 'Lightweight', kg: 7, hint: 'Regular apparel · up to 7 kg' },
-    { name: 'Heavy / Comforter', kg: 5, hint: 'Jackets, duvets, blankets · up to 5 kg' }
-  ],
-  addons: [
-    { name: 'Fabric Conditioner', unit: '24 mL', price: 10 },
-    { name: 'Liquid Detergent', unit: '64 mL', price: 18 }
-  ],
-  statusUrl: ''
-};
-
-function loadSettings() {
-  try {
-    const raw = localStorage.getItem('ww-settings');
-    if (raw) return { ...DEFAULT_CONFIG, ...JSON.parse(raw) };
-  } catch (e) {}
-  return JSON.parse(JSON.stringify(DEFAULT_CONFIG));
-}
-
-let settings = loadSettings();
-let SHOP = settings.shop;
-let RULES = settings.rules;
-let services = settings.services;
-let CATS = settings.cats;
-let addons = settings.addons;
-let STATUS_URL = settings.statusUrl;
-
-function persistSettings(newCfg) {
-  settings = newCfg;
-  SHOP = settings.shop;
-  RULES = settings.rules;
-  services = settings.services;
-  CATS = settings.cats;
-  addons = settings.addons;
-  STATUS_URL = settings.statusUrl;
-  localStorage.setItem('ww-settings', JSON.stringify(settings));
-  applyShopInfo();
-}
-
-function applyShopInfo() {
-  const noteEl = document.querySelector('.welcome-note');
-  if (noteEl) {
-    noteEl.innerHTML = `<b>${esc(SHOP.name)}</b><br>${esc(SHOP.branch)}`;
+function calculateLine(service, weight, addonPrices, fee = 0, catIdx = 0) {
+  if (service.fee) {
+    const f = service.price;
+    return { loads: 1, serviceTotal: f, excessFee: 0, grandTotal: f + addonPrices };
   }
-}
-applyShopInfo();
-
-function getOrders() {
-  try {
-    return JSON.parse(localStorage.getItem('fresh-orders') || '[]').map(o => o.status === 'Claimed' ? { ...o, status: 'Released' } : o);
-  } catch {
-    return [];
+  // Per-kg services (Fold only): weight × rate, no excess charge
+  if (service.perKg) {
+    const w = Number(weight) || 0;
+    const total = Math.round(w * service.price * 100) / 100;
+    return {
+      loads: Math.max(1, Math.ceil(w / (service.cap || 7))),
+      serviceTotal: total,
+      excessFee: 0,
+      grandTotal: total + addonPrices
+    };
   }
-}
-
-function saveOrders(o) {
-  try {
-    localStorage.setItem('fresh-orders', JSON.stringify(o));
-    updateKPIs();
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-function updateKPIs() {
-  const orders = getOrders();
-  const active = orders.filter(o => o.status !== 'Released');
-  const processing = orders.filter(o => ['Washing', 'Drying', 'Folding'].includes(o.status));
-  const ready = orders.filter(o => o.status === 'Ready for pickup');
-  const unpaid = orders.filter(o => !o.paid).reduce((sum, o) => sum + (o.total || 0), 0);
-
-  const kActive = document.querySelector('#kpi-active');
-  const kProc = document.querySelector('#kpi-processing');
-  const kReady = document.querySelector('#kpi-ready');
-  const kUnpaid = document.querySelector('#kpi-unpaid');
-
-  if (kActive) kActive.textContent = active.length;
-  if (kProc) kProc.textContent = processing.length;
-  if (kReady) kReady.textContent = ready.length;
-  if (kUnpaid) kUnpaid.textContent = peso(unpaid);
-}
-
-function newId() {
-  const a = new Uint8Array(4);
-  crypto.getRandomValues(a);
-  return 'WW-' + [...a].map(x => x.toString(16).padStart(2, '0')).join('').toUpperCase();
-}
-
-const plural = (n, u = 'load') => n + ' ' + u + (n === 1 ? '' : 's');
-
-let cart = [];
-let customer = '';
-let contact = '';
-let address = '';
-let selected = 0;
-let cat = 0;
-let choice = null;
-let qtys = addons.map(() => 0);
-
-function calcLine(s, catIdx, w, fee, ch) {
-  if (s.fee) return fee >= RULES.foldMin && fee <= RULES.foldMax ? { cap: 0, loads: 1, excess: 0, ask: false, price: fee } : null;
-  if (!(w > 0)) return null;
-  const cap = s.cats ? CATS[catIdx].kg : s.kg;
-
-  // Each load allows up to standard cap, with exactly 1 kg excess allowed across load tiers (e.g., 8kg for 1 load, 15kg for 2 loads)
-  let n = Math.ceil(w / cap);
+  const cap = service.cats ? CATS[catIdx].cap : (service.cap || 7);
+  let n = Math.ceil(weight / cap);
   if (n < 1) n = 1;
 
-  // Check if weight fits into (n-1) loads with allowable 1 kg excess
+  // 1kg allowable excess per tier (e.g. 8kg=1 load, 15kg=2 loads)
   if (n > 1) {
     const prevCapWithExcess = (n - 1) * cap + 1;
-    if (w <= prevCapWithExcess) {
+    if (weight <= prevCapWithExcess) {
       n = n - 1;
     }
   }
 
-  const baseCapacity = n * cap;
-  const maxLoadLimit = baseCapacity + 1;
+  const baseCap = n * cap;
+  const maxLimit = baseCap + 1;
+  const hasExcess = (weight > baseCap && weight <= maxLimit);
+  const excessFee = hasExcess ? RULES.excessFee : 0;
+  const serviceTotal = (n * service.price) + excessFee;
+  const grandTotal = serviceTotal + addonPrices;
 
-  if (w > baseCapacity && w <= maxLoadLimit) {
-    return { cap, loads: n, excess: RULES.excessFee, autoSplit: n > 1, maxSingle: maxLoadLimit, price: n * s.price + RULES.excessFee };
-  }
-  return { cap, loads: n, excess: 0, autoSplit: n > 1, maxSingle: maxLoadLimit, price: n * s.price };
-}
-
-function splitWeights(w, n) {
-  const base = Math.floor(w / n * 10) / 10;
-  const arr = Array(n).fill(base);
-  arr[n - 1] = Math.round((w - base * (n - 1)) * 10) / 10;
-  return arr;
-}
-
-const addonTotal = a => a.reduce((t, x) => t + x.price, 0);
-const lineTotal = it => it.price + addonTotal(it.addons);
-const orderTotal = items => items.reduce((t, i) => t + lineTotal(i), 0);
-
-const lineDesc = it => [
-  it.category,
-  it.weight ? it.weight + ' kg' : '',
-  it.loads > 1 ? plural(it.loads) : '',
-  it.excess ? '+ ' + peso(it.excess) + ' excess' : '',
-  ...it.addons.map(a => a.name + ' × ' + a.qty)
-].filter(Boolean).join(' · ');
-
-function lineDetail(it) {
-  const r = [];
-  if (it.category) r.push('Fabric: ' + it.category);
-  if (it.weight) r.push('Scale Weight: ' + it.weight + ' kg');
-  if (it.loads > 1 && it.loadWeights) r.push('Distributed ' + plural(it.loads) + ': ' + it.loadWeights.map((x, i) => 'Load ' + (i + 1) + ' (' + x + ' kg)').join(', '));
-  r.push('Service: ' + peso(it.price) + (it.excess ? ' (inc. ' + peso(it.excess) + ' excess charge)' : ''));
-  it.addons.forEach(a => r.push(esc(a.name) + ' × ' + a.qty + ': ' + peso(a.price)));
-  return r.join('<br>');
-}
-
-const cartRows = () => cart.map(it => `<div class="order-row"><div><b>${it.service}</b><small>${lineDesc(it)}</small></div><b>${peso(lineTotal(it))}</b></div>`).join('');
-const qty = o => o.unit === 'pc' ? plural(o.loads, 'piece') : o.weight + ' kg' + (o.loads ? ' (' + plural(o.loads) + ')' : '');
-const desc = o => o.items ? o.items.map(i => i.service).join(' + ') + ' · ' + peso(o.total) : `${o.service} · ${qty(o)} · ${peso(o.total)}`;
-
-function serviceRows() {
-  return '<div class="services">' + services.map((s, i) =>
-    `<button class="service ${i === selected ? 'selected' : ''}" type="button" data-service="${i}" aria-pressed="${i === selected}"><span><b>${s.name}</b><small>${s.description}</small></span><b>${s.fee ? '₱' + RULES.foldMin + '–' + RULES.foldMax : '₱' + s.price + '/load'}</b></button>`
-  ).join('') + '</div>';
-}
-
-function startOrder() {
-  cart = [];
-  customer = '';
-  contact = '';
-  address = '';
-  infoView();
-}
-
-function infoView() {
-  title.textContent = 'Customer Information';
-  body.innerHTML = `
-    <form id="info">
-      <p style="color:var(--muted);font-size:14px;margin-top:0;">Provide customer name and contact for receipt tracking and pickup verification.</p>
-      <label class="field">Customer Name <input name="customer" maxlength="60" autocomplete="off" placeholder="e.g. Maria Santos (or Walk-in)" value="${esc(customer)}"></label>
-      <label class="field">Phone / Mobile No. <span style="font-weight:400;color:var(--muted);">· optional</span><input name="contact" type="tel" maxlength="20" placeholder="09XX-XXX-XXXX" value="${esc(contact)}"></label>
-      <label class="field">Address / Unit No. <span style="font-weight:400;color:var(--muted);">· optional</span><input name="address" maxlength="120" autocomplete="off" placeholder="Block/Lot, Subdivision" value="${esc(address)}"></label>
-      <button class="action">Proceed to Service Selection</button>
-    </form>`;
-  body.querySelector('form').onsubmit = e => {
-    e.preventDefault();
-    const f = e.target.elements;
-    customer = f.customer.value.trim() || 'Walk-in Customer';
-    contact = f.contact.value.trim();
-    address = f.address.value.trim();
-    serviceStep();
+  return {
+    loads: n,
+    serviceTotal,
+    excessFee,
+    grandTotal
   };
 }
 
-function serviceStep() {
-  title.textContent = 'New Order · Select Services';
-  selected = 0;
-  cat = 0;
-  choice = null;
-  qtys = addons.map(() => 0);
-
-  body.innerHTML = `
-    <form id="order-form">
-      <div class="note">Customer: <b>${esc(customer)}</b> ${contact ? '· ' + esc(contact) : ''}</div>
-      <b class="lbl" style="display:block;margin:14px 0 6px;font-size:13.5px;">Choose Service</b>
-      ${serviceRows()}
-      <div id="cat-box"></div>
-      <div id="wbox">
-        <label class="field">Scale Weight (kg) <span style="font-weight:400;color:var(--muted);" id="whint"></span>
-          <input name="weight" id="weight-input" type="number" inputmode="decimal" min="0.1" max="100" step="0.1" placeholder="e.g. 5.5">
-        </label>
-        <div class="quick-chips">
-          <button type="button" class="chip-btn" data-addkg="3.5">3.5 kg</button>
-          <button type="button" class="chip-btn" data-addkg="5.0">5.0 kg</button>
-          <button type="button" class="chip-btn" data-addkg="7.0">7.0 kg</button>
-          <button type="button" class="chip-btn" data-addkg="9.0">9.0 kg</button>
-          <button type="button" class="chip-btn" data-addkg="14.0">14.0 kg</button>
-        </div>
-      </div>
-      <label class="field" id="fbox" style="display:none">Folding Fee (₱${RULES.foldMin}–₱${RULES.foldMax})<input name="fee" type="number" inputmode="decimal" min="${RULES.foldMin}" max="${RULES.foldMax}" step="1" value="${RULES.foldMin}"></label>
-      <div id="warn"></div>
-      <div id="addons-section">
-        <b class="lbl" style="display:block;margin:20px 0 6px;font-size:13.5px;">Detergent & Conditioners</b>
-        <div class="services">
-          ${addons.map((a, i) => `
-            <div class="service addon">
-              <span><b>${a.name}</b><small>${peso(a.price)} per ${a.unit}</small></span>
-              <span class="stepper">
-                <button type="button" data-dec="${i}" aria-label="Less ${a.name}">−</button>
-                <output id="q${i}">0</output>
-                <button type="button" data-inc="${i}" aria-label="More ${a.name}">+</button>
-              </span>
-            </div>`).join('')}
-        </div>
-      </div>
-      <div class="total"><span>Current Item<small id="breakdown" style="display:block;color:var(--muted);font-weight:400;">Enter weight</small></span><strong id="total">₱0</strong></div>
-      <button class="action">Add Service to Order</button>
-    </form>
-    ${cart.length ? `<b class="lbl" style="display:block;margin:22px 0 6px;font-size:13.5px;">Pending Cart Items</b>${cartRows()}` : ''}`;
-
-  const form = body.querySelector('form');
-  const $ = q => body.querySelector(q);
-  const cur = () => ({
-    s: services[selected],
-    w: parseFloat(form.elements.weight.value) || 0,
-    fee: parseFloat(form.elements.fee.value) || 0
-  });
-
-  const update = () => {
-    const { s, w, fee } = cur(), c = calcLine(s, cat, w, fee, choice), warn = $('#warn');
-    if (c && c.autoSplit) {
-      if (c.excess) {
-        warn.innerHTML = `
-          <div class="note" style="border-left-color:var(--warning);background:var(--warning-soft);color:#92400e;">
-            <b>Multi-Load with Excess:</b> Scale weight (${w} kg) is distributed into <b>${plural(c.loads)}</b> with an allowable 1 kg excess (${c.loads * c.cap}–${c.maxSingle} kg) adding flat ${peso(c.excess)}.
-          </div>`;
-      } else {
-        warn.innerHTML = `
-          <div class="note">
-            <b>Distributed Load:</b> Scale weight (${w} kg) exceeds single drum capacity (${c.cap} kg) and is split into <b>${plural(c.loads)}</b>.
-          </div>`;
-      }
-    } else if (c && c.excess) {
-      warn.innerHTML = `<div class="note">Over standard capacity (${c.cap} kg): flat ${peso(c.excess)} excess fee applied for allowable 1 kg excess (${c.cap}–${c.maxSingle} kg).</div>`;
-    } else {
-      warn.innerHTML = '';
-    }
-
-    if (!c) {
-      $('#total').textContent = '₱0';
-      $('#breakdown').textContent = s.fee ? 'Enter folding fee' : 'Enter laundry weight';
-      return;
-    }
-
-    const add = qtys.reduce((t, q, i) => t + q * addons[i].price, 0);
-    $('#total').textContent = peso(c.price + add);
-    $('#breakdown').textContent = s.fee ? 'Folding fee' : plural(c.loads) + ' × ' + peso(s.price) + (c.excess ? ' + ₱' + c.excess + ' excess' : '') + (add ? ' + add-ons' : '');
-  };
-
-  const sync = () => {
-    const s = services[selected];
-    const isWash = s.name.includes('Wash');
-
-    // Hide and clear detergents and conditioners if not a wash service (Dry only or Fold only)
-    const addonsSection = $('#addons-section');
-    if (addonsSection) {
-      addonsSection.style.display = isWash ? 'block' : 'none';
-      if (!isWash) {
-        qtys = addons.map(() => 0);
-        addons.forEach((_, i) => {
-          const qEl = $('#q' + i);
-          if (qEl) qEl.textContent = '0';
-        });
-        body.querySelectorAll('.service.addon').forEach(el => el.classList.remove('has'));
-      }
-    }
-
-    $('#cat-box').innerHTML = s.cats ? '<b class="lbl" style="display:block;margin:14px 0 6px;font-size:13.5px;">Fabric Classification</b><div class="services">' + CATS.map((c, i) => `<button class="service ${i === cat ? 'selected' : ''}" type="button" data-cat="${i}"><span><b>${c.name}</b><small>${c.hint}</small></span></button>`).join('') + '</div>' : '';
-    $('#wbox').style.display = s.fee ? 'none' : 'block';
-    $('#fbox').style.display = s.fee ? 'block' : 'none';
-    $('#whint').textContent = s.fee ? '' : '· max ' + (s.cats ? CATS[cat].kg : s.kg) + ' kg per standard load';
-    body.querySelectorAll('[data-cat]').forEach(b => b.onclick = () => { cat = Number(b.dataset.cat); choice = null; sync(); });
-    update();
-  };
-
-  body.querySelectorAll('[data-service]').forEach(b => b.onclick = () => {
-    selected = Number(b.dataset.service);
-    choice = null;
-    body.querySelectorAll('[data-service]').forEach((el, i) => {
-      el.classList.toggle('selected', i === selected);
-      el.setAttribute('aria-pressed', i === selected);
-    });
-    sync();
-  });
-
-  body.querySelectorAll('[data-addkg]').forEach(b => b.onclick = () => {
-    form.elements.weight.value = b.dataset.addkg;
-    choice = null;
-    update();
-  });
-
-  body.querySelectorAll('[data-inc],[data-dec]').forEach(b => b.onclick = () => {
-    const up = b.dataset.inc !== undefined, i = Number(up ? b.dataset.inc : b.dataset.dec);
-    qtys[i] = Math.max(0, Math.min(20, qtys[i] + (up ? 1 : -1)));
-    $('#q' + i).textContent = qtys[i];
-    b.closest('.addon').classList.toggle('has', qtys[i] > 0);
-    update();
-  });
-
-  form.elements.weight.oninput = () => { choice = null; update(); };
-  form.elements.fee.oninput = update;
-
-  form.onsubmit = e => {
-    e.preventDefault();
-    const { s, w, fee } = cur(), c = calcLine(s, cat, w, fee, choice);
-    if (!c) {
-      const el = s.fee ? form.elements.fee : form.elements.weight;
-      el.setCustomValidity(s.fee ? 'Please enter a valid fee.' : 'Please enter valid laundry weight.');
-      el.reportValidity();
-      el.oninput = () => { el.setCustomValidity(''); choice = null; update(); };
-      return;
-    }
-    cart.push({
-      service: s.name,
-      category: s.cats ? CATS[cat].name : '',
-      weight: s.fee ? 0 : w,
-      loads: c.loads,
-      loadWeights: c.loads > 1 ? splitWeights(w, c.loads) : null,
-      excess: c.excess,
-      price: c.price,
-      addons: addons.map((a, i) => qtys[i] ? { name: a.name, qty: qtys[i], price: a.price * qtys[i] } : null).filter(Boolean)
-    });
-    addedView();
-  };
-
-  sync();
-}
-
-function addedView() {
-  title.textContent = 'Cart Updated';
-  body.innerHTML = `
-    <div class="status-line">✓ Service successfully recorded in cart.</div>
-    ${cartRows()}
-    <div class="total"><span>Order Total</span><strong>${peso(orderTotal(cart))}</strong></div>
-    <div style="display:grid;gap:12px;margin-top:20px;">
-      <button class="action ghost" id="yes" type="button">+ Add Another Service</button>
-      <button class="action" id="no" type="button">Review & Confirm Payment</button>
-    </div>`;
-  body.querySelector('#yes').onclick = serviceStep;
-  body.querySelector('#no').onclick = summaryView;
-}
-
-function summaryView() {
-  title.textContent = 'Order Summary & Payment';
-  let paid = false;
-  body.innerHTML = `
-    <div class="note">
-      Customer: <b>${esc(customer || 'Walk-in')}</b>
-      ${contact ? '<br>Mobile: ' + esc(contact) : ''}
-      ${address ? '<br>Address: ' + esc(address) : ''}
-    </div>
-    ${cart.map((it, i) => `
-      <div class="order-row">
-        <div><b>${it.service}</b><small>${lineDetail(it)}</small></div>
-        <span><b>${peso(lineTotal(it))}</b> <button type="button" class="close" data-rm="${i}" style="width:34px;height:34px;font-size:16px;display:inline-grid;margin-left:8px;" aria-label="Remove item">×</button></span>
-      </div>`).join('')}
-    <div class="total"><span>Grand Total</span><strong>${peso(orderTotal(cart))}</strong></div>
-    <b class="lbl" style="display:block;margin:14px 0 6px;font-size:13.5px;">Payment Status</b>
-    <div class="services">
-      <button type="button" class="service selected" data-pay="0" aria-pressed="true">
-        <span><b>Pay on Pickup (Unpaid)</b><small>Customer settles bill when retrieving garments</small></span>
-      </button>
-      <button type="button" class="service" data-pay="1" aria-pressed="false">
-        <span><b>Paid Now at Drop-Off</b><small>Cash / GCash received and verified</small></span>
-      </button>
-    </div>
-    <div style="display:grid;gap:12px;margin-top:20px;">
-      <button class="action" id="confirm" type="button">Confirm & Print Receipt</button>
-      <button class="action ghost" id="back" type="button">Back / Edit Services</button>
-    </div>`;
-
-  body.querySelectorAll('[data-rm]').forEach(b => b.onclick = () => {
-    cart.splice(Number(b.dataset.rm), 1);
-    if (cart.length) summaryView(); else serviceStep();
-  });
-
-  body.querySelectorAll('[data-pay]').forEach(b => b.onclick = () => {
-    paid = b.dataset.pay === '1';
-    body.querySelectorAll('[data-pay]').forEach(el => {
-      const on = el === b;
-      el.classList.toggle('selected', on);
-      el.setAttribute('aria-pressed', on);
-    });
-  });
-
-  body.querySelector('#back').onclick = serviceStep;
-  body.querySelector('#confirm').onclick = () => {
-    const order = {
-      id: newId(),
-      customer,
-      contact,
-      address,
-      items: cart,
-      total: orderTotal(cart),
-      status: STATUSES[0],
-      paid,
-      paidAt: paid ? Date.now() : null,
-      created: Date.now()
-    };
-    const orders = getOrders();
-    orders.push(order);
-    if (!saveOrders(orders)) {
-      body.innerHTML = '<p class="error">Storage error: Unable to save order.</p>';
-      return;
-    }
-    cart = [];
-    receipt(order);
-  };
-}
-
-function receipt(order) {
-  title.textContent = 'Receipt';
-  const when = new Date(order.created).toLocaleString('en-PH', { dateStyle: 'medium', timeStyle: 'short' });
-
-  // Compile individual loads across all services in this order
-  const loadList = [];
-  (order.items || []).forEach(it => {
-    const count = it.loads || 1;
-    for (let i = 0; i < count; i++) {
-      const w = it.loadWeights && it.loadWeights[i] ? it.loadWeights[i] : (it.weight ? (it.weight / count).toFixed(1) : '');
-      loadList.push({
-        service: it.service,
-        category: it.category || '',
-        weight: w,
-        addons: it.addons || []
-      });
-    }
-  });
-
-  const totalLoads = loadList.length;
-
-  // 1. Build Master Staff / Customer Receipt HTML
-  let html = `
-    <div class="receipt receipt-page-break">
-      <div class="shop">
-        <b>${SHOP.name}</b><br>
-        <span style="font-size:12px;">${SHOP.branch}</span><br>
-        <span style="font-size:11px;">${SHOP.address}</span>
-      </div>
-      <div style="border-top:1.5px dashed #000;margin:10px 0 6px;"></div>
-      <div style="font-size:12px;font-weight:800;letter-spacing:1px;">★ MASTER ORDER SLIP ★</div>
-      <span style="font-size:11px;letter-spacing:1px;font-weight:700;">ORDER REFERENCE NUMBER</span>
-      <strong>${order.id}</strong>
-      <p style="font-size:13px;line-height:1.45;margin:6px 0;">
-        Customer: <b>${esc(order.customer || 'Walk-in')}</b><br>
-        ${order.contact ? 'Mobile: ' + esc(order.contact) + '<br>' : ''}
-        Total Physical Loads: <b>${totalLoads} ${totalLoads === 1 ? 'Bundle' : 'Bundles'}</b><br>
-        Date: ${when}
-      </p>
-      <div style="border-top:1px dashed #000;margin:8px 0;"></div>
-      <div style="text-align:left;font-size:13px;line-height:1.4;">
-        ${order.items.map(i => `
-          <div style="display:flex;justify-content:space-between;font-weight:700;margin-top:6px;">
-            <span>${i.service}</span>
-            <span>${peso(lineTotal(i))}</span>
-          </div>
-          <div style="font-size:11px;color:#333;margin-bottom:6px;">${lineDetail(i)}</div>
-        `).join('')}
-      </div>
-      <div class="total">
-        <span>TOTAL DUE:</span>
-        <strong style="font-size:24px;">${peso(order.total)}</strong>
-      </div>
-      <div class="pay">${order.paid ? 'PAID · COMPLETE' : 'UNPAID · BALANCE DUE'}</div>
-      <div id="master-qr" class="order-qr" role="img" aria-label="Master QR Code"></div>
-      <p style="font-size:11px;margin:4px 0 0;font-weight:600;">Scan QR code for live tracking status</p>
-      <div style="font-size:11px;margin-top:10px;line-height:1.4;">
-        ${esc(SHOP.footerNote).replace(/\n/g, '<br>')}
-      </div>
-      <div class="paper-cutter-space"></div>
-    </div>
-  `;
-
-  // 2. Build 1 Bag Tag / Basket Slip per Load
-  loadList.forEach((ld, idx) => {
-    const loadNo = idx + 1;
-    const isLast = loadNo === totalLoads;
-    html += `
-      <div class="load-slip ${!isLast ? 'receipt-page-break' : ''}">
-        <div style="font-size:12px;font-weight:700;">${SHOP.name}</div>
-        <div class="load-badge">LOAD TAG: ${loadNo} OF ${totalLoads}</div>
-        <div style="font-size:11px;letter-spacing:1px;font-weight:700;margin-top:4px;">ORDER REF</div>
-        <strong style="font-size:22px;display:block;margin:4px 0;">${order.id}</strong>
-        <div style="font-size:13px;line-height:1.4;margin:6px 0;text-align:left;border-top:1px dashed #000;padding-top:6px;">
-          Customer: <b>${esc(order.customer || 'Walk-in')}</b><br>
-          Service: <b>${ld.service}</b><br>
-          ${ld.category ? 'Fabric: ' + ld.category + '<br>' : ''}
-          ${ld.weight ? 'Load Scale: <b>' + ld.weight + ' kg</b><br>' : ''}
-          ${ld.addons && ld.addons.length ? 'Add-ons: ' + ld.addons.map(a => a.name).join(', ') + '<br>' : ''}
-          Payment: <b>${order.paid ? 'PAID' : 'COLLECT AT PICKUP'}</b>
-        </div>
-        <div id="slip-qr-${loadNo}" class="slip-qr" role="img" aria-label="Load Tag QR"></div>
-        <div style="font-size:11px;font-weight:700;letter-spacing:0.5px;">ATTACH TO LAUNDRY BASKET / BAG</div>
-        <div class="paper-cutter-space"></div>
+function renderServicesGrid() {
+  const container = document.getElementById('services-grid-container');
+  container.innerHTML = services.map(s => {
+    const isAdded = cart.some(item => item.serviceId === s.id);
+    return `
+      <div class="service-card ${isAdded ? 'highlight-added' : ''}" data-service-id="${s.id}">
+        <div class="service-card-icon">${SERVICE_ICONS[s.id] || ''}</div>
+        <h3 class="service-card-title">${s.name}</h3>
+        <small style="color:var(--muted);font-size:12px;line-height:1.3;">${s.desc}</small>
+        <div class="service-card-price">${peso(s.price)}${s.perKg ? ' / kg' : ''}</div>
       </div>
     `;
+  }).join('');
+
+  container.querySelectorAll('.service-card').forEach(card => {
+    card.onclick = () => {
+      const sId = card.dataset.serviceId;
+      openServiceWeighModal(sId);
+    };
   });
 
-  html += `
-    <div style="display:grid;gap:10px;margin-top:16px;" class="print-hide">
-      <div class="note" style="margin:0 0 6px;">
-        🖨️ Ready to print <b>${1 + totalLoads} slips</b> (1 Master Receipt + ${totalLoads} Load Bag Tags).
-      </div>
-      <button class="action" id="print" type="button">🖨️ Print All Slips (${1 + totalLoads})</button>
-      <button class="action ghost" id="done" type="button">Close & Return to Dashboard</button>
-    </div>
-  `;
+  updateCartBadge();
+}
 
-  body.innerHTML = html;
-
-  // Render Master QR Code
-  const qrText = STATUS_URL ? STATUS_URL + order.id : order.id;
-  const masterContainer = document.querySelector('#master-qr');
-  if (typeof QRCode !== 'undefined') {
-    new QRCode(masterContainer, {
-      text: qrText,
-      width: 160,
-      height: 160,
-      colorDark: '#000000',
-      colorLight: '#ffffff',
-      correctLevel: QRCode.CorrectLevel.M
-    });
+function updateCartBadge() {
+  const btn = document.getElementById('btn-current-order');
+  const countBadge = document.getElementById('cart-badge-count');
+  if (cart.length > 0) {
+    btn.style.display = 'inline-flex';
+    countBadge.textContent = cart.length;
   } else {
-    masterContainer.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(qrText)}" alt="QR Code" width="160" height="160">`;
+    btn.style.display = 'none';
+  }
+}
+
+let activeCat = 0;
+const activeCap = () => activeService.cats ? CATS[activeCat].cap : (activeService.cap || 7);
+
+function syncServiceModal() {
+  const s = activeService;
+  const isWash = s.name.includes('Wash');
+
+  const catBox = document.getElementById('modal-cat-box');
+  catBox.innerHTML = s.cats
+    ? `<label style="font-size:13px;font-weight:700;display:block;margin-top:14px;">FABRIC TYPE:</label>
+       <div class="cat-row">${CATS.map((c, i) => `<button type="button" class="cat-btn ${i === activeCat ? 'selected' : ''}" data-cat="${i}"><b>${c.name}</b><small>${c.hint}</small></button>`).join('')}</div>`
+    : '';
+  catBox.querySelectorAll('[data-cat]').forEach(b => b.onclick = () => {
+    activeCat = Number(b.dataset.cat);
+    syncServiceModal();
+  });
+
+  document.getElementById('modal-weight-box').style.display = s.fee ? 'none' : 'block';
+  document.getElementById('modal-fee-box').style.display = 'none';
+  document.getElementById('modal-addons-box').style.display = isWash ? 'block' : 'none';
+  if (!isWash) {
+    addons.forEach(a => addonQtys[a.name] = 0);
+    renderModalAddons();
   }
 
-  // Render individual QR codes for each load tag
-  loadList.forEach((_, idx) => {
-    const loadNo = idx + 1;
-    const slipContainer = document.querySelector(`#slip-qr-${loadNo}`);
-    const slipText = STATUS_URL ? `${STATUS_URL}${order.id}&load=${loadNo}` : `${order.id}-L${loadNo}`;
-    if (typeof QRCode !== 'undefined') {
-      new QRCode(slipContainer, {
-        text: slipText,
-        width: 120,
-        height: 120,
+  document.getElementById('modal-cap-hint').textContent =
+    `${s.perKg ? peso(s.price) + ' per kg · no excess charge' : activeCap() + ' kg per standard load. Up to 1 kg excess allowed (+' + peso(RULES.excessFee) + '); beyond that the laundry is split into more loads.'}`;
+  document.getElementById('modal-service-desc').textContent = s.fee
+    ? `Fixed rate ${peso(s.price)}`
+    : s.perKg
+      ? `${peso(s.price)} per kg`
+      : `Base: ${peso(s.price)} per load · ${activeCap()} kg standard`;
+  recalculateModal();
+}
+
+function openServiceWeighModal(serviceId) {
+  activeService = services.find(s => s.id === serviceId) || services[0];
+  activeCat = 0;
+  activeKg = activeCap();
+  addonQtys = {};
+  addons.forEach(a => addonQtys[a.name] = 0);
+
+  document.getElementById('modal-service-name').textContent = activeService.name;
+  document.getElementById('dial-weight-input').value = activeKg.toFixed(1);
+
+  // New order starts with an empty name; an order in progress keeps (and locks) its customer
+  const nameInput = document.getElementById('modal-cust-name');
+  nameInput.value = cart.length ? cart[0].customer : '';
+  nameInput.readOnly = cart.length > 0;
+  const fee = document.getElementById('modal-fee-input');
+  fee.min = RULES.foldMin;
+  fee.max = RULES.foldMax;
+  fee.value = RULES.foldMin;
+
+  renderModalAddons();
+  syncServiceModal();
+  openModal('modal-service');
+}
+
+function renderModalAddons() {
+  const container = document.getElementById('modal-addons-list');
+  container.innerHTML = addons.map((a, i) => `
+    <div class="addon-row">
+      <div>
+        <b style="font-size:14px;">${a.name}</b>
+        <small style="color:var(--muted);display:block;">${peso(a.price)} per ${a.unit}</small>
+      </div>
+      <div class="addon-stepper">
+        <button type="button" class="addon-step-btn" data-addon-dec="${a.name}">−</button>
+        <span style="font-weight:800;font-size:15px;min-width:20px;text-align:center;" id="addon-qty-${i}">${addonQtys[a.name] || 0}</span>
+        <button type="button" class="addon-step-btn" data-addon-inc="${a.name}">+</button>
+      </div>
+    </div>
+  `).join('');
+
+  container.querySelectorAll('[data-addon-dec]').forEach(b => {
+    b.onclick = () => {
+      const name = b.dataset.addonDec;
+      addonQtys[name] = Math.max(0, (addonQtys[name] || 0) - 1);
+      renderModalAddons();
+      recalculateModal();
+    };
+  });
+  container.querySelectorAll('[data-addon-inc]').forEach(b => {
+    b.onclick = () => {
+      const name = b.dataset.addonInc;
+      addonQtys[name] = (addonQtys[name] || 0) + 1;
+      renderModalAddons();
+      recalculateModal();
+    };
+  });
+}
+
+function recalculateModal() {
+  const w = parseFloat(document.getElementById('dial-weight-input').value) || activeKg;
+  const fee = parseFloat(document.getElementById('modal-fee-input').value) || RULES.foldMin;
+  let addTotal = 0;
+  addons.forEach(a => {
+    addTotal += (addonQtys[a.name] || 0) * a.price;
+  });
+
+  const calc = calculateLine(activeService, w, addTotal, fee, activeCat);
+  document.getElementById('summary-loads').textContent = activeService.fee
+    ? 'Folding fee'
+    : `${calc.loads} ${calc.loads === 1 ? 'Load' : 'Loads'}${calc.excessFee ? ' (+' + peso(calc.excessFee) + ' excess)' : ''}`;
+  document.getElementById('summary-service-fee').textContent = peso(calc.serviceTotal);
+  document.getElementById('summary-addons-fee').textContent = peso(addTotal);
+  document.getElementById('summary-total-calc').textContent = peso(calc.grandTotal);
+
+  return calc;
+}
+
+// Weight Dial controls
+document.getElementById('dial-minus').onclick = () => {
+  const el = document.getElementById('dial-weight-input');
+  let val = Math.max(0.5, (parseFloat(el.value) || 0) - 0.5);
+  el.value = val.toFixed(1);
+  recalculateModal();
+};
+document.getElementById('dial-plus').onclick = () => {
+  const el = document.getElementById('dial-weight-input');
+  let val = Math.min(60, (parseFloat(el.value) || 0) + 0.5);
+  el.value = val.toFixed(1);
+  recalculateModal();
+};
+document.getElementById('dial-weight-input').oninput = recalculateModal;
+document.getElementById('modal-fee-input').oninput = recalculateModal;
+
+
+function collectCurrentItem() {
+  const s = activeService;
+  const w = s.fee ? 0 : (parseFloat(document.getElementById('dial-weight-input').value) || activeKg);
+  const fee = parseFloat(document.getElementById('modal-fee-input').value) || RULES.foldMin;
+  const custName = document.getElementById('modal-cust-name').value.trim() || 'Walk-in';
+  let addTotal = 0;
+  const pickedAddons = [];
+  addons.forEach(a => {
+    const q = addonQtys[a.name] || 0;
+    if (q > 0) {
+      addTotal += q * a.price;
+      pickedAddons.push({ name: a.name, qty: q, price: a.price * q });
+    }
+  });
+  const calc = calculateLine(s, w, addTotal, fee, activeCat);
+
+  return {
+    serviceId: s.id,
+    name: s.cats ? `${s.name} · ${CATS[activeCat].name}` : s.name,
+    weight: w,
+    loads: calc.loads,
+    price: calc.grandTotal,
+    addons: pickedAddons,
+    customer: custName
+  };
+}
+
+// Screen 4 "ADD MORE" button (PDF Page 4 & 5)
+document.getElementById('btn-modal-addmore').onclick = () => {
+  const item = collectCurrentItem();
+  cart.push(item);
+  closeModal('modal-service');
+  renderServicesGrid();
+};
+
+// Screen 4 "PLACE ORDER" button (PDF Page 4)
+document.getElementById('btn-modal-placeorder').onclick = () => {
+  const item = collectCurrentItem();
+  cart.push(item);
+  closeModal('modal-service');
+  renderServicesGrid();
+  openPaymentModal();
+};
+
+// Top Header "CURRENT ORDER" click
+document.getElementById('btn-current-order').onclick = () => {
+  if (cart.length === 0) return;
+  openPaymentModal();
+};
+
+function openPaymentModal() {
+  const subtotal = cart.reduce((sum, item) => sum + item.price, 0);
+  document.getElementById('checkout-subtotal-display').textContent = peso(subtotal);
+
+  const lines = cart.map((it, idx) => `
+    <div>NO. ${idx + 1} | ${it.name} (${it.weight ? it.weight + 'kg · ' : ''}${it.loads} load) - ${peso(it.price)}</div>
+  `).join('');
+  document.getElementById('checkout-order-summary-lines').innerHTML = lines;
+
+  openModal('modal-payment');
+}
+
+document.getElementById('btn-pay-on-claim').onclick = () => {
+  proceedPayment(false);
+};
+document.getElementById('btn-pay-now').onclick = () => {
+  proceedPayment(true);
+};
+
+function proceedPayment(isPaidNow) {
+  closeModal('modal-payment');
+  const subtotal = cart.reduce((sum, it) => sum + it.price, 0);
+  const totalLoads = cart.reduce((sum, it) => sum + it.loads, 0);
+  const custName = cart[0]?.customer || 'Walk-in';
+  const orderId = `#${nextOrderCounter++}`;
+  saveStored('ll_counter', nextOrderCounter);
+
+  const newOrder = {
+    id: orderId,
+    customer: custName,
+    subtotal: subtotal,
+    payment: isPaidNow ? 'Paid' : 'Unpaid',
+    status: 'Received',
+    items: [...cart],
+    totalLoads: totalLoads,
+    token: makeToken(),
+    created: Date.now()
+  };
+
+  orders.unshift(newOrder);
+  syncOrders([newOrder], false);
+  saveStored('ll_orders', orders);
+  cart = [];
+  renderServicesGrid();
+
+  renderOrdersTables();
+  pendingOrderForReceipt = newOrder;
+  showCustomerReceipt(newOrder);
+}
+
+function showCustomerReceipt(order) {
+  const d = new Date(order.created);
+  document.getElementById('cr-date').textContent = d.toLocaleDateString('en-PH');
+  document.getElementById('cr-time').textContent = d.toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit' });
+  document.getElementById('cr-cust-name').textContent = order.customer;
+  document.getElementById('cr-claim-no').textContent = order.id;
+  document.getElementById('cr-subtotal').textContent = peso(order.subtotal);
+  document.getElementById('cr-loads').textContent = order.totalLoads;
+  document.getElementById('cr-pay-status').textContent = `[ ${order.payment.toUpperCase()} ]`;
+
+  const itemsHtml = order.items.map((it, idx) => `
+    <div>NO. ${idx + 1} | ${it.name} ${it.addons.length ? '(' + it.addons.map(a => a.name).join(', ') + ')' : ''} | ${it.loads} LOADS | ${peso(it.price)}</div>
+  `).join('');
+  document.getElementById('cr-items-list').innerHTML = itemsHtml;
+
+  // Render centered QR
+  const qrBox = document.getElementById('cr-qr-code');
+  qrBox.innerHTML = '';
+  new QRCode(qrBox, {
+    text: orderQrText(order),
+    width: 160,
+    height: 160,
+    colorDark: '#000000',
+    colorLight: '#ffffff',
+    correctLevel: QRCode.CorrectLevel.M
+  });
+
+  openModal('modal-cust-receipt');
+}
+
+// "PRINT CUSTOMER RECEIPT" -> Print & advance to Employee Slips (PDF Page 7 & 8)
+document.getElementById('btn-print-cust-receipt').onclick = () => {
+  window.print();
+  closeModal('modal-cust-receipt');
+  // Transition order status to Processing as described in Page 7 flow
+  if (pendingOrderForReceipt) {
+    const target = orders.find(o => o.id === pendingOrderForReceipt.id);
+    if (target && target.status === 'Received') {
+      target.status = 'Processing';
+      saveStored('ll_orders', orders);
+      renderOrdersTables();
+    }
+    showEmployeeReceipts(pendingOrderForReceipt);
+  }
+};
+
+// Back arrow on the customer receipt: cancel the just-created order and return to checkout
+document.getElementById('btn-receipt-back').onclick = () => {
+  const o = pendingOrderForReceipt;
+  closeModal('modal-cust-receipt');
+  if (!o) return;
+  const idx = orders.findIndex(x => x.id === o.id);
+  if (idx === -1 || orders[idx].status !== 'Received') return;   // already processed: just close
+
+  orders.splice(idx, 1);
+  saveStored('ll_orders', orders);
+  if (o.id === '#' + (nextOrderCounter - 1)) {
+    nextOrderCounter--;
+    saveStored('ll_counter', nextOrderCounter);
+  }
+  if (typeof FIREBASE_DB !== 'undefined' && FIREBASE_DB && o.token) {
+    fetch(FIREBASE_DB.replace(/\/+$/, '') + '/status/' + o.token + '.json', { method: 'DELETE' }).catch(() => {});
+    delete syncCache[o.token];
+  }
+  cart = o.items.slice();
+  pendingOrderForReceipt = null;
+  renderServicesGrid();
+  renderOrdersTables();
+  openPaymentModal();
+};
+
+// Back arrow on the employee slips: return to the customer receipt
+document.getElementById('btn-emp-back').onclick = () => {
+  closeModal('modal-emp-receipt');
+  if (pendingOrderForReceipt) showCustomerReceipt(pendingOrderForReceipt);
+};
+
+let employeeSlips = [];
+function showEmployeeReceipts(order) {
+  employeeSlips = [];
+  let slipCount = 1;
+  order.items.forEach(it => {
+    for (let l = 0; l < it.loads; l++) {
+      employeeSlips.push({
+        slipTag: `${order.id}-${String(slipCount).padStart(2, '0')}`,
+        serviceName: it.name,
+        addonsText: it.addons.map(a => a.name).join(', '),
+        price: (it.price / it.loads),
+        orderId: order.id,
+        qrText: orderQrText(order)
+      });
+      slipCount++;
+    }
+  });
+
+  slipCarouselIndex = 0;
+  renderEmployeeSlipsPage();
+  openModal('modal-emp-receipt');
+}
+
+function renderEmployeeSlipsPage() {
+  const container = document.getElementById('employee-slips-container');
+  const navBar = document.getElementById('carousel-nav-bar');
+  const total = employeeSlips.length;
+
+  // Max 2 receipts per page
+  const pageItems = employeeSlips.slice(slipCarouselIndex, slipCarouselIndex + 2);
+
+  container.innerHTML = pageItems.map((slip, i) => `
+    <div class="receipt-paper" style="text-align:center;">
+      <b style="font-size:15px;display:block;">${slip.slipTag}</b>
+      <div style="font-size:12px;margin:6px 0;border-top:1px dashed #000;border-bottom:1px dashed #000;padding:6px 0;">
+        NO. ${slipCarouselIndex + i + 1} | ${slip.serviceName} ${slip.addonsText ? '(' + slip.addonsText + ')' : ''} | 1 LOAD ONLY | ${peso(slip.price)}
+      </div>
+      <p style="font-size:11px;margin:6px 0 2px;">Scan the QR code to check your laundry status.</p>
+      <div class="receipt-qr-center" id="emp-qr-${slipCarouselIndex + i}"></div>
+    </div>
+  `).join('');
+
+  // Render identical QR code as requested in PDF Page 8 ("SAME LANG SILA LAHAT NG QR")
+  pageItems.forEach((slip, i) => {
+    const el = document.getElementById(`emp-qr-${slipCarouselIndex + i}`);
+    if (el) {
+      new QRCode(el, {
+        text: slip.qrText,
+        width: 130,
+        height: 130,
         colorDark: '#000000',
         colorLight: '#ffffff',
         correctLevel: QRCode.CorrectLevel.M
       });
+    }
+  });
+
+  if (total > 2) {
+    navBar.style.display = 'flex';
+    const end = Math.min(total, slipCarouselIndex + 2);
+    document.getElementById('slip-page-indicator').textContent = `Slips ${slipCarouselIndex + 1}–${end} of ${total}`;
+    document.getElementById('slip-prev-btn').disabled = slipCarouselIndex === 0;
+    document.getElementById('slip-next-btn').disabled = slipCarouselIndex + 2 >= total;
+  } else {
+    navBar.style.display = 'none';
+  }
+}
+
+document.getElementById('slip-prev-btn').onclick = () => {
+  if (slipCarouselIndex > 0) {
+    slipCarouselIndex -= 2;
+    renderEmployeeSlipsPage();
+  }
+};
+document.getElementById('slip-next-btn').onclick = () => {
+  if (slipCarouselIndex + 2 < employeeSlips.length) {
+    slipCarouselIndex += 2;
+    renderEmployeeSlipsPage();
+  }
+};
+
+document.getElementById('btn-print-emp-receipt').onclick = () => {
+  window.print();
+  closeModal('modal-emp-receipt');
+  renderOrdersTables();
+};
+
+// When close button '✕' is clicked on service modal or payment modal with active cart
+document.querySelectorAll('[data-close-modal]').forEach(b => {
+  b.onclick = () => {
+    const target = b.dataset.closeModal;
+    if ((target === 'service' || target === 'payment') && cart.length > 0) {
+      openModal('modal-cancel-confirm');
     } else {
-      slipContainer.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(slipText)}" alt="QR Code Load ${loadNo}" width="120" height="120">`;
+      closeModal(`modal-${target}`);
     }
-  });
-
-  document.querySelector('#print').onclick = () => window.print();
-  document.querySelector('#done').onclick = () => modal.close();
-}
-
-function ordersView() {
-  let filter = 'all';
-  let searchTerm = '';
-
-  const renderList = () => {
-    let list = getOrders().slice().reverse();
-    if (searchTerm) {
-      const q = searchTerm.toLowerCase();
-      list = list.filter(o => o.id.toLowerCase().includes(q) || (o.customer && o.customer.toLowerCase().includes(q)));
-    }
-    if (filter === 'active') list = list.filter(o => o.status !== 'Released');
-    if (filter === 'ready') list = list.filter(o => o.status === 'Ready for pickup');
-    if (filter === 'unpaid') list = list.filter(o => !o.paid);
-
-    const container = body.querySelector('#orders-container');
-    if (!container) return;
-
-    if (!list.length) {
-      container.innerHTML = '<div style="text-align:center;padding:32px;color:var(--muted);font-size:14px;">No matching orders found.</div>';
-      return;
-    }
-
-    const badgeCls = s => ({
-      'Received': 'badge-received',
-      'Washing': 'badge-washing',
-      'Drying': 'badge-drying',
-      'Folding': 'badge-folding',
-      'Ready for pickup': 'badge-ready',
-      'Released': 'badge-released'
-    }[s] || 'badge-received');
-
-    container.innerHTML = list.map(o => `
-      <div class="order-row">
-        <div style="flex:1;">
-          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-            <b>${esc(o.customer || 'Walk-in')}</b>
-            <span class="status-badge ${badgeCls(o.status)}">${o.status}</span>
-            <span style="font-size:12px;font-weight:700;color:${o.paid ? 'var(--success)' : 'var(--danger)'};">${o.paid ? '● Paid' : '○ Unpaid'}</span>
-          </div>
-          <small>${o.id} · ${desc(o)}</small>
-        </div>
-        <div style="display:flex;gap:6px;align-items:center;">
-          <select data-status="${o.id}" style="width:auto;min-height:42px;padding:6px 10px;font-size:13px;border-radius:10px;" aria-label="Status">
-            ${STATUSES.map(t => `<option${t === o.status ? ' selected' : ''}>${t}</option>`).join('')}
-          </select>
-          <button type="button" class="mini print-mini" data-reprint="${o.id}" title="Reprint receipt">Print</button>
-          ${o.paid ? '' : `<button type="button" class="mini" data-markpaid="${o.id}" style="color:var(--success);border-color:#bcf0d3;">Pay</button>`}
-        </div>
-      </div>
-    `).join('');
-
-    container.querySelectorAll('[data-status]').forEach(sel => sel.onchange = () => {
-      const os = getOrders(), o = os.find(x => x.id === sel.dataset.status);
-      if (!o) return;
-      if (sel.value === 'Released' && !o.paid) {
-        sel.value = o.status;
-        alert('Order balance must be marked as Paid before releasing laundry.');
-        return;
-      }
-      o.status = sel.value;
-      saveOrders(os);
-      renderList();
-    });
-
-    container.querySelectorAll('[data-markpaid]').forEach(b => b.onclick = () => {
-      const os = getOrders(), o = os.find(x => x.id === b.dataset.markpaid);
-      if (o) {
-        o.paid = true;
-        o.paidAt = Date.now();
-        saveOrders(os);
-        renderList();
-      }
-    });
-
-    container.querySelectorAll('[data-reprint]').forEach(b => b.onclick = () => {
-      const os = getOrders(), o = os.find(x => x.id === b.dataset.reprint);
-      if (o) receipt(o);
-    });
   };
+});
 
-  body.innerHTML = `
-    <div>
-      <input id="order-search" placeholder="🔍 Search by Order ID or customer name..." style="margin-top:0;">
-      <div class="filter-tabs">
-        <button type="button" class="filter-tab active" data-tab="all">All Orders</button>
-        <button type="button" class="filter-tab" data-tab="active">In Progress</button>
-        <button type="button" class="filter-tab" data-tab="ready">Ready for Pickup</button>
-        <button type="button" class="filter-tab" data-tab="unpaid">Unpaid Balance</button>
-      </div>
-      <div id="orders-container"></div>
-    </div>`;
-
-  body.querySelector('#order-search').oninput = e => {
-    searchTerm = e.target.value.trim();
-    renderList();
-  };
-
-  body.querySelectorAll('[data-tab]').forEach(btn => btn.onclick = () => {
-    filter = btn.dataset.tab;
-    body.querySelectorAll('[data-tab]').forEach(b => b.classList.toggle('active', b === btn));
-    renderList();
-  });
-
-  renderList();
-}
-
-function verifyView() {
-  body.innerHTML = `
-    <p style="font-size:14px;color:var(--muted);margin-top:0;">Scan the receipt QR code with a barcode scanner or enter the tracking reference code.</p>
-    <form id="lookup">
-      <label class="field">Order ID Reference
-        <input name="id" required maxlength="120" placeholder="e.g. WW-8C2A5B10" autocomplete="off" autofocus>
-      </label>
-      <button class="action">Verify Order & Payment</button>
-    </form>
-    <div id="result" style="margin-top:18px;" aria-live="polite"></div>`;
-
-  body.querySelector('form').onsubmit = e => {
-    e.preventDefault();
-    const raw = new FormData(e.target).get('id').trim().toUpperCase();
-    const m = raw.match(/WW-[0-9A-F]{8}/) || raw.match(/FR-[0-9A-F]{8}/);
-    const id = m ? m[0] : raw;
-    const orders = getOrders();
-    const order = orders.find(o => o.id === id);
-    const result = document.querySelector('#result');
-
-    const add = (cls, text) => {
-      const d = document.createElement('div');
-      d.className = cls;
-      d.innerHTML = text;
-      result.append(d);
-    };
-
-    const btn = (text, fn, cls = 'action') => {
-      const b = document.createElement('button');
-      b.type = 'button';
-      b.className = cls;
-      b.textContent = text;
-      b.onclick = fn;
-      result.append(b);
-    };
-
-    const render = () => {
-      result.replaceChildren();
-      if (!order) {
-        add('error', '⚠️ Order ID not found on this terminal. Verify the slip code and try again.');
-        return;
-      }
-
-      add('status-line', `
-        <b>Customer:</b> ${esc(order.customer || 'Walk-in')}<br>
-        <b>Summary:</b> ${desc(order)}<br>
-        <b>Current Status:</b> <span style="font-weight:700;">${order.status}</span><br>
-        <b>Payment:</b> <span style="font-weight:700;color:${order.paid ? 'var(--success)' : 'var(--danger)'};">${order.paid ? 'PAID' : 'UNPAID'}</span>
-      `);
-
-      if (order.status === 'Released') {
-        add('note', '✓ This bundle has already been released to the customer.');
-        return;
-      }
-
-      if (!order.paid) {
-        add('error', '⚠️ Unpaid balance: Collect payment before releasing garments.');
-        btn('Mark as Paid (Receive Cash/GCash)', () => {
-          order.paid = true;
-          order.paidAt = Date.now();
-          saveOrders(orders);
-          render();
-        });
-      } else {
-        if (order.status !== 'Ready for pickup') {
-          add('note', 'Notice: Laundry is currently marked as ' + order.status + '. Ensure bundles are clean before release.');
-        }
-        btn('Confirm Release to Customer', () => {
-          order.status = 'Released';
-          saveOrders(orders);
-          render();
-        });
-      }
-    };
-
-    render();
-  };
-}
-
-function settingsView() {
-  body.innerHTML = `
-    <div id="settings-feedback"></div>
-    <form id="pricing-settings-form">
-      <div class="settings-nav">
-        <button type="button" class="settings-nav-btn active" data-tab="rates">
-          <span>🧺</span> Service & Product Rates
-        </button>
-        <button type="button" class="settings-nav-btn" data-tab="capacities">
-          <span>⚖️</span> Capacities & Rules
-        </button>
-      </div>
-
-      <!-- Tab 1: Service & Product Rates -->
-      <div id="tab-rates" class="settings-tab-panel">
-        <div class="setting-row">
-          <div class="setting-info">
-            <span class="setting-title">${services[0].name}</span>
-            <span class="setting-sub">Complete cycle per load (wash, tumble dry, fold)</span>
-          </div>
-          <div class="affix-box">
-            <span class="affix-symbol">₱</span>
-            <input name="wdf" type="number" step="1" min="1" value="${services[0].price}" required>
-          </div>
-        </div>
-
-        <div class="setting-row">
-          <div class="setting-info">
-            <span class="setting-title">${services[1].name}</span>
-            <span class="setting-sub">Washed and tumble dried (no folding)</span>
-          </div>
-          <div class="affix-box">
-            <span class="affix-symbol">₱</span>
-            <input name="wd" type="number" step="1" min="1" value="${services[1].price}" required>
-          </div>
-        </div>
-
-        <div class="setting-row">
-          <div class="setting-info">
-            <span class="setting-title">${services[2].name}</span>
-            <span class="setting-sub">Single wash cycle only</span>
-          </div>
-          <div class="affix-box">
-            <span class="affix-symbol">₱</span>
-            <input name="wo" type="number" step="1" min="1" value="${services[2].price}" required>
-          </div>
-        </div>
-
-        <div class="setting-row">
-          <div class="setting-info">
-            <span class="setting-title">${services[3].name}</span>
-            <span class="setting-sub">Tumble dry cycle based on fabric tier</span>
-          </div>
-          <div class="affix-box">
-            <span class="affix-symbol">₱</span>
-            <input name="do" type="number" step="1" min="1" value="${services[3].price}" required>
-          </div>
-        </div>
-
-        <div class="setting-row">
-          <div class="setting-info">
-            <span class="setting-title">${addons[0].name}</span>
-            <span class="setting-sub">Per ${addons[0].unit} sachet</span>
-          </div>
-          <div class="affix-box">
-            <span class="affix-symbol">₱</span>
-            <input name="addon0" type="number" step="1" min="0" value="${addons[0].price}" required>
-          </div>
-        </div>
-
-        <div class="setting-row">
-          <div class="setting-info">
-            <span class="setting-title">${addons[1].name}</span>
-            <span class="setting-sub">Per ${addons[1].unit} sachet</span>
-          </div>
-          <div class="affix-box">
-            <span class="affix-symbol">₱</span>
-            <input name="addon1" type="number" step="1" min="0" value="${addons[1].price}" required>
-          </div>
-        </div>
-      </div>
-
-      <!-- Tab 2: Capacities & High-Weight Rules -->
-      <div id="tab-capacities" class="settings-tab-panel" style="display:none;">
-        <div class="setting-row">
-          <div class="setting-info">
-            <span class="setting-title">Regular Load Capacity</span>
-            <span class="setting-sub">Standard apparel drum limit</span>
-          </div>
-          <div class="affix-box">
-            <input name="regKg" type="number" step="0.5" min="1" value="${services[0].kg}" required>
-            <span class="affix-symbol suffix">kg</span>
-          </div>
-        </div>
-
-        <div class="setting-row">
-          <div class="setting-info">
-            <span class="setting-title">Heavy / Comforter Capacity</span>
-            <span class="setting-sub">Limit for blankets, jackets, and duvets</span>
-          </div>
-          <div class="affix-box">
-            <input name="heavyKg" type="number" step="0.5" min="1" value="${CATS[1].kg}" required>
-            <span class="affix-symbol suffix">kg</span>
-          </div>
-        </div>
-
-        <div class="setting-row">
-          <div class="setting-info">
-            <span class="setting-title">Over-Capacity Excess Fee</span>
-            <span class="setting-sub">Fee for 1 kg allowable excess (up to 8 kg)</span>
-          </div>
-          <div class="affix-box">
-            <span class="affix-symbol">₱</span>
-            <input name="excessFee" type="number" step="1" min="0" value="${RULES.excessFee}" required>
-          </div>
-        </div>
-
-        <div class="setting-row">
-          <div class="setting-info">
-            <span class="setting-title">Mandatory Split Threshold</span>
-            <span class="setting-sub">Exceeding this (over 8 kg) forces 2+ loads</span>
-          </div>
-          <div class="affix-box">
-            <input name="splitAskKg" type="number" step="0.5" min="1" value="8" required>
-            <span class="affix-symbol suffix">kg</span>
-          </div>
-        </div>
-
-        <div class="setting-row">
-          <div class="setting-info">
-            <span class="setting-title">Fold Only Minimum Fee</span>
-            <span class="setting-sub">Staff baseline folding charge</span>
-          </div>
-          <div class="affix-box">
-            <span class="affix-symbol">₱</span>
-            <input name="foldMin" type="number" step="1" min="1" value="${RULES.foldMin}" required>
-          </div>
-        </div>
-
-        <div class="setting-row">
-          <div class="setting-info">
-            <span class="setting-title">Fold Only Maximum Fee</span>
-            <span class="setting-sub">Staff ceiling folding charge</span>
-          </div>
-          <div class="affix-box">
-            <span class="affix-symbol">₱</span>
-            <input name="foldMax" type="number" step="1" min="1" value="${RULES.foldMax}" required>
-          </div>
-        </div>
-      </div>
-
-      <button class="action" type="submit" style="margin-top:16px;">Save Pricing & Capacities</button>
-    </form>
-  `;
-
-  const tabs = body.querySelectorAll('.settings-nav-btn');
-  const panelRates = body.querySelector('#tab-rates');
-  const panelCaps = body.querySelector('#tab-capacities');
-
-  tabs.forEach(btn => {
-    btn.onclick = () => {
-      tabs.forEach(b => b.classList.toggle('active', b === btn));
-      const isRates = btn.dataset.tab === 'rates';
-      panelRates.style.display = isRates ? 'block' : 'none';
-      panelCaps.style.display = isRates ? 'none' : 'block';
-    };
-  });
-
-  const renderFeedback = (msg, isErr = false) => {
-    const box = body.querySelector('#settings-feedback');
-    if (!box) return;
-    box.innerHTML = `<div class="${isErr ? 'note' : 'status-line'}" style="${isErr ? 'border-left-color:var(--danger);background:var(--danger-soft);' : ''}">${esc(msg)}</div>`;
-    setTimeout(() => { if (box) box.innerHTML = ''; }, 3500);
-  };
-
-  body.querySelector('#pricing-settings-form').onsubmit = e => {
-    e.preventDefault();
-    const f = e.target.elements;
-    const newServices = [...services];
-    newServices[0].price = Number(f.wdf.value);
-    newServices[0].kg = Number(f.regKg.value);
-    newServices[1].price = Number(f.wd.value);
-    newServices[1].kg = Number(f.regKg.value);
-    newServices[2].price = Number(f.wo.value);
-    newServices[2].kg = Number(f.regKg.value);
-    newServices[3].price = Number(f.do.value);
-
-    const newCats = [...CATS];
-    newCats[0].kg = Number(f.regKg.value);
-    newCats[1].kg = Number(f.heavyKg.value);
-
-    const newAddons = [...addons];
-    newAddons[0].price = Number(f.addon0.value);
-    newAddons[1].price = Number(f.addon1.value);
-
-    const updated = {
-      ...settings,
-      services: newServices,
-      cats: newCats,
-      addons: newAddons,
-      rules: {
-        excessFee: Number(f.excessFee.value),
-        foldMin: Number(f.foldMin.value),
-        foldMax: Number(f.foldMax.value),
-        splitAskKg: Number(f.splitAskKg.value)
-      }
-    };
-    persistSettings(updated);
-    renderFeedback('✓ Pricing rates and load capacity rules saved successfully.');
-  };
-}
-
-function open(view) {
-  title.textContent = {
-    order: 'New Order Entry',
-    orders: 'Active Orders & Dispatch',
-    verify: 'Scan / Verify Order',
-    settings: 'Pricing & Capacities',
-    help: 'Staff Terminal Guide'
-  }[view];
-
-  if (view === 'order') startOrder();
-  if (view === 'orders') ordersView();
-  if (view === 'verify') verifyView();
-  if (view === 'settings') settingsView();
-  if (view === 'help') {
-    body.innerHTML = `
-      <div style="font-size:14px;line-height:1.6;color:var(--ink);">
-        <p><b>1. Creating Orders:</b> Weigh clothes on the scale. Up to 7 kg is a regular load. 7.1 kg–8.0 kg incurs an excess charge of +₱20 (max 1 kg excess allowed). Anything over 8.0 kg is automatically split into 2 or more loads.</p>
-        <p><b>2. Printing Receipts:</b> Receipts include customer details and the encoded tracking QR code.</p>
-        <p><b>3. Managing Loads:</b> Transition orders from Washing → Drying → Folding → Ready for Pickup. Unpaid orders cannot be set to Released until marked as paid.</p>
-        <p><b>4. QR Verification:</b> Use a barcode scanner or type the ID to verify pickup release instantly.</p>
-      </div>`;
-  }
-  if (!modal.open) modal.showModal();
-}
-
-document.querySelectorAll('[data-open]').forEach(b => b.onclick = () => open(b.dataset.open));
-document.querySelector('.close').onclick = () => modal.close();
-
-function tick() {
-  const d = new Date();
-  document.querySelector('#clock').textContent = new Intl.DateTimeFormat('en-PH', {
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-    timeZone: 'Asia/Manila'
-  }).format(d);
-}
-tick();
-setInterval(tick, 30000);
-
-const homeEls = document.querySelectorAll('header, main, .footer');
-const welcome = document.querySelector('#welcome');
-homeEls.forEach(el => el.inert = true);
-
-const IDLE_MS = 300000;
-let idleTimer;
-
-function resetIdle() {
-  clearTimeout(idleTimer);
-  if (!welcome.classList.contains('leaving')) return;
-  idleTimer = setTimeout(showWelcome, IDLE_MS);
-}
-
-function showHome() {
-  homeEls.forEach(el => el.inert = false);
-  welcome.classList.add('leaving');
-  updateKPIs();
-  resetIdle();
-}
-
-function showWelcome() {
-  clearTimeout(idleTimer);
-  if (modal.open) modal.close();
-  body.innerHTML = '';
-  title.textContent = '';
+document.getElementById('btn-confirm-cancel-order').onclick = () => {
   cart = [];
-  customer = '';
-  address = '';
-  contact = '';
-  loginForm.reset();
-  pwInput.type = 'password';
-  eyeBtn.setAttribute('aria-pressed', 'false');
-  loadRemembered();
-  setMsg('');
-  homeEls.forEach(el => el.inert = true);
-  welcome.classList.remove('leaving');
-  window.scrollTo(0, 0);
-}
-
-document.querySelector('#lock-screen-btn').onclick = showWelcome;
-['pointerdown', 'keydown', 'input'].forEach(t => document.addEventListener(t, resetIdle, { passive: true }));
-
-const loginForm = document.querySelector('#login-form');
-const loginMsg = document.querySelector('#login-msg');
-const pwInput = loginForm.elements.password;
-const eyeBtn = document.querySelector('#eye');
-
-function setMsg(t, err) {
-  loginMsg.textContent = t;
-  loginMsg.classList.toggle('error', !!err);
-}
-
-function loadRemembered() {
-  try {
-    const v = localStorage.getItem('ww-email');
-    loginForm.elements.email.value = v || '';
-    loginForm.elements.remember.checked = !!v;
-  } catch {}
-}
-
-function signIn() {
-  loginForm.reset();
-  pwInput.type = 'password';
-  eyeBtn.setAttribute('aria-pressed', 'false');
-  loadRemembered();
-  setMsg('');
-  showHome();
-}
-
-loadRemembered();
-updateKPIs();
-
-document.querySelector('#rfid').onclick = signIn;
-document.querySelector('#key-btn').onclick = document.querySelector('#pad-btn').onclick = () => setMsg('Access method simulated: Tap the RFID card or enter any credentials to proceed.');
-document.querySelector('#forgot').onclick = () => setMsg('Default staff access is enabled for this prototype terminal.');
-
-eyeBtn.onclick = () => {
-  const show = pwInput.type === 'password';
-  pwInput.type = show ? 'text' : 'password';
-  eyeBtn.setAttribute('aria-pressed', show);
-  eyeBtn.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+  closeModal('modal-cancel-confirm');
+  closeModal('modal-service');
+  closeModal('modal-payment');
+  renderServicesGrid();
+};
+document.getElementById('btn-keep-order').onclick = () => {
+  closeModal('modal-cancel-confirm');
 };
 
-loginForm.onsubmit = e => {
+// Status changes ask for confirmation first (Orders and Completed tabs)
+let statusConfirmOrderId = null;
+let statusConfirmValue = '';
+
+function askStatusConfirm(order, newStatus) {
+  statusConfirmOrderId = order.id;
+  statusConfirmValue = newStatus;
+  document.getElementById('confirm-status-title').textContent = `Change status to "${newStatus}"?`;
+  document.getElementById('confirm-status-detail').textContent =
+    `${order.id} · ${order.customer}\n${order.status} → ${newStatus}`;
+  openModal('modal-confirm-status');
+}
+
+function cancelStatusConfirm() {
+  closeModal('modal-confirm-status');
+  renderOrdersTables();   // puts the dropdown back to the real value
+}
+
+document.getElementById('btn-confirm-status-no').onclick = cancelStatusConfirm;
+document.getElementById('btn-confirm-status-back').onclick = cancelStatusConfirm;
+document.getElementById('btn-confirm-status-yes').onclick = () => {
+  const target = orders.find(x => x.id === statusConfirmOrderId);
+  closeModal('modal-confirm-status');
+  if (target) {
+    target.status = statusConfirmValue;
+    saveStored('ll_orders', orders);
+  }
+  renderOrdersTables();
+};
+
+// Payment changes in the Orders tab always ask for confirmation first
+let payConfirmOrderId = null;
+let payConfirmValue = '';
+
+function askPaymentConfirm(order, newValue) {
+  payConfirmOrderId = order.id;
+  payConfirmValue = newValue;
+  const makePaid = newValue === 'Paid';
+  document.getElementById('confirm-pay-title').textContent = makePaid
+    ? 'Did the customer really pay?'
+    : 'Mark this order as unpaid?';
+  document.getElementById('confirm-pay-detail').textContent =
+    `${order.id} · ${order.customer} · ${peso(order.subtotal)}`;
+  document.getElementById('btn-confirm-pay-no').textContent = makePaid ? 'NO, NOT YET' : 'NO, KEEP AS PAID';
+  document.getElementById('btn-confirm-pay-yes').textContent = makePaid ? 'YES, PAID' : 'YES, MARK UNPAID';
+  openModal('modal-confirm-pay');
+}
+
+function cancelPaymentConfirm() {
+  closeModal('modal-confirm-pay');
+  renderOrdersTables();   // puts the dropdown back to the real value
+}
+
+document.getElementById('btn-confirm-pay-no').onclick = cancelPaymentConfirm;
+document.getElementById('btn-confirm-pay-back').onclick = cancelPaymentConfirm;
+document.getElementById('btn-confirm-pay-yes').onclick = () => {
+  const target = orders.find(x => x.id === payConfirmOrderId);
+  closeModal('modal-confirm-pay');
+  if (target) {
+    target.payment = payConfirmValue;
+    saveStored('ll_orders', orders);
+  }
+  renderOrdersTables();
+};
+
+function renderOrdersTables() {
+  // Page 10: Active Orders
+  const ordersTbody = document.getElementById('orders-table-body');
+    ordersTbody.innerHTML = orders.map((o, idx) => {
+    // Delete is only allowed while the order is still "Received" (paid or unpaid)
+    const canDelete = o.status === 'Received';
+    const payCls = o.payment === 'Paid' ? 'paid' : 'unpaid';
+    const statCls = { 'Received': 'received', 'Processing': 'processing', 'For Pick-up': 'pickup', 'Claimed': 'claimed' }[o.status] || 'received';
+    return `
+      <tr>
+        <td>${idx + 1}</td>
+        <td>${o.customer}</td>
+        <td>${o.id}</td>
+        <td>${peso(o.subtotal)}</td>
+        <td>
+          <div class="pill-select ${payCls}">
+            <select data-order-payment="${o.id}" aria-label="Payment for ${o.id}">
+              <option value="Paid" ${o.payment === 'Paid' ? 'selected' : ''}>Paid</option>
+              <option value="Unpaid" ${o.payment === 'Unpaid' ? 'selected' : ''}>Unpaid</option>
+            </select>
+          </div>
+        </td>
+        <td>
+          <div class="pill-select ${statCls}">
+            <select data-order-status="${o.id}" aria-label="Status for ${o.id}">
+              <option value="Received" ${o.status === 'Received' ? 'selected' : ''}>Received</option>
+              <option value="Processing" ${o.status === 'Processing' ? 'selected' : ''}>Processing</option>
+              <option value="For Pick-up" ${o.status === 'For Pick-up' ? 'selected' : ''}>For Pick-up</option>
+              ${(o.payment === 'Paid' || o.status === 'Claimed') ? `${(o.payment === 'Paid' || o.status === 'Claimed') ? `<option value="Claimed" ${o.status === 'Claimed' ? 'selected' : ''}>Claimed</option>` : ''}` : ''}
+            </select>
+          </div>
+        </td>
+        <td>
+          ${canDelete ? `<button type="button" class="btn-del-action" data-del-order="${o.id}"><span>Delete</span><svg viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button>` : ''}
+        </td>
+      </tr>
+    `;
+  }).join('');
+
+  // Payment dropdown: always ask the staff to confirm before changing
+  ordersTbody.querySelectorAll('[data-order-payment]').forEach(sel => {
+    sel.onchange = () => {
+      const target = orders.find(x => x.id === sel.dataset.orderPayment);
+      if (target) askPaymentConfirm(target, sel.value);
+    };
+  });
+
+  // Attach status change events (always asks for confirmation first)
+  ordersTbody.querySelectorAll('[data-order-status]').forEach(sel => {
+    sel.onchange = () => {
+      const target = orders.find(x => x.id === sel.dataset.orderStatus);
+      if (target) askStatusConfirm(target, sel.value);
+    };
+  });
+
+  // Attach delete events
+  ordersTbody.querySelectorAll('[data-del-order]').forEach(btn => {
+    btn.onclick = () => {
+      const oId = btn.dataset.delOrder;
+      const idx = orders.findIndex(x => x.id === oId);
+      if (idx !== -1) {
+        const removed = orders.splice(idx, 1)[0];
+        deletedOrders.unshift(removed);
+        saveStored('ll_orders', orders);
+        saveStored('ll_deleted', deletedOrders);
+        renderOrdersTables();
+      }
+    };
+  });
+
+  // Page 11: Completed Orders
+  // Rule: Qualified only if (Paid & For Pick-up) OR (Paid & Claimed)
+  // Completed = payment is Paid OR the laundry is Claimed
+  // (stricter version: o.payment === 'Paid' && (o.status === 'For Pick-up' || o.status === 'Claimed'))
+  const completedList = orders.filter(o => o.payment === 'Paid' || o.status === 'For Pick-up' || o.status === 'Claimed');
+  const completedTbody = document.getElementById('completed-table-body');
+    completedTbody.innerHTML = completedList.map((o, idx) => `
+    <tr>
+      <td>${idx + 1}</td>
+      <td><b>${o.customer}</b></td>
+      <td><span class="order-num-tag">${o.id}</span></td>
+      <td><b>${peso(o.subtotal)}</b></td>
+      <td>
+        <span class="badge-pay ${o.payment === 'Paid' ? 'paid' : 'unpaid'}" style="margin-right:10px;">${o.payment}</span>
+        <select class="status-select" data-completed-status="${o.id}">
+          ${['Received', 'Processing', 'For Pick-up', 'Claimed'].filter(s => s !== 'Claimed' || o.payment === 'Paid' || o.status === 'Claimed').map(s => `<option value="${s}" ${o.status === s ? 'selected' : ''}>${s}</option>`).join('')}
+        </select>
+      </td>
+    </tr>
+  `).join('');
+
+  completedTbody.querySelectorAll('[data-completed-status]').forEach(sel => {
+    sel.onchange = () => {
+      const target = orders.find(x => x.id === sel.dataset.completedStatus);
+      if (target) askStatusConfirm(target, sel.value);
+    };
+  });
+
+  // Page 13: Deleted Orders
+  const deletedTbody = document.getElementById('deleted-table-body');
+    deletedTbody.innerHTML = deletedOrders.map((o, idx) => `
+    <tr>
+      <td>${idx + 1}</td>
+      <td><b>${o.customer}</b></td>
+      <td><span class="order-num-tag">${o.id}</span></td>
+      <td><b>${peso(o.subtotal)}</b></td>
+      <td><span class="badge-pay ${o.payment === 'Paid' ? 'paid' : 'unpaid'}">${o.payment}</span></td>
+      <td>${o.status}</td>
+    </tr>
+  `).join('');
+
+  deletedTbody.querySelectorAll('[data-restore-order]').forEach(btn => {
+    btn.onclick = () => {
+      const oId = btn.dataset.restoreOrder;
+      const idx = deletedOrders.findIndex(x => x.id === oId);
+      if (idx !== -1) {
+        const restored = deletedOrders.splice(idx, 1)[0];
+        orders.unshift(restored);
+        saveStored('ll_orders', orders);
+        saveStored('ll_deleted', deletedOrders);
+        renderOrdersTables();
+      }
+    };
+  });
+}
+
+document.getElementById('btn-open-compute-total').onclick = () => {
+  const readyPickup = orders.filter(o => o.payment === 'Paid' && o.status !== 'Claimed');
+  const claimed = orders.filter(o => o.payment === 'Paid' && o.status === 'Claimed');
+
+  const sumPickup = readyPickup.reduce((t, o) => t + o.subtotal, 0);
+  const sumClaimed = claimed.reduce((t, o) => t + o.subtotal, 0);
+  const totalSub = sumPickup + sumClaimed;
+
+  document.getElementById('summary-val-pickup').textContent = peso(sumPickup);
+  document.getElementById('summary-val-claimed').textContent = peso(sumClaimed);
+  document.getElementById('summary-val-subtotal').textContent = peso(totalSub);
+
+  openModal('modal-compute-total');
+};
+
+document.getElementById('btn-edit-services').onclick = () => {
+  const container = document.getElementById('edit-services-list');
+  container.innerHTML = services.map((s, idx) => `
+    <div style="display:grid;grid-template-columns:1fr 100px;gap:10px;align-items:center;">
+      <input type="text" value="${s.name}" data-edit-name="${idx}" style="padding:10px;border:1px solid var(--border);border-radius:8px;">
+      <input type="number" value="${s.price}" data-edit-price="${idx}" style="padding:10px;border:1px solid var(--border);border-radius:8px;">
+    </div>
+  `).join('');
+  openModal('modal-edit-services');
+};
+
+document.getElementById('edit-services-form').onsubmit = (e) => {
   e.preventDefault();
-  const f = loginForm.elements;
-  const email = f.email.value.trim();
-  const pw = f.password.value;
-
-  if (!email || !f.email.checkValidity()) {
-    setMsg('Enter a valid staff email or ID.', true);
-    f.email.focus();
-    return;
-  }
-  if (!pw) {
-    setMsg('Enter your terminal password.', true);
-    f.password.focus();
-    return;
-  }
-  try {
-    f.remember.checked ? localStorage.setItem('ww-email', email) : localStorage.removeItem('ww-email');
-  } catch {}
-  signIn();
+  services.forEach((s, idx) => {
+    const nameInput = document.querySelector(`[data-edit-name="${idx}"]`);
+    const priceInput = document.querySelector(`[data-edit-price="${idx}"]`);
+    if (nameInput) s.name = nameInput.value.trim();
+    if (priceInput) s.price = Number(priceInput.value) || s.price;
+  });
+  saveStored('ll_services_v2', services);
+  renderServicesGrid();
+  closeModal('modal-edit-services');
 };
+
+// Navigation tab switches
+document.querySelectorAll('[data-tab]').forEach(btn => {
+  btn.onclick = () => {
+    renderOrdersTables();   // always show the latest orders
+    document.querySelectorAll('[data-tab]').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+    btn.classList.add('active');
+    const tabName = btn.dataset.tab;
+    const view = document.getElementById(`view-${tabName}`);
+    if (view) view.classList.add('active');
+  };
+});
+
+// Modal helpers
+// Receipt pop-ups never scroll: they shrink to fit the screen height instead
+function fitModal(win) {
+  const s = Math.min(1, (window.innerHeight - 24) / win.offsetHeight);
+  win.style.transform = s < 1 ? 'scale(' + s + ')' : 'none';
+}
+function setupFitModals() {
+  const wins = ['modal-cust-receipt', 'modal-emp-receipt']
+    .map(id => document.querySelector('#' + id + ' .modal-window'))
+    .filter(Boolean);
+  const run = () => wins.forEach(fitModal);
+  wins.forEach(w => new ResizeObserver(run).observe(w));
+  window.addEventListener('resize', run);
+}
+
+function openModal(id) {
+  document.getElementById(id).classList.remove('hidden');
+}
+function closeModal(id) {
+  document.getElementById(id).classList.add('hidden');
+}
+
+// Authentication flow: Splash -> Login -> System -> Logout
+document.getElementById('btn-get-started').onclick = () => {
+  document.getElementById('screen-splash').classList.add('hidden');
+  document.getElementById('screen-login').classList.remove('hidden');
+};
+
+document.getElementById('rfid-tap-area').onclick = () => {
+  document.getElementById('login-status-msg').textContent = 'RFID Key Tag authenticated!';
+  setTimeout(() => {
+    document.getElementById('screen-login').classList.add('hidden');
+    document.getElementById('login-status-msg').textContent = '';
+  }, 400);
+};
+
+document.getElementById('login-form').onsubmit = (e) => {
+  e.preventDefault();
+  document.getElementById('screen-login').classList.add('hidden');
+};
+
+document.getElementById('login-eye').onclick = () => {
+  const p = document.getElementById('login-pass');
+  const eye = document.getElementById('login-eye');
+  const show = p.type === 'password';
+  p.type = show ? 'text' : 'password';
+  eye.setAttribute('aria-pressed', show);
+  eye.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+};
+
+document.getElementById('btn-logout').onclick = () => {
+  cart = [];
+  document.getElementById('screen-login').classList.add('hidden');
+  document.getElementById('screen-splash').classList.remove('hidden');
+};
+
+// Initial startup
+renderServicesGrid();
+renderOrdersTables();
+setupFitModals();
 </script>
 </body>
 </html>

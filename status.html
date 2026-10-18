@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LABADA LINK · Order Status</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@700&family=Manrope:wght@600;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --blue: #1877c9;
+  --dark: #0f5c9e;
+  --cyan: #2ea3f8;
+  --ink: #0f2438;
+  --muted: #5a738e;
+  --border: #cde0f1;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+body {
+  margin: 0;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  padding: 28px 16px 36px;
+  background: radial-gradient(120% 90% at 50% 0%, #f9fcff 0%, #ebf4fc 60%, #dbe9f8 100%);
+  color: var(--ink);
+  font-family: 'DM Sans', -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* Bubbles */
+.bubbles { position: fixed; inset: 0; overflow: hidden; pointer-events: none; }
+.bubbles i {
+  position: absolute;
+  bottom: -160px;
+  left: var(--x);
+  width: var(--s);
+  height: var(--s);
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 28%, rgba(255,255,255,.85) 0, rgba(255,255,255,.35) 18%, rgba(91,176,238,.12) 55%, rgba(35,121,194,.22) 100%);
+  border: 2px solid rgba(35, 121, 194, .22);
+  animation: rise var(--d) linear infinite;
+  animation-delay: var(--dl);
+}
+@keyframes rise {
+  0%   { transform: translate(0, 0) scale(.85); opacity: 0; }
+  8%   { opacity: 1; }
+  35%  { transform: translate(18px, -38vh) scale(.95); }
+  65%  { transform: translate(-14px, -80vh) scale(1.05); }
+  100% { transform: translate(8px, -125vh) scale(1.15); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bubbles i { animation: none; bottom: auto; top: var(--y, 60%); opacity: .6; }
+}
+
+/* Brand */
+.brand {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 24px;
+  letter-spacing: -0.5px;
+}
+.brand .a { color: var(--cyan); }
+.brand .b { color: var(--blue); }
+.logo { width: 56px; height: 56px; display: grid; place-items: center; }
+.logo img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.logo.img-fallback img { display: none; }
+.logo.img-fallback::before {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%232ea3f8'/><stop offset='1' stop-color='%231877c9'/></linearGradient></defs><rect x='14' y='6' width='36' height='42' rx='8' fill='url(%23g)'/><circle cx='21' cy='13' r='2' fill='white'/><circle cx='28' cy='13' r='2' fill='white'/><circle cx='32' cy='31' r='12' fill='white'/><circle cx='32' cy='31' r='8' fill='%23cfe9fc'/><path d='M25 33c3-4 6 3 14-1' fill='none' stroke='white' stroke-width='2' stroke-linecap='round'/><path d='M5 47c8 12 46 12 54 0' fill='none' stroke='%232ea3f8' stroke-width='3' stroke-linecap='round'/><circle cx='9' cy='27' r='3.5' fill='none' stroke='%232ea3f8' stroke-width='1.6'/><circle cx='56' cy='22' r='2.6' fill='none' stroke='%232ea3f8' stroke-width='1.6'/><circle cx='54' cy='34' r='1.6' fill='%232ea3f8'/></svg>") center / contain no-repeat;
+}
+
+/* Card */
+.card {
+  position: relative;
+  z-index: 1;
+  width: min(440px, 100%);
+  background: #fff;
+  border: 1.5px solid var(--border);
+  border-radius: 24px;
+  box-shadow: 0 24px 50px -12px rgba(15, 36, 56, 0.22);
+  padding: 28px 24px 24px;
+}
+.label {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 2.4px;
+  color: var(--muted);
+}
+.order-no {
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  font-size: clamp(32px, 10vw, 44px);
+  color: var(--dark);
+  margin: 6px 0 18px;
+  letter-spacing: 1px;
+  overflow-wrap: anywhere;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  padding: 15px 0;
+  border-top: 1.5px dashed var(--border);
+  font-size: 15px;
+}
+.row > span:first-child { color: var(--muted); font-weight: 500; }
+.row b { font-family: 'Manrope', sans-serif; font-weight: 800; text-align: right; overflow-wrap: anywhere; }
+
+.pill {
+  display: inline-block;
+  padding: 7px 16px;
+  border-radius: 8px;
+  color: #fff;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 14.5px;
+}
+.pill.paid, .pill.received { background: #44bd82; }
+.pill.unpaid { background: #e24b3c; }
+.pill.processing { background: #eeb347; }
+.pill.pickup { background: #4fb0e6; }
+.pill.claimed { background: #6b7c93; }
+
+/* Progress tracker */
+.steps { display: flex; margin: 24px 0 4px; }
+.step {
+  flex: 1;
+  position: relative;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+}
+.step::before {
+  content: '';
+  position: absolute;
+  top: 13px;
+  left: -50%;
+  width: 100%;
+  height: 3px;
+  background: var(--border);
+}
+.step:first-child::before { display: none; }
+.dot {
+  position: relative;
+  z-index: 1;
+  width: 28px;
+  height: 28px;
+  margin: 0 auto 6px;
+  border-radius: 50%;
+  background: #fff;
+  border: 3px solid var(--border);
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 13px;
+  line-height: 1;
+}
+.step.done .dot { background: var(--cyan); border-color: var(--cyan); }
+.step.done .dot::after { content: '✓'; }
+.step.done::before, .step.current::before { background: var(--cyan); }
+.step.current { color: var(--dark); }
+.step.current .dot { border-color: var(--blue); box-shadow: 0 0 0 5px rgba(46, 163, 248, .2); }
+
+.msg {
+  margin-top: 18px;
+  background: #edf5fe;
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: #295377;
+  text-align: center;
+}
+.asof {
+  margin-top: 14px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--muted);
+  text-align: center;
+}
+.asof.live { color: #1c8a5a; font-weight: 700; }
+
+.bad { text-align: center; }
+.bad h1 { font-family: 'Manrope', sans-serif; font-size: 20px; margin: 0 0 8px; }
+.bad p { margin: 0; color: var(--muted); line-height: 1.5; font-size: 14.5px; }
+</style>
+</head>
+<body>
+
+<div class="bubbles" aria-hidden="true">
+  <i style="--x:6%;--s:60px;--d:11s;--dl:-2s;--y:70%"></i>
+  <i style="--x:22%;--s:100px;--d:15s;--dl:-9s;--y:50%"></i>
+  <i style="--x:38%;--s:36px;--d:8s;--dl:-5s;--y:30%"></i>
+  <i style="--x:56%;--s:84px;--d:13s;--dl:-8s;--y:65%"></i>
+  <i style="--x:74%;--s:44px;--d:9s;--dl:-1s;--y:40%"></i>
+  <i style="--x:88%;--s:110px;--d:16s;--dl:-11s;--y:80%"></i>
+</div>
+
+<div class="brand">
+  <div class="logo">
+    <img src="logo.jfif" alt="Labada Link" onerror="this.onerror=null; this.parentElement.classList.add('img-fallback');">
+  </div>
+  <span><span class="a">LABADA</span> <span class="b">LINK</span></span>
+</div>
+
+<main class="card" id="ok">
+  <div class="label">ORDER NUMBER</div>
+  <div class="order-no" id="order-no">-</div>
+
+  <div id="details" hidden>
+    <div class="row" id="row-name" hidden>
+      <span>Name</span>
+      <b id="v-name"></b>
+    </div>
+    <div class="row">
+      <span>Total loads</span>
+      <b id="v-loads">-</b>
+    </div>
+    <div class="row" id="row-subtotal" hidden>
+      <span>Subtotal</span>
+      <b id="v-subtotal"></b>
+    </div>
+    <div class="row">
+      <span>Payment status</span>
+      <span class="pill" id="v-pay"></span>
+    </div>
+    <div class="row">
+      <span>Laundry status</span>
+      <span class="pill" id="v-status"></span>
+    </div>
+
+    <div class="steps" id="steps"></div>
+    <div class="msg" id="msg"></div>
+  </div>
+
+  <div class="asof" id="asof"></div>
+</main>
+
+<main class="card bad" id="bad" hidden>
+  <h1>We couldn't read this QR code</h1>
+  <p>Please scan the QR code on your receipt again, or ask the staff at the counter to check your order.</p>
+</main>
+
+<script>
+/* Realtime Database address (the same one you put in index.html), e.g.
+   'https://your-project-default-rtdb.asia-southeast1.firebasedatabase.app'
+   Leave '' to show only the details printed inside the QR code (not live). */
+const FIREBASE_DB = 'https://labada-link-default-rtdb.asia-southeast1.firebasedatabase.app/';
+
+const DB = FIREBASE_DB.replace(/\/+$/, '');
+const STEPS = ['Received', 'Processing', 'For Pick-up', 'Claimed'];
+const STATUS_CLS = { 'Received': 'received', 'Processing': 'processing', 'For Pick-up': 'pickup', 'Claimed': 'claimed' };
+const MSG = {
+  'Received': 'We have received your laundry.',
+  'Processing': 'Your laundry is being washed, dried and prepared.',
+  'For Pick-up': 'Your laundry is ready! Please come to the counter.',
+  'Claimed': 'Thank you! This order has already been claimed.'
+};
+
+const $ = el => document.getElementById(el);
+const params = new URLSearchParams(location.search);
+const id = (params.get('o') || '').trim();
+const token = (params.get('k') || '').trim();
+const timeText = ms => new Date(ms).toLocaleTimeString('en-PH', { hour: 'numeric', minute: '2-digit' });
+
+function render(d) {
+  $('details').hidden = false;
+  $('order-no').textContent = d.id;
+
+  // Name is shown only if there is one (hidden for walk-ins)
+  const hasName = d.name && d.name.toLowerCase() !== 'walk-in';
+  $('row-name').hidden = !hasName;
+  if (hasName) $('v-name').textContent = d.name;
+
+  $('v-loads').textContent = d.loads > 0 ? d.loads : '-';
+
+  // Subtotal of the services ordered (row stays hidden if there is no amount yet)
+  const hasSubtotal = Number(d.subtotal) > 0;
+  $('row-subtotal').hidden = !hasSubtotal;
+  if (hasSubtotal) {
+    $('v-subtotal').textContent = '₱' + Number(d.subtotal).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  const pay = $('v-pay');
+  pay.textContent = d.paid ? 'Paid' : 'Unpaid';
+  pay.className = 'pill ' + (d.paid ? 'paid' : 'unpaid');
+
+  const st = $('v-status');
+
+  // Order was deleted by the shop
+  if (d.deleted) {
+    st.textContent = 'Cancelled';
+    st.className = 'pill claimed';
+    $('steps').innerHTML = '';
+    $('msg').textContent = 'This order was cancelled. Please contact the shop if you have questions.';
+    return;
+  }
+
+  st.textContent = d.status;
+  st.className = 'pill ' + (STATUS_CLS[d.status] || 'received');
+
+  const idx = Math.max(0, STEPS.indexOf(d.status));
+  $('steps').innerHTML = STEPS.map((s, i) =>
+    `<div class="step ${i < idx ? 'done' : i === idx ? 'current' : ''}"><div class="dot"></div>${s}</div>`
+  ).join('');
+
+  let msg = MSG[d.status] || '';
+  if (d.status === 'For Pick-up' && !d.paid) msg += ' Payment is due when you pick up.';
+  $('msg').textContent = msg;
+}
+
+/* Live mode: the staff app writes every change to the database, and this page listens to it. */
+function startLive() {
+  $('order-no').textContent = id;
+  $('asof').textContent = 'Connecting…';
+  let live = null;
+
+  const handle = (e, merge) => {
+    let msg;
+    try { msg = JSON.parse(e.data); } catch { return; }
+    const path = msg.path || '/';
+    if (path === '/') {
+      live = merge ? Object.assign({}, live || {}, msg.data || {}) : msg.data;
+    } else {
+      live = live || {};
+      const key = path.split('/')[1];
+      if (msg.data === null) delete live[key]; else live[key] = msg.data;
+    }
+    if (!live) {
+      $('details').hidden = true;
+      $('asof').className = 'asof';
+      $('asof').textContent = "We can't find live details for this order yet. Please ask the staff.";
+      return;
+    }
+    render({
+      id: live.id || id,
+      name: live.name || '',
+      loads: Number(live.loads) || 0,
+      subtotal: Number(live.subtotal) || 0,
+      paid: !!live.paid,
+      status: live.status || 'Received',
+      deleted: !!live.deleted
+    });
+    $('asof').className = 'asof live';
+    $('asof').textContent = '● Live · last update ' + timeText(live.updated || Date.now());
+  };
+
+  const es = new EventSource(DB + '/status/' + encodeURIComponent(token) + '.json');
+  es.addEventListener('put', e => handle(e, false));
+  es.addEventListener('patch', e => handle(e, true));
+  es.onerror = () => {
+    $('asof').className = 'asof';
+    $('asof').textContent = es.readyState === EventSource.CLOSED
+      ? "Can't load this order. Please ask the staff."
+      : 'Connection lost. Trying to reconnect…';
+  };
+}
+
+if (!id) {
+  $('ok').hidden = true;
+  $('bad').hidden = false;
+} else if (token && DB) {
+  startLive();
+} else {
+  // Not live: show the details printed inside the QR code
+  render({
+    id,
+    name: (params.get('n') || '').trim(),
+    loads: parseInt(params.get('l'), 10) || 0,
+    subtotal: Number(params.get('a')) || 0,
+    paid: params.get('p') === '1',
+    status: params.get('s') || 'Received',
+    deleted: false
+  });
+  const t = Number(params.get('t'));
+  const printed = t ? new Date(t).toLocaleString('en-PH', { dateStyle: 'medium', timeStyle: 'short' }) : '';
+  $('asof').textContent = (printed ? 'Details as of ' + printed + '. ' : '') + 'Ask the staff for the latest update.';
+}
+</script>
+</body>
+</html>
