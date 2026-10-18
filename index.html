@@ -1534,6 +1534,13 @@ main {
   .modal-back-btn { display: none !important; }
 }
 
+/* Service pop-up: space for the back arrow */
+#modal-service .service-modal-header {
+  padding-left: 50px;
+  min-height: 44px;
+}
+#modal-service .modal-back-btn { top: 22px; }
+
 /* Print thermal overrides */
 @media print {
   @page { margin: 2mm; size: 80mm auto; }
@@ -1784,6 +1791,9 @@ main {
 <div id="modal-service" class="modal-overlay hidden">
   <div class="modal-window">
     <button type="button" class="modal-close-btn" data-close-modal="service">✕</button>
+    <button type="button" class="modal-back-btn print-hide-btn" id="btn-service-back" aria-label="Back to services">
+      <svg viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+    </button>
     <div class="service-modal-header">
       <h3 id="modal-service-name">Service Name</h3>
       <p id="modal-service-desc">Initial Base: ₱90 · 7kg Standard</p>
@@ -1938,6 +1948,20 @@ main {
     <button type="button" class="btn-modal-placeorder print-hide-btn" id="btn-print-emp-receipt" style="width:100%;margin-top:16px;">
       PRINT EMPLOYEE RECEIPT
     </button>
+  </div>
+</div>
+
+<div id="modal-confirm-delete" class="modal-overlay hidden">
+  <div class="modal-window" style="max-width:440px;text-align:center;padding:40px 26px 28px;">
+    <button type="button" class="modal-back-btn" id="btn-confirm-delete-back" aria-label="Back">
+      <svg viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+    </button>
+    <h3 style="font-family:'Manrope',sans-serif;font-size:22px;margin:8px 0 10px;color:var(--danger);">Delete this order?</h3>
+    <p id="confirm-delete-detail" style="color:var(--muted);font-size:15px;line-height:1.6;margin:0 0 24px;white-space:pre-line;"></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <button type="button" class="btn-modal-addmore" id="btn-confirm-delete-no">NO, KEEP IT</button>
+      <button type="button" class="btn-modal-placeorder" id="btn-confirm-delete-yes" style="background:#e24b3c;">YES, DELETE</button>
+    </div>
   </div>
 </div>
 
@@ -2118,7 +2142,7 @@ let pendingOrderForReceipt = null;
 let slipCarouselIndex = 0;
 
 // Where the customer page lives. Leave '' to use status.html next to this page,
-const STATUS_PAGE_URL = '';
+const STATUS_PAGE_URL = 'https://labada-link.cvsu.workers.dev/';
 
 function orderQrText(order) {
   let base = STATUS_PAGE_URL;
@@ -2425,16 +2449,19 @@ document.getElementById('btn-pay-now').onclick = () => {
   proceedPayment(true);
 };
 
+// true: an order starts as "Processing" when its receipt is printed
+// false: it starts as "Received" and staff move it forward themselves
+const START_PROCESSING_ON_PRINT = false;
+
 function proceedPayment(isPaidNow) {
   closeModal('modal-payment');
   const subtotal = cart.reduce((sum, it) => sum + it.price, 0);
   const totalLoads = cart.reduce((sum, it) => sum + it.loads, 0);
   const custName = cart[0]?.customer || 'Walk-in';
-  const orderId = `#${nextOrderCounter++}`;
-  saveStored('ll_counter', nextOrderCounter);
 
+  // The order is only prepared here. It is saved to the Orders page when the receipt is printed.
   const newOrder = {
-    id: orderId,
+    id: `#${nextOrderCounter}`,
     customer: custName,
     subtotal: subtotal,
     payment: isPaidNow ? 'Paid' : 'Unpaid',
@@ -2445,13 +2472,6 @@ function proceedPayment(isPaidNow) {
     created: Date.now()
   };
 
-  orders.unshift(newOrder);
-  syncOrders([newOrder], false);
-  saveStored('ll_orders', orders);
-  cart = [];
-  renderServicesGrid();
-
-  renderOrdersTables();
   pendingOrderForReceipt = newOrder;
   showCustomerReceipt(newOrder);
 }
@@ -2488,43 +2508,33 @@ function showCustomerReceipt(order) {
 
 // "PRINT CUSTOMER RECEIPT" -> Print & advance to Employee Slips (PDF Page 7 & 8)
 document.getElementById('btn-print-cust-receipt').onclick = () => {
+  const order = pendingOrderForReceipt;
+  if (!order) return;
+
+  // First print = the order becomes real: save it to the Orders page (and sync it online)
+  if (!orders.some(o => o.id === order.id)) {
+    order.status = START_PROCESSING_ON_PRINT ? 'Processing' : 'Received';
+    orders.unshift(order);
+    nextOrderCounter++;
+    saveStored('ll_counter', nextOrderCounter);
+    saveStored('ll_orders', orders);
+    cart = [];
+    renderServicesGrid();
+    renderOrdersTables();
+  }
+
   window.print();
   closeModal('modal-cust-receipt');
-  // Transition order status to Processing as described in Page 7 flow
-  if (pendingOrderForReceipt) {
-    const target = orders.find(o => o.id === pendingOrderForReceipt.id);
-    if (target && target.status === 'Received') {
-      target.status = 'Processing';
-      saveStored('ll_orders', orders);
-      renderOrdersTables();
-    }
-    showEmployeeReceipts(pendingOrderForReceipt);
-  }
+  showEmployeeReceipts(order);
 };
 
-// Back arrow on the customer receipt: cancel the just-created order and return to checkout
+// Back arrow on the customer receipt: return to checkout (nothing has been saved yet)
 document.getElementById('btn-receipt-back').onclick = () => {
   const o = pendingOrderForReceipt;
   closeModal('modal-cust-receipt');
-  if (!o) return;
-  const idx = orders.findIndex(x => x.id === o.id);
-  if (idx === -1 || orders[idx].status !== 'Received') return;   // already processed: just close
-
-  orders.splice(idx, 1);
-  saveStored('ll_orders', orders);
-  if (o.id === '#' + (nextOrderCounter - 1)) {
-    nextOrderCounter--;
-    saveStored('ll_counter', nextOrderCounter);
-  }
-  if (typeof FIREBASE_DB !== 'undefined' && FIREBASE_DB && o.token) {
-    fetch(FIREBASE_DB.replace(/\/+$/, '') + '/status/' + o.token + '.json', { method: 'DELETE' }).catch(() => {});
-    delete syncCache[o.token];
-  }
-  cart = o.items.slice();
+  if (!o || orders.some(x => x.id === o.id)) return;   // already printed and saved: just close
   pendingOrderForReceipt = null;
-  renderServicesGrid();
-  renderOrdersTables();
-  openPaymentModal();
+  openPaymentModal();   // the cart is still there
 };
 
 // Back arrow on the employee slips: return to the customer receipt
@@ -2641,6 +2651,34 @@ document.getElementById('btn-confirm-cancel-order').onclick = () => {
 };
 document.getElementById('btn-keep-order').onclick = () => {
   closeModal('modal-cancel-confirm');
+};
+
+// Deleting an order asks for confirmation first
+let deleteConfirmOrderId = null;
+
+function askDeleteConfirm(order) {
+  deleteConfirmOrderId = order.id;
+  document.getElementById('confirm-delete-detail').textContent =
+    `${order.id} · ${order.customer} · ${peso(order.subtotal)}\nIt will move to the Deleted page and can't be restored.`;
+  openModal('modal-confirm-delete');
+}
+
+function cancelDeleteConfirm() {
+  closeModal('modal-confirm-delete');
+}
+
+document.getElementById('btn-confirm-delete-no').onclick = cancelDeleteConfirm;
+document.getElementById('btn-confirm-delete-back').onclick = cancelDeleteConfirm;
+document.getElementById('btn-confirm-delete-yes').onclick = () => {
+  const idx = orders.findIndex(x => x.id === deleteConfirmOrderId);
+  closeModal('modal-confirm-delete');
+  if (idx !== -1 && orders[idx].status === 'Received') {
+    const removed = orders.splice(idx, 1)[0];
+    deletedOrders.unshift(removed);
+    saveStored('ll_orders', orders);
+    saveStored('ll_deleted', deletedOrders);
+  }
+  renderOrdersTables();
 };
 
 // Status changes ask for confirmation first (Orders and Completed tabs)
@@ -2763,18 +2801,11 @@ function renderOrdersTables() {
     };
   });
 
-  // Attach delete events
+  // Attach delete events (asks for confirmation first)
   ordersTbody.querySelectorAll('[data-del-order]').forEach(btn => {
     btn.onclick = () => {
-      const oId = btn.dataset.delOrder;
-      const idx = orders.findIndex(x => x.id === oId);
-      if (idx !== -1) {
-        const removed = orders.splice(idx, 1)[0];
-        deletedOrders.unshift(removed);
-        saveStored('ll_orders', orders);
-        saveStored('ll_deleted', deletedOrders);
-        renderOrdersTables();
-      }
+      const target = orders.find(x => x.id === btn.dataset.delOrder);
+      if (target) askDeleteConfirm(target);
     };
   });
 
@@ -2819,19 +2850,6 @@ function renderOrdersTables() {
     </tr>
   `).join('');
 
-  deletedTbody.querySelectorAll('[data-restore-order]').forEach(btn => {
-    btn.onclick = () => {
-      const oId = btn.dataset.restoreOrder;
-      const idx = deletedOrders.findIndex(x => x.id === oId);
-      if (idx !== -1) {
-        const restored = deletedOrders.splice(idx, 1)[0];
-        orders.unshift(restored);
-        saveStored('ll_orders', orders);
-        saveStored('ll_deleted', deletedOrders);
-        renderOrdersTables();
-      }
-    };
-  });
 }
 
 document.getElementById('btn-open-compute-total').onclick = () => {
@@ -2904,6 +2922,9 @@ function setupFitModals() {
 function openModal(id) {
   document.getElementById(id).classList.remove('hidden');
 }
+// Back arrow in a service pop-up: return to the services page (the cart is kept)
+document.getElementById('btn-service-back').onclick = () => closeModal('modal-service');
+
 function closeModal(id) {
   document.getElementById(id).classList.add('hidden');
 }
