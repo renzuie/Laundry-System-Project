@@ -1351,7 +1351,7 @@ main {
 #view-completed .data-table-card,
 #view-deleted .data-table-card {
   border: 2px solid #0558a0;
-  border-radius: 0;
+  border-radius: 18px;
   box-shadow: none;
   overflow-x: auto;
 }
@@ -1360,6 +1360,7 @@ main {
 #view-deleted .data-table {
   min-width: 880px;
   border-collapse: collapse;
+  margin-top: 0;
   text-align: center;
   font-size: 14px;
 }
@@ -1584,6 +1585,85 @@ main {
   .modal-close-btn, .print-hide-btn, .carousel-nav-bar { display: none !important; }
   .receipt-paper, .receipt-paper * { color: #000000 !important; }
 }
+
+/* Laundry type: small cards over a blurred background */
+.type-screen {
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 25px 60px -15px rgba(15, 36, 56, 0.35);
+  width: min(980px, 96vw);
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 22px 24px 26px;
+}
+.type-head { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+.type-head h3 { font-family: 'Manrope', sans-serif; font-size: 20px; margin: 0; color: var(--ink); }
+.type-head p { margin: 2px 0 0; color: var(--muted); font-size: 13.5px; }
+.type-back {
+  width: 40px; height: 40px; flex: none;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: #fff;
+  display: grid; place-items: center;
+  cursor: pointer;
+}
+.type-back svg { width: 20px; height: 20px; stroke: var(--ink); fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.type-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+.type-grid .service-card { min-height: 270px; cursor: pointer; }
+.type-grid .service-card-icon svg { width: 96px; height: 96px; }
+.type-grid .service-card-title { font-size: 17px; }
+.type-grid .service-card-price { font-size: 21px; padding: 11px 0; }
+.type-grid .service-card small { display: block; }
+@media (max-width: 640px) {
+  .type-grid { grid-template-columns: 1fr; }
+  .type-grid .service-card { min-height: 0; }
+}
+
+/* Edit prices */
+.edit-window { width: min(700px, 96vw); }
+.edit-tabs { display: flex; gap: 8px; margin-bottom: 14px; }
+.edit-tab {
+  flex: 1; padding: 10px;
+  border: 2px solid var(--border); border-radius: 10px;
+  background: #fff; color: var(--muted);
+  font-weight: 800; cursor: pointer;
+}
+.edit-tab.active { border-color: #52aee6; background: #52aee6; color: #fff; }
+.edit-row {
+  display: grid;
+  grid-template-columns: 1.5fr repeat(3, 1fr);
+  gap: 10px; align-items: center;
+  padding: 10px 4px;
+  border-bottom: 1px solid var(--border);
+}
+.edit-row.two { grid-template-columns: 1.5fr 1fr; }
+.edit-row b { font-size: 14px; color: var(--ink); }
+.edit-row small { display: block; color: var(--muted); font-size: 11px; font-weight: 600; }
+.edit-head {
+  font-size: 11px; font-weight: 800; color: var(--muted);
+  text-align: center; border-bottom: 2px solid var(--border);
+}
+.edit-head span:first-child { text-align: left; }
+.edit-price {
+  display: flex; align-items: center;
+  border: 1.5px solid var(--border); border-radius: 8px;
+  padding: 0 8px; background: #fff;
+}
+.edit-price:focus-within { border-color: #52aee6; }
+.edit-price i { font-style: normal; color: var(--muted); font-weight: 700; margin-right: 4px; }
+.edit-price input {
+  width: 100%; min-width: 0;
+  border: 0; outline: 0; background: transparent;
+  padding: 9px 0; font-size: 15px; font-weight: 700;
+}
+@media (max-width: 560px) {
+  .edit-row { grid-template-columns: 1.2fr repeat(3, 1fr); gap: 6px; }
+}
+
 </style>
 </head>
 <body>
@@ -1654,7 +1734,6 @@ main {
         <div class="rfid-box" id="rfid-tap-area" title="Tap RFID Key Tag to sign-in">
           <span class="rfid-icon"><svg viewBox="0 0 100 100"><circle class="dot" cx="50" cy="50" r="7"/><path d="M38 38a17 17 0 0 0 0 24"/><path d="M62 38a17 17 0 0 1 0 24"/><path d="M30 30a29 29 0 0 0 0 40"/><path d="M70 30a29 29 0 0 1 0 40"/><path d="M22 22a41 41 0 0 0 0 56"/><path d="M78 22a41 41 0 0 1 0 56"/></svg></span>
         </div>
-        <small class="rfid-hint">RFID reader active · Click to simulate tap</small>
       </div>
 
       <div class="login-col">
@@ -1663,14 +1742,14 @@ main {
             <label for="login-user">Username:</label>
             <div class="input-wrap">
               <svg class="in-icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4.5"/><path d="M3.5 21c0-4.7 3.8-7.5 8.5-7.5s8.5 2.8 8.5 7.5z"/></svg>
-              <input type="text" id="login-user" placeholder="Enter username" autocomplete="username" required value="staff">
+              <input type="text" id="login-user" placeholder="Enter username" autocomplete="off" required>
             </div>
           </div>
           <div class="form-field">
             <label for="login-pass">Password:</label>
             <div class="input-wrap">
               <svg class="in-icon" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2"/></svg>
-              <input type="password" id="login-pass" placeholder="Enter password" autocomplete="current-password" required value="1234">
+              <input type="password" id="login-pass" placeholder="Enter password" autocomplete="new-password" required>
               <button type="button" class="eye-btn" id="login-eye" aria-pressed="false" aria-label="Show password"><svg viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/><path class="slash" d="M4 4l16 16"/></svg></button>
             </div>
           </div>
@@ -1756,6 +1835,7 @@ main {
             <th>NO.</th>
             <th>NAME</th>
             <th>ORDER NO.</th>
+            <th>LAUNDRY TYPE</th>
             <th>SUBTOTAL</th>
             <th>PAYMENT</th>
             <th>STATUS</th>
@@ -1783,6 +1863,7 @@ main {
             <th>NO.</th>
             <th>NAME</th>
             <th>ORDER NO.</th>
+            <th>LAUNDRY TYPE</th>
             <th>SUBTOTAL</th>
             <th>PAYMENT</th>
             <th>STATUS</th>
@@ -1808,6 +1889,7 @@ main {
             <th>NO.</th>
             <th>NAME</th>
             <th>ORDER NO.</th>
+            <th>LAUNDRY TYPE</th>
             <th>SUBTOTAL</th>
             <th>PAYMENT</th>
             <th>STATUS</th>
@@ -1820,6 +1902,20 @@ main {
     </div>
   </section>
 </main>
+
+<div id="modal-type" class="modal-overlay hidden">
+  <div class="type-screen">
+    <div class="type-head">
+      <button type="button" class="type-back" id="btn-type-back" aria-label="Back to services">
+        <svg viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+      </button>
+      <div>
+        <h3 id="type-service-name">Service</h3>
+      </div>
+    </div>
+    <div class="type-grid" id="type-options"></div>
+  </div>
+</div>
 
 <div id="modal-service" class="modal-overlay hidden">
   <div class="modal-window">
@@ -2081,14 +2177,17 @@ main {
 </div>
 
 <div id="modal-edit-services" class="modal-overlay hidden">
-  <div class="modal-window">
+  <div class="modal-window edit-window">
     <button type="button" class="modal-close-btn" data-close-modal="edit-services">✕</button>
-    <h3 style="font-family:'Manrope',sans-serif;font-size:22px;margin:0 0 16px;">EDIT SERVICES & PRICES</h3>
+    <h3 style="font-family:'Manrope',sans-serif;font-size:22px;margin:0 0 14px;">EDIT PRICES</h3>
+    <div class="edit-tabs">
+      <button type="button" class="edit-tab active" data-edit-tab="services">Services</button>
+      <button type="button" class="edit-tab" data-edit-tab="addons">Add-ons</button>
+    </div>
     <form id="edit-services-form">
-      <div id="edit-services-list" style="display:grid;gap:12px;margin-bottom:18px;">
-        <!-- Dynamic edit inputs -->
-      </div>
-      <button type="submit" class="btn-modal-placeorder" style="width:100%;">Save Changes</button>
+      <div id="edit-pane-services"></div>
+      <div id="edit-pane-addons" style="display:none;"></div>
+      <button type="submit" class="btn-modal-placeorder" style="width:100%;margin-top:18px;">Save Changes</button>
     </form>
   </div>
 </div>
@@ -2097,9 +2196,12 @@ main {
 const RULES = { excessFee: 20, foldMin: 20, foldMax: 30 };
 
 const CATS = [
-  { name: 'Lightweight', cap: 7, hint: 'Regular apparel · up to 7 kg' },
-  { name: 'Heavy / Comforter', cap: 5, hint: 'Jackets, duvets, blankets · up to 5 kg' }
+  { name: 'Lightweight', cap: 7 },
+  { name: 'Heavyweight', cap: 5, strict: true },
+  { name: 'Comforter', cap: 1, piece: true }
 ];
+// price of a service for a laundry type (0 = lightweight, 1 = heavyweight, 2 = comforter)
+const typePrice = (s, i) => i === 1 ? (s.heavyPrice ?? s.price) : i === 2 ? (s.comfPrice ?? 200) : s.price;
 
 const DEFAULT_SERVICES = [
   { id: 'wdf', name: 'Wash, Dry & Fold', price: 170, cap: 7, desc: 'Complete cycle · folding included · 6–7 kg/load' },
@@ -2176,6 +2278,13 @@ function saveStored(key, val) {
 }
 
 let services = loadStored('ll_services_v2', DEFAULT_SERVICES);
+
+services.forEach(s => {
+  if (s.heavyPrice == null) s.heavyPrice = s.price;
+  if (s.comfPrice == null) s.comfPrice = (s.id === 'wo' || s.id === 'do') ? 100 : (s.id === 'fo' ? 20 : 200);
+  // one-time fix: Fold only comforter = ₱20 (an earlier version saved ₱200)
+  if (s.id === 'fo' && !s.comfMigrated) { s.comfPrice = 20; s.comfMigrated = true; }
+});
 // Fold only is now per load (convert a saved older version; keeps any edited price)
 services.forEach(s => {
   if (s.id === 'fo') { delete s.perKg; s.noExcess = true; s.cap = 7; s.desc = 'Per load · 6–7 kg/load'; }
@@ -2231,9 +2340,19 @@ function calculateLine(service, weight, addonPrices, fee = 0, catIdx = 0) {
     return { loads: 1, serviceTotal: f, excessFee: 0, grandTotal: f + addonPrices };
   }
 
-  const cap = service.cats ? CATS[catIdx].cap : (service.cap || 7);
+  const cat = CATS[catIdx] || CATS[0];
+  if (cat.piece) {
+    const pcs = Math.max(1, Math.round(Number(weight) || 1));
+    const t = pcs * typePrice(service, 2);
+    return { loads: pcs, serviceTotal: t, excessFee: 0, grandTotal: t + addonPrices };
+  }
+  const cap = cat.cap;
   let n = Math.ceil(weight / cap);
   if (n < 1) n = 1;
+  if (cat.strict) {
+    const t = n * typePrice(service, 1);
+    return { loads: n, serviceTotal: t, excessFee: 0, grandTotal: t + addonPrices };
+  }
 
   // 1kg allowable excess per tier (e.g. 8kg=1 load, 15kg=2 loads)
   if (n > 1) {
@@ -2275,7 +2394,7 @@ function renderServicesGrid() {
   container.querySelectorAll('.service-card').forEach(card => {
     card.onclick = () => {
       const sId = card.dataset.serviceId;
-      openServiceWeighModal(sId);
+      openTypeChooser(sId);
     };
   });
 
@@ -2294,21 +2413,40 @@ function updateCartBadge() {
 }
 
 let activeCat = 0;
-const activeCap = () => activeService.cats ? CATS[activeCat].cap : (activeService.cap || 7);
+const activeCap = () => CATS[activeCat].cap;
+const isPiece = () => !!CATS[activeCat].piece;
+
+let pendingServiceId = null;
+const TYPE_ICONS = [
+  SERVICE_ICONS.fo,
+  '<svg viewBox="0 0 24 24"><path d="M7 3h10l1 18h-4.5L12 10l-1.5 11H6z"/><path d="M7 7h10"/></svg>',
+  '<svg viewBox="0 0 24 24"><path d="M5 2.5h9a1.5 1.5 0 0 1 1.5 1.5v7.5a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 11.5V4A1.5 1.5 0 0 1 5 2.5z"/><path d="M6 5.5h.01M9 5.5h.01M12 5.5h.01M6 8.5h.01M9 8.5h.01M6 11.2h.01"/><path style="fill:#fff" d="M12 7h8.5a1.5 3 0 0 1 0 6H12z"/><ellipse style="fill:#fff" cx="12" cy="10" rx="1.5" ry="3"/><rect x="3" y="14.2" width="18" height="2.6" rx="1.3"/><rect x="3" y="17" width="18" height="2.6" rx="1.3"/><rect x="3" y="19.8" width="18" height="2.6" rx="1.3"/></svg>'
+];
+function openTypeChooser(serviceId) {
+  const s = services.find(x => x.id === serviceId) || services[0];
+  pendingServiceId = s.id;
+  document.getElementById('type-service-name').textContent = s.name;
+  const box = document.getElementById('type-options');
+  box.innerHTML = CATS.map((c, i) => `
+    <div class="service-card" data-type="${i}">
+      <div class="service-card-icon">${TYPE_ICONS[i]}</div>
+      <h3 class="service-card-title">${c.name}</h3>
+      <div class="service-card-price">${peso(typePrice(s, i))}</div>
+    </div>`).join('');
+  box.querySelectorAll('[data-type]').forEach(b => b.onclick = () => {
+    closeModal('modal-type');
+    openServiceWeighModal(pendingServiceId, Number(b.dataset.type));
+  });
+  openModal('modal-type');
+}
+document.getElementById('btn-type-back').onclick = () => closeModal('modal-type');
 
 function syncServiceModal() {
   const s = activeService;
   const isWash = s.name.includes('Wash');
 
   const catBox = document.getElementById('modal-cat-box');
-  catBox.innerHTML = s.cats
-    ? `<label style="font-size:13px;font-weight:700;display:block;margin-top:14px;">FABRIC TYPE:</label>
-       <div class="cat-row">${CATS.map((c, i) => `<button type="button" class="cat-btn ${i === activeCat ? 'selected' : ''}" data-cat="${i}"><b>${c.name}</b><small>${c.hint}</small></button>`).join('')}</div>`
-    : '';
-  catBox.querySelectorAll('[data-cat]').forEach(b => b.onclick = () => {
-    activeCat = Number(b.dataset.cat);
-    syncServiceModal();
-  });
+  catBox.innerHTML = `<label style="font-size:13px;font-weight:700;display:block;margin-top:14px;">LAUNDRY TYPE: <span style="color:var(--blue,#52aee6)">${CATS[activeCat].name.toUpperCase()}</span></label>`;
 
   document.getElementById('modal-weight-box').style.display = s.fee ? 'none' : 'block';
   document.getElementById('modal-fee-box').style.display = 'none';
@@ -2318,7 +2456,20 @@ function syncServiceModal() {
     renderModalAddons();
   }
 
-  document.getElementById('modal-cap-hint').textContent =
+  const piece = isPiece();
+  const strict = !!CATS[activeCat].strict;
+  document.getElementById('modal-weight-box').querySelector('label').textContent = piece ? 'ENTER NUMBER OF PIECES:' : 'ENTER KG:';
+  const inp = document.getElementById('dial-weight-input');
+  inp.step = piece ? 1 : 0.5;
+  inp.min = piece ? 1 : 0.5;
+  document.getElementById('modal-cap-hint').textContent = piece
+    ? `${peso(typePrice(s, 2))} per piece`
+    : strict
+      ? `${activeCap()} kg per load. Anything over ${activeCap()} kg counts as another load.`
+      : `${activeCap()} kg per standard load. Up to 1 kg excess allowed (+${peso(RULES.excessFee)}); beyond that the laundry is split into more loads.`;
+  document.getElementById('modal-service-desc').textContent = piece
+    ? `${CATS[activeCat].name} · ${peso(typePrice(s, 2))} per piece`
+    : `${CATS[activeCat].name} · ${peso(typePrice(s, activeCat))} per load · ${activeCap()} kg max`;
     s.noExcess
       ? `${activeCap()} kg per load · up to 1 kg over still counts as one load (no excess charge); beyond that it is split into more loads.`
       : `${activeCap()} kg per standard load. Up to 1 kg excess allowed (+${peso(RULES.excessFee)}); beyond that the laundry is split into more loads.`;
@@ -2328,15 +2479,15 @@ function syncServiceModal() {
   recalculateModal();
 }
 
-function openServiceWeighModal(serviceId) {
+function openServiceWeighModal(serviceId, catIdx = 0) {
   activeService = services.find(s => s.id === serviceId) || services[0];
-  activeCat = 0;
+  activeCat = catIdx;
   activeKg = activeCap();
   addonQtys = {};
   addons.forEach(a => addonQtys[a.name] = 0);
 
   document.getElementById('modal-service-name').textContent = activeService.name;
-  document.getElementById('dial-weight-input').value = activeKg.toFixed(1);
+  document.getElementById('dial-weight-input').value = isPiece() ? '1' : activeKg.toFixed(1);
 
   // New order starts with an empty name; an order in progress keeps (and locks) its customer
   const nameInput = document.getElementById('modal-cust-name');
@@ -2408,14 +2559,14 @@ function recalculateModal() {
 // Weight Dial controls
 document.getElementById('dial-minus').onclick = () => {
   const el = document.getElementById('dial-weight-input');
-  let val = Math.max(0.5, (parseFloat(el.value) || 0) - 0.5);
-  el.value = val.toFixed(1);
+  const p = isPiece(), step = p ? 1 : 0.5;
+  el.value = Math.max(step, (parseFloat(el.value) || 0) - step).toFixed(p ? 0 : 1);
   recalculateModal();
 };
 document.getElementById('dial-plus').onclick = () => {
   const el = document.getElementById('dial-weight-input');
-  let val = Math.min(60, (parseFloat(el.value) || 0) + 0.5);
-  el.value = val.toFixed(1);
+  const p = isPiece(), step = p ? 1 : 0.5;
+  el.value = Math.min(60, (parseFloat(el.value) || 0) + step).toFixed(p ? 0 : 1);
   recalculateModal();
 };
 document.getElementById('dial-weight-input').oninput = recalculateModal;
@@ -2440,7 +2591,8 @@ function collectCurrentItem() {
 
   return {
     serviceId: s.id,
-    name: s.cats ? `${s.name} · ${CATS[activeCat].name}` : s.name,
+    name: `${s.name} · ${CATS[activeCat].name}`,
+    piece: isPiece(),
     weight: w,
     loads: calc.loads,
     price: calc.grandTotal,
@@ -2477,7 +2629,7 @@ function openPaymentModal() {
   document.getElementById('checkout-subtotal-display').textContent = peso(subtotal);
 
   const lines = cart.map((it, idx) => `
-    <div>NO. ${idx + 1} | ${it.name} (${it.weight ? it.weight + 'kg · ' : ''}${it.loads} load) - ${peso(it.price)}</div>
+    <div>NO. ${idx + 1} | ${it.name} (${it.weight ? it.weight + (it.piece ? ' pc · ' : 'kg · ') : ''}${it.loads} load) - ${peso(it.price)}</div>
   `).join('');
   document.getElementById('checkout-order-summary-lines').innerHTML = lines;
 
@@ -2788,6 +2940,16 @@ document.getElementById('btn-confirm-pay-yes').onclick = () => {
   renderOrdersTables();
 };
 
+// Laundry type(s) of an order, read from each item's name ("Wash only · Heavyweight")
+function orderTypes(o) {
+  const types = [];
+  (o.items || []).forEach(it => {
+    const t = (it.name || '').split(' · ')[1];
+    if (t && !types.includes(t)) types.push(t);
+  });
+  return types.length ? types.join(', ') : '—';
+}
+
 function renderOrdersTables() {
   // Page 10: Active Orders
   const ordersTbody = document.getElementById('orders-table-body');
@@ -2804,6 +2966,7 @@ function renderOrdersTables() {
         <td>${idx + 1}</td>
         <td>${o.customer}</td>
         <td>${o.id}</td>
+      <td>${orderTypes(o)}</td>
         <td>${peso(o.subtotal)}</td>
         <td>
           <div class="pill-select ${payCls}">
@@ -2866,6 +3029,7 @@ function renderOrdersTables() {
       <td>${idx + 1}</td>
       <td>${o.customer}</td>
       <td>${o.id}</td>
+      <td>${orderTypes(o)}</td>
       <td>${peso(o.subtotal)}</td>
       <td>
         <div class="pill-select ${payCls}">
@@ -2911,6 +3075,7 @@ function renderOrdersTables() {
       <td>${idx + 1}</td>
       <td>${o.customer}</td>
       <td>${o.id}</td>
+      <td>${orderTypes(o)}</td>
       <td>${peso(o.subtotal)}</td>
       <td><span class="pill-badge ${payCls}">${o.payment}</span></td>
       <td><span class="pill-badge ${statCls}">${o.status}</span></td>
@@ -2935,26 +3100,60 @@ document.getElementById('btn-open-compute-total').onclick = () => {
   openModal('modal-compute-total');
 };
 
+function showEditTab(which) {
+  document.querySelectorAll('[data-edit-tab]').forEach(b => b.classList.toggle('active', b.dataset.editTab === which));
+  document.getElementById('edit-pane-services').style.display = which === 'services' ? 'block' : 'none';
+  document.getElementById('edit-pane-addons').style.display = which === 'addons' ? 'block' : 'none';
+}
+document.querySelectorAll('[data-edit-tab]').forEach(b => b.onclick = () => showEditTab(b.dataset.editTab));
+
+const priceBox = (attr, idx, val) =>
+  `<label class="edit-price"><i>₱</i><input type="number" min="0" step="1" value="${val}" ${attr}="${idx}"></label>`;
+
 document.getElementById('btn-edit-services').onclick = () => {
-  const container = document.getElementById('edit-services-list');
-  container.innerHTML = services.map((s, idx) => `
-    <div style="display:grid;grid-template-columns:1fr 100px;gap:10px;align-items:center;">
-      <input type="text" value="${s.name}" data-edit-name="${idx}" style="padding:10px;border:1px solid var(--border);border-radius:8px;">
-      <input type="number" value="${s.price}" data-edit-price="${idx}" style="padding:10px;border:1px solid var(--border);border-radius:8px;">
-    </div>
-  `).join('');
+  document.getElementById('edit-pane-services').innerHTML = `
+    <div class="edit-row edit-head">
+      <span>SERVICE</span>
+      <span>LIGHTWEIGHT<small>per load</small></span>
+      <span>HEAVYWEIGHT<small>per load</small></span>
+      <span>COMFORTER<small>per piece</small></span>
+    </div>` + services.map((s, i) => `
+    <div class="edit-row">
+      <b>${s.name}</b>
+      ${priceBox('data-edit-price', i, s.price)}
+      ${priceBox('data-edit-heavy', i, typePrice(s, 1))}
+      ${priceBox('data-edit-comf', i, typePrice(s, 2))}
+    </div>`).join('');
+
+  document.getElementById('edit-pane-addons').innerHTML = `
+    <div class="edit-row two edit-head"><span>ADD-ON</span><span>PRICE</span></div>` +
+    addons.map((a, i) => `
+    <div class="edit-row two">
+      <div><b>${a.name}</b><small>per ${a.unit}</small></div>
+      ${priceBox('data-edit-addon', i, a.price)}
+    </div>`).join('');
+
+  showEditTab('services');
   openModal('modal-edit-services');
 };
 
 document.getElementById('edit-services-form').onsubmit = (e) => {
   e.preventDefault();
-  services.forEach((s, idx) => {
-    const nameInput = document.querySelector(`[data-edit-name="${idx}"]`);
-    const priceInput = document.querySelector(`[data-edit-price="${idx}"]`);
-    if (nameInput) s.name = nameInput.value.trim();
-    if (priceInput) s.price = Number(priceInput.value) || s.price;
+  const num = (sel, fallback) => {
+    const el = document.querySelector(sel);
+    const v = el ? parseFloat(el.value) : NaN;
+    return (isNaN(v) || v < 0) ? fallback : v;
+  };
+  services.forEach((s, i) => {
+    s.price      = num(`[data-edit-price="${i}"]`, s.price);
+    s.heavyPrice = num(`[data-edit-heavy="${i}"]`, typePrice(s, 1));
+    s.comfPrice  = num(`[data-edit-comf="${i}"]`, typePrice(s, 2));
+  });
+  addons.forEach((a, i) => {
+    a.price = num(`[data-edit-addon="${i}"]`, a.price);
   });
   saveStored('ll_services_v2', services);
+  saveStored('ll_addons_v2', addons);
   renderServicesGrid();
   closeModal('modal-edit-services');
 };
@@ -2991,7 +3190,7 @@ function openModal(id) {
   document.getElementById(id).classList.remove('hidden');
 }
 // Back arrow in a service pop-up: return to the services page (the cart is kept)
-document.getElementById('btn-service-back').onclick = () => closeModal('modal-service');
+document.getElementById('btn-service-back').onclick = () => { closeModal('modal-service'); openModal('modal-type'); };
 
 function closeModal(id) {
   document.getElementById(id).classList.add('hidden');
@@ -3003,16 +3202,23 @@ document.getElementById('btn-get-started').onclick = () => {
   document.getElementById('screen-login').classList.remove('hidden');
 };
 
-document.getElementById('rfid-tap-area').onclick = () => {
-  document.getElementById('login-status-msg').textContent = 'RFID Key Tag authenticated!';
-  setTimeout(() => {
-    document.getElementById('screen-login').classList.add('hidden');
-    document.getElementById('login-status-msg').textContent = '';
-  }, 400);
-};
+// RFID tap sign-in is turned off (the RFID box stays on the page)
+
+const LOGIN_USER = 'labada-link';
+const LOGIN_PASS = 'cvsu123';
 
 document.getElementById('login-form').onsubmit = (e) => {
   e.preventDefault();
+  const user = document.getElementById('login-user').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  const msg = document.getElementById('login-status-msg');
+  if (user !== LOGIN_USER || pass !== LOGIN_PASS) {
+    msg.style.color = 'var(--danger)';
+    msg.textContent = 'Incorrect username or password.';
+    return;
+  }
+  msg.style.color = '';
+  msg.textContent = '';
   document.getElementById('screen-login').classList.add('hidden');
 };
 
@@ -3036,6 +3242,7 @@ function closeLogoutConfirm() { closeModal('modal-confirm-logout'); }
 document.getElementById('btn-confirm-logout-no').onclick = closeLogoutConfirm;
 document.getElementById('btn-confirm-logout-back').onclick = closeLogoutConfirm;
 document.getElementById('btn-confirm-logout-yes').onclick = () => {
+  document.getElementById('login-form').reset();
   closeModal('modal-confirm-logout');
   cart = [];
   document.getElementById('screen-login').classList.add('hidden');
