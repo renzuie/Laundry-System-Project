@@ -73,8 +73,14 @@ body {
 }
 .brand .a { color: var(--cyan); }
 .brand .b { color: var(--blue); }
+.brand .chain {
+  width: 22px; height: 22px;
+  margin: 0 6px;
+  vertical-align: middle;
+  stroke: var(--cyan); fill: none; stroke-width: 2.5; stroke-linecap: round;
+}
 .logo { width: 56px; height: 56px; display: grid; place-items: center; }
-.logo img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.logo img { width: 100%; height: 100%; object-fit: contain; display: block; mix-blend-mode: multiply; }
 .logo.img-fallback img { display: none; }
 .logo.img-fallback::before {
   content: '';
@@ -220,7 +226,7 @@ body {
   <div class="logo">
     <img src="logo.jfif" alt="Labada Link" onerror="this.onerror=null; this.parentElement.classList.add('img-fallback');">
   </div>
-  <span><span class="a">LABADA</span> <span class="b">LINK</span></span>
+  <span><span class="a">LABADA</span><svg class="chain" viewBox="0 0 24 24"><rect x="2" y="8" width="11" height="8" rx="4"/><rect x="11" y="8" width="11" height="8" rx="4"/></svg><span class="b">LINK</span></span>
 </div>
 
 <main class="card" id="ok">
@@ -236,6 +242,10 @@ body {
       <span>Total loads</span>
       <b id="v-loads">-</b>
     </div>
+    <div class="row" id="row-type" hidden>
+      <span>Laundry type</span>
+      <b id="v-type"></b>
+    </div>
     <div class="row" id="row-subtotal" hidden>
       <span>Subtotal</span>
       <b id="v-subtotal"></b>
@@ -250,7 +260,6 @@ body {
     </div>
 
     <div class="steps" id="steps"></div>
-    <div class="msg" id="msg"></div>
   </div>
 
   <div class="asof" id="asof"></div>
@@ -294,6 +303,10 @@ function render(d) {
 
   $('v-loads').textContent = d.loads > 0 ? d.loads : '-';
 
+  // Laundry type is shown only when the order has one (older orders don't)
+  $('row-type').hidden = !d.type;
+  if (d.type) $('v-type').textContent = d.type;
+
   // Subtotal of the services ordered (row stays hidden if there is no amount yet)
   const hasSubtotal = Number(d.subtotal) > 0;
   $('row-subtotal').hidden = !hasSubtotal;
@@ -312,7 +325,6 @@ function render(d) {
     st.textContent = 'Cancelled';
     st.className = 'pill claimed';
     $('steps').innerHTML = '';
-    $('msg').textContent = 'This order was cancelled. Please contact the shop if you have questions.';
     return;
   }
 
@@ -324,9 +336,7 @@ function render(d) {
     `<div class="step ${i < idx ? 'done' : i === idx ? 'current' : ''}"><div class="dot"></div>${s}</div>`
   ).join('');
 
-  let msg = MSG[d.status] || '';
-  if (d.status === 'For Pick-up' && !d.paid) msg += ' Payment is due when you pick up.';
-  $('msg').textContent = msg;
+
 }
 
 /* Live mode: the staff app writes every change to the database, and this page listens to it. */
@@ -356,13 +366,13 @@ function startLive() {
       id: live.id || id,
       name: live.name || '',
       loads: Number(live.loads) || 0,
+      type: live.type || '',
       subtotal: Number(live.subtotal) || 0,
       paid: !!live.paid,
       status: live.status || 'Received',
       deleted: !!live.deleted
     });
-    $('asof').className = 'asof live';
-    $('asof').textContent = '● Live · last update ' + timeText(live.updated || Date.now());
+    $('asof').textContent = '';
   };
 
   const es = new EventSource(DB + '/status/' + encodeURIComponent(token) + '.json');
@@ -387,14 +397,12 @@ if (!id) {
     id,
     name: (params.get('n') || '').trim(),
     loads: parseInt(params.get('l'), 10) || 0,
+    type: (params.get('y') || '').trim(),
     subtotal: Number(params.get('a')) || 0,
     paid: params.get('p') === '1',
     status: params.get('s') || 'Received',
     deleted: false
   });
-  const t = Number(params.get('t'));
-  const printed = t ? new Date(t).toLocaleString('en-PH', { dateStyle: 'medium', timeStyle: 'short' }) : '';
-  $('asof').textContent = (printed ? 'Details as of ' + printed + '. ' : '') + 'Ask the staff for the latest update.';
 }
 </script>
 </body>

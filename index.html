@@ -2246,6 +2246,7 @@ function syncOrders(list, deleted) {
       id: o.id,
       name: o.customer && o.customer !== 'Walk-in' ? o.customer : '',
       loads: o.totalLoads || 0,
+      type: orderTypes(o) === '—' ? '' : orderTypes(o),
       subtotal: o.subtotal || 0,
       paid: o.payment === 'Paid',
       status: o.status,
@@ -2327,6 +2328,7 @@ function orderQrText(order) {
     t: order.created
   });
   if (order.customer && order.customer !== 'Walk-in') p.set('n', order.customer);
+  if (orderTypes(order) !== '—') p.set('y', orderTypes(order));
   return base + '?' + p.toString();
 }
 
