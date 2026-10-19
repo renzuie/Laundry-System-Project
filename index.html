@@ -2106,7 +2106,7 @@ const DEFAULT_SERVICES = [
   { id: 'wd', name: 'Wash & Dry only', price: 170, cap: 7, desc: 'Ready to press · 6–7 kg/load' },
   { id: 'wo', name: 'Wash only', price: 85, cap: 7, desc: 'Per standard wash cycle' },
   { id: 'do', name: 'Dry only', price: 90, cap: 7, cats: true, desc: 'Tumble drying based on fabric tier' },
-  { id: 'fo', name: 'Fold only', price: 20, cap: 7, perKg: true, desc: 'Fixed rate per kg' }
+  { id: 'fo', name: 'Fold only', price: 20, cap: 7, noExcess: true, desc: 'Per load · 6–7 kg/load' }
 ];
 
 // Line icons, one per service id
@@ -2176,6 +2176,10 @@ function saveStored(key, val) {
 }
 
 let services = loadStored('ll_services_v2', DEFAULT_SERVICES);
+// Fold only is now per load (convert a saved older version; keeps any edited price)
+services.forEach(s => {
+  if (s.id === 'fo') { delete s.perKg; s.noExcess = true; s.cap = 7; s.desc = 'Per load · 6–7 kg/load'; }
+});
 let addons = loadStored('ll_addons_v2', DEFAULT_ADDONS);
 let orders = loadStored('ll_orders', []);
 let deletedOrders = loadStored('ll_deleted', []);
@@ -2226,17 +2230,7 @@ function calculateLine(service, weight, addonPrices, fee = 0, catIdx = 0) {
     const f = service.price;
     return { loads: 1, serviceTotal: f, excessFee: 0, grandTotal: f + addonPrices };
   }
-  // Per-kg services (Fold only): weight × rate, no excess charge
-  if (service.perKg) {
-    const w = Number(weight) || 0;
-    const total = Math.round(w * service.price * 100) / 100;
-    return {
-      loads: Math.max(1, Math.ceil(w / (service.cap || 7))),
-      serviceTotal: total,
-      excessFee: 0,
-      grandTotal: total + addonPrices
-    };
-  }
+
   const cap = service.cats ? CATS[catIdx].cap : (service.cap || 7);
   let n = Math.ceil(weight / cap);
   if (n < 1) n = 1;
@@ -2252,7 +2246,7 @@ function calculateLine(service, weight, addonPrices, fee = 0, catIdx = 0) {
   const baseCap = n * cap;
   const maxLimit = baseCap + 1;
   const hasExcess = (weight > baseCap && weight <= maxLimit);
-  const excessFee = hasExcess ? RULES.excessFee : 0;
+  const excessFee = (hasExcess && !service.noExcess) ? RULES.excessFee : 0;
   const serviceTotal = (n * service.price) + excessFee;
   const grandTotal = serviceTotal + addonPrices;
 
@@ -2273,7 +2267,7 @@ function renderServicesGrid() {
         <div class="service-card-icon">${SERVICE_ICONS[s.id] || ''}</div>
         <h3 class="service-card-title">${s.name}</h3>
         <small style="color:var(--muted);font-size:12px;line-height:1.3;">${s.desc}</small>
-        <div class="service-card-price">${peso(s.price)}${s.perKg ? ' / kg' : ''}</div>
+        <div class="service-card-price">${peso(s.price)}</div>
       </div>
     `;
   }).join('');
@@ -2325,12 +2319,12 @@ function syncServiceModal() {
   }
 
   document.getElementById('modal-cap-hint').textContent =
-    `${s.perKg ? peso(s.price) + ' per kg · no excess charge' : activeCap() + ' kg per standard load. Up to 1 kg excess allowed (+' + peso(RULES.excessFee) + '); beyond that the laundry is split into more loads.'}`;
+    s.noExcess
+      ? `${activeCap()} kg per load · up to 1 kg over still counts as one load (no excess charge); beyond that it is split into more loads.`
+      : `${activeCap()} kg per standard load. Up to 1 kg excess allowed (+${peso(RULES.excessFee)}); beyond that the laundry is split into more loads.`;
   document.getElementById('modal-service-desc').textContent = s.fee
     ? `Fixed rate ${peso(s.price)}`
-    : s.perKg
-      ? `${peso(s.price)} per kg`
-      : `Base: ${peso(s.price)} per load · ${activeCap()} kg standard`;
+    : `Base: ${peso(s.price)} per load · ${activeCap()} kg standard`;
   recalculateModal();
 }
 
