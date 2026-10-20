@@ -3472,18 +3472,44 @@ function parseScanCode(text) {
   return m2 ? m2[1] : text;
 }
 
-let scanHighlightId = null, scanHighlightTimer = null;
+let scanHighlightId = null, scanHighlightTab = null, scanSig = '', scanHighlightTimer = null;
+const SCAN_HIGHLIGHT_MS = 15000;   // how long the highlight stays when nothing is changed
 
-// Marks the scanned order's row (the row under NO. / NAME / ORDER NO. ...) in whichever table it is in
+// (Re)starts the countdown after which only the highlight design is removed (the row stays)
+function startScanTimer() {
+  clearTimeout(scanHighlightTimer);
+  if (!scanHighlightId) return;
+  scanHighlightTimer = setTimeout(() => { scanHighlightId = null; applyScanHighlight(); }, SCAN_HIGHLIGHT_MS);
+}
+
+// Marks the scanned order's row in whichever table it is in
 function applyScanHighlight() {
   document.querySelectorAll('tr.scan-hit').forEach(r => r.classList.remove('scan-hit'));
   if (!scanHighlightId) return null;
   const norm = s => String(s).replace(/^#/, '').trim().toLowerCase();
-  let hit = null;
-  document.querySelectorAll('#orders-table-body tr, #completed-table-body tr, #deleted-table-body tr').forEach(r => {
-    const cell = r.children[2];   // ORDER NO. column
-    if (cell && norm(cell.textContent) === norm(scanHighlightId)) { r.classList.add('scan-hit'); hit = r; }
+  const tables = { orders: 'orders-table-body', completed: 'completed-table-body', deleted: 'deleted-table-body' };
+  let hit = null, foundIn = null;
+  Object.keys(tables).forEach(tab => {
+    document.querySelectorAll('#' + tables[tab] + ' tr').forEach(r => {
+      const cell = r.children[2];   // ORDER NO. column
+      if (cell && norm(cell.textContent) === norm(scanHighlightId)) { hit = r; foundIn = tab; }
+    });
   });
+  if (!hit) return null;
+
+  // The order moved to another tab (for example Orders -> Completed): the highlight is finished
+  if (foundIn !== scanHighlightTab) {
+    scanHighlightId = null;
+    clearTimeout(scanHighlightTimer);
+    return null;
+  }
+
+  // Payment or status was changed but the order is still here: keep the highlight, wait 15 more seconds
+  const o = orders.find(x => norm(x.id) === norm(scanHighlightId));
+  const sig = o ? o.payment + '|' + o.status : '';
+  if (sig !== scanSig) { scanSig = sig; startScanTimer(); }
+
+  hit.classList.add('scan-hit');
   return hit;
 }
 
@@ -3513,7 +3539,6 @@ function handleScan(raw) {
     scanToast('Scan received, but "' + openPopup.id + '" is open. Close it, then scan again.');
     return;
   }
-  scanToast('Scanned: ' + parseScanCode(raw));
 
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const clean = s => String(s).replace(/^#/, '').trim().toLowerCase();
@@ -3533,7 +3558,7 @@ function handleScan(raw) {
   };
 
   let order = orders.find(o => clean(o.id) === clean(code));
-  let tab;
+  let tab, isDeleted = false;
   if (order) {
     if (order.token && key && key.toLowerCase() !== String(order.token).toLowerCase()) {
       return message('Invalid QR', 'This QR code does not match the order. Ask the customer for the receipt.');
@@ -3545,16 +3570,43 @@ function handleScan(raw) {
     order = deletedOrders.find(o => clean(o.id) === clean(code));
     if (!order) return message('Order not found', `No order matches "${code}".`);
     tab = 'deleted';
+    isDeleted = true;
   }
 
+  // Highlight the row. The 15-second countdown starts when the pop-up is closed (see below).
   scanHighlightId = order.id;
+  scanHighlightTab = tab;
+  scanSig = order.payment + '|' + order.status;
   clearTimeout(scanHighlightTimer);
-  scanHighlightTimer = setTimeout(() => { scanHighlightId = null; applyScanHighlight(); }, 20000);
-
   document.querySelector(`[data-tab="${tab}"]`).click();      // switch tab (also refreshes the tables)
   const hit = applyScanHighlight();
   if (hit) hit.scrollIntoView({ block: 'center', behavior: 'smooth' });
+
+  // Status pop-up for this order
+  const payCls = order.payment === 'Paid' ? 'paid' : 'unpaid';
+  const statCls = { 'Received': 'received', 'Processing': 'processing', 'For Pick-up': 'pickup', 'Claimed': 'claimed' }[order.status] || 'received';
+  const row = (k, v) => `<div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:9px 0;border-top:1px dashed var(--border);"><span style="color:var(--muted);">${k}</span><b>${v}</b></div>`;
+  let note;
+  if (isDeleted) note = 'This order was deleted.';
+  else if (order.status === 'Claimed') note = 'Already claimed.';
+  else if (order.status === 'For Pick-up') note = order.payment === 'Paid' ? 'Ready for pick-up.' : `Ready for pick-up. Payment due: ${peso(order.subtotal)}.`;
+  else note = 'Not ready yet.';
+
+  document.getElementById('scan-title').textContent = order.id;
+  document.getElementById('scan-body').innerHTML =
+    row('Name', esc(order.customer)) +
+    row('Laundry type', esc(orderTypes(order))) +
+    row('Total loads', order.totalLoads) +
+    row('Amount', peso(order.subtotal)) +
+    row('Payment', `<span class="pill-badge ${payCls}">${order.payment}</span>`) +
+    row('Status', `<span class="pill-badge ${statCls}">${isDeleted ? 'Deleted' : order.status}</span>`) +
+    `<p style="text-align:center;font-weight:800;margin:14px 0 0;">${note}</p>`;
+  document.getElementById('scan-actions').innerHTML = '';
+  openModal('modal-scan');
 }
+
+// Closing the status pop-up with the X starts the 15-second highlight countdown
+document.querySelector('#modal-scan .modal-close-btn').addEventListener('click', startScanTimer);
 
 // Initial startup
 renderServicesGrid();
