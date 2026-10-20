@@ -1825,6 +1825,16 @@ main {
   .slips-viewport.single { grid-template-columns: 1fr; }
 }
 
+/* Order found by the QR scanner */
+tr.scan-hit td {
+  background: #fff3c4 !important;
+  box-shadow: inset 0 3px 0 #f59e0b, inset 0 -3px 0 #f59e0b;
+  animation: scan-pulse 1s ease-in-out 3;
+}
+tr.scan-hit td:first-child { box-shadow: inset 3px 3px 0 #f59e0b, inset 0 -3px 0 #f59e0b; }
+tr.scan-hit td:last-child { box-shadow: inset -3px 3px 0 #f59e0b, inset 0 -3px 0 #f59e0b; }
+@keyframes scan-pulse { 50% { background: #ffe08a; } }
+
 </style>
 </head>
 <body>
@@ -3264,6 +3274,7 @@ function renderOrdersTables() {
   `;
   }).join('');
 
+  applyScanHighlight();   // keep the scanned order highlighted after a refresh
 }
 
 document.getElementById('btn-open-compute-total').onclick = () => {
@@ -3460,68 +3471,66 @@ function parseScanCode(text) {
   return m2 ? m2[1] : text;
 }
 
+let scanHighlightId = null, scanHighlightTimer = null;
+
+// Marks the scanned order's row (the row under NO. / NAME / ORDER NO. ...) in whichever table it is in
+function applyScanHighlight() {
+  document.querySelectorAll('tr.scan-hit').forEach(r => r.classList.remove('scan-hit'));
+  if (!scanHighlightId) return null;
+  const norm = s => String(s).replace(/^#/, '').trim().toLowerCase();
+  let hit = null;
+  document.querySelectorAll('#orders-table-body tr, #completed-table-body tr, #deleted-table-body tr').forEach(r => {
+    const cell = r.children[2];   // ORDER NO. column
+    if (cell && norm(cell.textContent) === norm(scanHighlightId)) { r.classList.add('scan-hit'); hit = r; }
+  });
+  return hit;
+}
+
 function handleScan(raw) {
   // ignore scans on the welcome / login screens
   if (!['screen-splash', 'screen-login'].every(id => document.getElementById(id).classList.contains('hidden'))) return;
+  // ignore scans while staff is in the middle of something (service, checkout, receipt...)
+  if (document.querySelector('.modal-overlay:not(.hidden):not(#modal-scan)')) return;
 
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const clean = s => String(s).replace(/^#/, '').trim().toLowerCase();
   const code = parseScanCode(raw);
   const key = (raw.match(/[?&]k=([^&\s]+)/) || [])[1] || '';
-  const order = orders.find(o => clean(o.id) === clean(code));
-  const title = document.getElementById('scan-title');
-  const body = document.getElementById('scan-body');
-  const actions = document.getElementById('scan-actions');
-  actions.innerHTML = '';
 
-  const addBtn = (label, cls, fn) => {
-    const b = document.createElement('button');
-    b.type = 'button'; b.className = cls; b.style.width = '100%'; b.textContent = label;
-    b.onclick = fn;
-    actions.appendChild(b);
-  };
-  const addClose = () => addBtn('CLOSE', 'btn-modal-addmore', () => closeModal('modal-scan'));
   const message = (t, text) => {
-    title.textContent = t;
-    body.innerHTML = `<p style="text-align:center;color:var(--muted);margin:0;">${esc(text)}</p>`;
-    addClose();
+    document.getElementById('scan-title').textContent = t;
+    document.getElementById('scan-body').innerHTML = `<p style="text-align:center;color:var(--muted);margin:0;">${esc(text)}</p>`;
+    const actions = document.getElementById('scan-actions');
+    actions.innerHTML = '';
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'btn-modal-addmore'; b.style.width = '100%'; b.textContent = 'CLOSE';
+    b.onclick = () => closeModal('modal-scan');
+    actions.appendChild(b);
     openModal('modal-scan');
   };
 
-  if (!order) {
-    const wasDeleted = deletedOrders.some(o => clean(o.id) === clean(code));
-    return message(wasDeleted ? 'Order deleted' : 'Order not found',
-      wasDeleted ? 'This order was deleted and cannot be claimed.' : `No order matches "${code}".`);
-  }
-  if (order.token && key && key.toLowerCase() !== String(order.token).toLowerCase()) {
-    return message('Invalid QR', 'This QR code does not match the order. Ask the customer for the receipt.');
-  }
-
-  const payCls = order.payment === 'Paid' ? 'paid' : 'unpaid';
-  const statCls = { 'Received': 'received', 'Processing': 'processing', 'For Pick-up': 'pickup', 'Claimed': 'claimed' }[order.status] || 'received';
-  const row = (k, v) => `<div style="display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-top:1px dashed var(--border);"><span style="color:var(--muted);">${k}</span><b>${v}</b></div>`;
-
-  title.textContent = order.id;
-  body.innerHTML =
-    row('Name', esc(order.customer)) +
-    row('Laundry type', esc(orderTypes(order))) +
-    row('Total loads', order.totalLoads) +
-    row('Amount', peso(order.subtotal)) +
-    row('Payment', `<span class="pill-badge ${payCls}">${order.payment}</span>`) +
-    row('Status', `<span class="pill-badge ${statCls}">${order.status}</span>`);
-
-  if (order.status === 'Claimed') {
-    body.insertAdjacentHTML('beforeend', '<p style="text-align:center;color:#c0392b;font-weight:800;margin:14px 0 0;">ALREADY CLAIMED</p>');
-  } else if (order.status !== 'For Pick-up') {
-    body.insertAdjacentHTML('beforeend', `<p style="text-align:center;color:var(--muted);margin:14px 0 0;">Not ready yet. Current status: ${order.status}.</p>`);
-  } else if (order.payment !== 'Paid') {
-    body.insertAdjacentHTML('beforeend', `<p style="text-align:center;font-weight:800;margin:14px 0 0;">Collect ${peso(order.subtotal)} first.</p>`);
-    addBtn('MARK AS PAID', 'btn-modal-placeorder', () => { closeModal('modal-scan'); askPaymentConfirm(order, 'Paid'); });
+  let order = orders.find(o => clean(o.id) === clean(code));
+  let tab;
+  if (order) {
+    if (order.token && key && key.toLowerCase() !== String(order.token).toLowerCase()) {
+      return message('Invalid QR', 'This QR code does not match the order. Ask the customer for the receipt.');
+    }
+    // same rule as the tables: Paid + (For Pick-up or Claimed) = Completed, everything else = Orders
+    const done = order.payment === 'Paid' && (order.status === 'For Pick-up' || order.status === 'Claimed');
+    tab = done ? 'completed' : 'orders';
   } else {
-    addBtn('CLAIM ORDER', 'btn-modal-placeorder', () => { closeModal('modal-scan'); askStatusConfirm(order, 'Claimed'); });
+    order = deletedOrders.find(o => clean(o.id) === clean(code));
+    if (!order) return message('Order not found', `No order matches "${code}".`);
+    tab = 'deleted';
   }
-  addClose();
-  openModal('modal-scan');
+
+  scanHighlightId = order.id;
+  clearTimeout(scanHighlightTimer);
+  scanHighlightTimer = setTimeout(() => { scanHighlightId = null; applyScanHighlight(); }, 20000);
+
+  document.querySelector(`[data-tab="${tab}"]`).click();      // switch tab (also refreshes the tables)
+  const hit = applyScanHighlight();
+  if (hit) hit.scrollIntoView({ block: 'center', behavior: 'smooth' });
 }
 
 // Initial startup
