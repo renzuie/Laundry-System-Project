@@ -2270,6 +2270,16 @@ main {
   </div>
 </div>
 
+<div id="modal-scan" class="modal-overlay hidden">
+  <div class="modal-window" style="width:min(460px,96vw);text-align:center;">
+    <button type="button" class="modal-close-btn" data-close-modal="scan">✕</button>
+    <div style="font-size:12px;font-weight:800;letter-spacing:2px;color:var(--muted);">QR SCANNED</div>
+    <div id="scan-title" style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:34px;margin:6px 0 14px;color:var(--ink);">-</div>
+    <div id="scan-body" style="text-align:left;"></div>
+    <div id="scan-actions" style="display:grid;gap:10px;margin-top:18px;"></div>
+  </div>
+</div>
+
 <div id="modal-confirm-pay" class="modal-overlay hidden">
   <div class="modal-window" style="max-width:440px;text-align:center;padding:40px 26px 28px;">
     <button type="button" class="modal-back-btn" id="btn-confirm-pay-back" aria-label="Back">
@@ -3419,6 +3429,100 @@ document.getElementById('btn-confirm-logout-yes').onclick = () => {
   document.getElementById('screen-login').classList.add('hidden');
   document.getElementById('screen-splash').classList.remove('hidden');
 };
+
+/* ===== QR scanner (USB scanner = keyboard that types the QR text + Enter) ===== */
+let scanBuf = '', scanLast = 0;
+document.addEventListener('keydown', e => {
+  if (e.ctrlKey || e.altKey || e.metaKey) return;
+  const el = document.activeElement;
+  if (el && /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName)) return;   // staff is typing in a box
+  const now = Date.now();
+  if (now - scanLast > 80) scanBuf = '';          // scanners type much faster than people
+  scanLast = now;
+  if (e.key === 'Enter') {
+    if (scanBuf.length >= 3) {
+      e.preventDefault();
+      if (el && el.blur) el.blur();
+      const text = scanBuf; scanBuf = '';
+      handleScan(text);
+    }
+    scanBuf = '';
+    return;
+  }
+  if (e.key.length === 1) scanBuf += e.key;
+});
+
+function parseScanCode(text) {
+  text = text.trim();
+  const m = text.match(/[?&]o=([^&\s]+)/);
+  if (m) return decodeURIComponent(m[1]);
+  const m2 = text.match(/^LL-(.+)$/i);
+  return m2 ? m2[1] : text;
+}
+
+function handleScan(raw) {
+  // ignore scans on the welcome / login screens
+  if (!['screen-splash', 'screen-login'].every(id => document.getElementById(id).classList.contains('hidden'))) return;
+
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const clean = s => String(s).replace(/^#/, '').trim().toLowerCase();
+  const code = parseScanCode(raw);
+  const key = (raw.match(/[?&]k=([^&\s]+)/) || [])[1] || '';
+  const order = orders.find(o => clean(o.id) === clean(code));
+  const title = document.getElementById('scan-title');
+  const body = document.getElementById('scan-body');
+  const actions = document.getElementById('scan-actions');
+  actions.innerHTML = '';
+
+  const addBtn = (label, cls, fn) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = cls; b.style.width = '100%'; b.textContent = label;
+    b.onclick = fn;
+    actions.appendChild(b);
+  };
+  const addClose = () => addBtn('CLOSE', 'btn-modal-addmore', () => closeModal('modal-scan'));
+  const message = (t, text) => {
+    title.textContent = t;
+    body.innerHTML = `<p style="text-align:center;color:var(--muted);margin:0;">${esc(text)}</p>`;
+    addClose();
+    openModal('modal-scan');
+  };
+
+  if (!order) {
+    const wasDeleted = deletedOrders.some(o => clean(o.id) === clean(code));
+    return message(wasDeleted ? 'Order deleted' : 'Order not found',
+      wasDeleted ? 'This order was deleted and cannot be claimed.' : `No order matches "${code}".`);
+  }
+  if (order.token && key && key.toLowerCase() !== String(order.token).toLowerCase()) {
+    return message('Invalid QR', 'This QR code does not match the order. Ask the customer for the receipt.');
+  }
+
+  const payCls = order.payment === 'Paid' ? 'paid' : 'unpaid';
+  const statCls = { 'Received': 'received', 'Processing': 'processing', 'For Pick-up': 'pickup', 'Claimed': 'claimed' }[order.status] || 'received';
+  const row = (k, v) => `<div style="display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-top:1px dashed var(--border);"><span style="color:var(--muted);">${k}</span><b>${v}</b></div>`;
+
+  title.textContent = order.id;
+  body.innerHTML =
+    row('Name', esc(order.customer)) +
+    row('Laundry type', esc(orderTypes(order))) +
+    row('Total loads', order.totalLoads) +
+    row('Amount', peso(order.subtotal)) +
+    row('Payment', `<span class="pill-badge ${payCls}">${order.payment}</span>`) +
+    row('Status', `<span class="pill-badge ${statCls}">${order.status}</span>`);
+
+  if (order.status === 'Claimed') {
+    body.insertAdjacentHTML('beforeend', '<p style="text-align:center;color:#c0392b;font-weight:800;margin:14px 0 0;">ALREADY CLAIMED</p>');
+  } else if (order.status !== 'For Pick-up') {
+    body.insertAdjacentHTML('beforeend', `<p style="text-align:center;color:var(--muted);margin:14px 0 0;">Not ready yet. Current status: ${order.status}.</p>`);
+  } else if (order.payment !== 'Paid') {
+    body.insertAdjacentHTML('beforeend', `<p style="text-align:center;font-weight:800;margin:14px 0 0;">Collect ${peso(order.subtotal)} first.</p>`);
+    addBtn('MARK AS PAID', 'btn-modal-placeorder', () => { closeModal('modal-scan'); askPaymentConfirm(order, 'Paid'); });
+  } else {
+    addBtn('CLAIM ORDER', 'btn-modal-placeorder', () => { closeModal('modal-scan'); askStatusConfirm(order, 'Claimed'); });
+  }
+  addClose();
+  openModal('modal-scan');
+}
 
 // Initial startup
 renderServicesGrid();
