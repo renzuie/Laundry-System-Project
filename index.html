@@ -3506,8 +3506,9 @@ function handleScan(raw) {
   // ignore scans on the welcome / login screens
   if (!['screen-splash', 'screen-login'].every(id => document.getElementById(id).classList.contains('hidden'))) return;
   // ignore scans while staff is in the middle of something (service, checkout, receipt...)
-  if (document.querySelector('.modal-overlay:not(.hidden):not(#modal-scan)')) {
-    scanToast('Scan received. Close the open pop-up first, then scan again.');
+  const openPopup = document.querySelector('.modal-overlay:not(.hidden):not(#modal-scan)');
+  if (openPopup) {
+    scanToast('Scan received, but "' + openPopup.id + '" is open. Close it, then scan again.');
     return;
   }
   scanToast('Scanned: ' + parseScanCode(raw));
