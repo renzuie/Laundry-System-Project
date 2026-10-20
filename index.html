@@ -51,9 +51,6 @@
 }
 
 * { box-sizing: border-box; }
-* { scrollbar-width: thin; scrollbar-color: rgba(148, 163, 184, 0.4) transparent; }
-::-webkit-scrollbar { width: 4px; height: 4px; }
-::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.4); border-radius: 999px; }
 
 body {
   margin: 0;
@@ -105,8 +102,8 @@ button:active { transform: scale(0.97); }
   gap: clamp(20px, 4vh, 36px);
 }
 .splash-logo {
-  width: clamp(170px, 38vmin, 270px);
-  height: clamp(170px, 38vmin, 270px);
+  width: clamp(220px, 50vmin, 400px);
+  height: clamp(220px, 50vmin, 400px);
   display: grid;
   place-items: center;
   animation: logo-float 5s ease-in-out infinite;
@@ -1078,16 +1075,17 @@ main {
   position: absolute;
   top: 18px;
   right: 18px;
-  width: 38px;
-  height: 38px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  border: 0;
-  background: #f1f5f9;
-  color: var(--muted);
-  font-size: 20px;
+  border: 2px solid var(--border);
+  background: #fff;
+  color: var(--ink);
+  font-size: 18px;
   display: grid;
   place-items: center;
   font-weight: 800;
+  cursor: pointer;
 }
 .modal-close-btn:hover {
   background: #e2e8f0;
@@ -1353,6 +1351,7 @@ main {
 #view-deleted .data-table-card {
   border: 2px solid #0558a0;
   border-radius: 18px;
+  background: #0558a0;
   box-shadow: none;
   overflow-x: auto;
 }
@@ -1360,6 +1359,7 @@ main {
 #view-completed .data-table,
 #view-deleted .data-table {
   min-width: 880px;
+  margin: 0;
   border-collapse: collapse;
   margin-top: 0;
   text-align: center;
@@ -1381,6 +1381,7 @@ main {
 #view-completed .data-table td,
 #view-deleted .data-table td {
   border: 1.5px solid #0558a0;
+  background: #fff;
   padding: 10px;
   height: 62px;
   text-align: center;
@@ -1545,22 +1546,23 @@ main {
   position: absolute;
   top: 18px;
   left: 18px;
-  width: 38px;
-  height: 38px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  border: 0;
-  background: #f1f5f9;
-  color: var(--muted);
+  border: 2px solid var(--border);
+  background: #fff;
+  color: var(--ink);
   display: grid;
   place-items: center;
+  cursor: pointer;
 }
-.modal-back-btn:hover { background: #e2e8f0; color: var(--ink); }
+.modal-back-btn:hover { background: #f4f9ff; }
 .modal-back-btn svg {
   width: 20px;
   height: 20px;
   fill: none;
   stroke: currentColor;
-  stroke-width: 2.4;
+  stroke-width: 2.2;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
@@ -1665,6 +1667,164 @@ main {
   .edit-row { grid-template-columns: 1.2fr repeat(3, 1fr); gap: 6px; }
 }
 
+/* Service pop-up: clean step layout */
+#modal-service { counter-reset: sec; }
+#modal-service .service-modal-header { padding-bottom: 12px; margin-bottom: 14px; }
+#modal-service .service-modal-header h3 { font-size: 22px; }
+#modal-service .service-modal-header p { margin-top: 6px; }
+.type-chip {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  background: #52aee6;
+  color: #fff;
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+#modal-service .sec {
+  background: #f8fbff;
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+}
+#modal-service .sec-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  color: var(--muted);
+}
+#modal-service .sec-title::before {
+  counter-increment: sec;
+  content: counter(sec);
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: #52aee6;
+  color: #fff;
+  display: grid; place-items: center;
+  font-size: 11px;
+  letter-spacing: 0;
+}
+#modal-service .sec-opt { font-weight: 600; letter-spacing: 0; text-transform: none; opacity: .8; }
+#modal-service .sec-input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1.5px solid var(--border);
+  background: #fff;
+  font-size: 15px;
+}
+#modal-service .sec-input:focus {
+  outline: 0;
+  border-color: var(--brand-cyan);
+  box-shadow: 0 0 0 3px rgba(46, 163, 248, 0.18);
+}
+#modal-service .sec-input[readonly] { background: #eef4fa; color: var(--muted); cursor: not-allowed; }
+#modal-service .dial-kg-wrap { margin: 2px 0 8px; }
+#modal-service #modal-cap-hint {
+  display: block;
+  text-align: center;
+  color: var(--muted);
+  font-size: 12.5px;
+  line-height: 1.4;
+  margin: 0;
+}
+#modal-service .addons-list { display: grid; gap: 8px; }
+#modal-service .addon-row { background: #fff; }
+#modal-service .calc-summary-box { margin: 14px 0 4px; }
+#modal-service .calc-summary-row.total-bold { font-size: 22px; }
+#modal-service .btn-modal-addmore { font-size: 13.5px; }
+
+/* Service pop-up: compact so everything fits without scrolling */
+#modal-service .modal-window { max-height: 94vh; padding: 22px 26px 20px; }
+#modal-service .service-modal-header { margin-bottom: 12px; padding-bottom: 10px; min-height: 40px; }
+#modal-service #modal-cat-box { display: inline-block; vertical-align: middle; }
+#modal-service #modal-service-desc { display: inline; margin: 0 0 0 8px; font-size: 13px; }
+#modal-service .sec { padding: 10px 14px 12px; margin-bottom: 10px; }
+#modal-service .sec-title { margin-bottom: 8px; }
+#modal-service .sec-input { padding: 10px 14px; }
+#modal-service .dial-btn { width: 44px; height: 44px; font-size: 22px; }
+#modal-service .kg-input-box { font-size: 28px; padding: 6px 10px; }
+#modal-service .addons-list { margin: 0; }
+#modal-service .calc-summary-box { padding: 12px 16px; margin: 12px 0 0; }
+#modal-service .calc-summary-row.total-bold { font-size: 20px; }
+#modal-service .modal-actions-row { margin-top: 12px; }
+
+/* ✕ and back arrow share the same height on each pop-up */
+#modal-service .modal-close-btn { top: 22px; width: 40px; height: 40px; }   /* ✕ follows the arrow */
+#modal-payment .modal-back-btn,
+#modal-cust-receipt .modal-back-btn,
+#modal-emp-receipt .modal-back-btn { top: 18px; width: 40px; height: 40px; } /* arrow follows the ✕ */
+
+/* ✕ buttons: identical to the back arrow button */
+.modal-close-btn {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: #fff;
+  color: var(--ink);
+  font-size: 0;                 /* hides the ✕ text, the icon below replaces it */
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+.modal-close-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230f2438' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 6l12 12M18 6L6 18'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.modal-close-btn:hover { background: #f4f9ff; color: var(--ink); }
+.modal-back-btn { padding: 0; }
+
+/* Bigger blue scrollbars (every scrollable area, including pop-ups and tables) */
+::-webkit-scrollbar { width: 14px; height: 14px; }
+::-webkit-scrollbar-track { background: #e6f1fb; border-radius: 10px; }
+::-webkit-scrollbar-thumb {
+  background: #52aee6;
+  border-radius: 10px;
+  border: 3px solid #e6f1fb;      /* gives the bar some breathing room */
+}
+::-webkit-scrollbar-thumb:hover { background: #1877c9; }
+::-webkit-scrollbar-corner { background: #e6f1fb; }
+@supports not selector(::-webkit-scrollbar) {   /* Firefox */
+  * { scrollbar-width: auto; scrollbar-color: #52aee6 #e6f1fb; }
+}
+
+/* Order checkout: a little bigger */
+#modal-payment .modal-window { width: min(680px, 96vw); padding: 34px 38px; }
+#modal-payment .modal-window > h3 { font-size: 28px !important; }
+#modal-payment .modal-window > p { font-size: 16px !important; margin-bottom: 28px !important; }
+#modal-payment .modal-window span { font-size: 13px !important; }
+#checkout-subtotal-display { font-size: 46px !important; }
+#checkout-order-summary-lines { font-size: 15px !important; line-height: 1.6; }
+#btn-pay-on-claim, #btn-pay-now { padding: 20px !important; font-size: 18px !important; }
+
+/* Employee receipts: one slip sits in the center, two slips split side by side */
+.slips-viewport.single {
+  grid-template-columns: calc(50% - 7px);
+  justify-content: center;
+}
+@media (max-width: 600px) {
+  .slips-viewport.single { grid-template-columns: 1fr; }
+}
+
 </style>
 </head>
 <body>
@@ -1705,7 +1865,7 @@ main {
       <!-- REPLACE 'logo.png' WITH YOUR IMAGE PATH OR URL HERE -->
       <img src="logo.png" alt="Labada Link Logo" class="brand-img-src" onerror="this.onerror=null; this.parentElement.classList.add('img-fallback');">
     </div>
-    <button type="button" class="btn-get-started" id="btn-get-started"><span>Get Started</span><span class="go"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></button>
+    <button type="button" class="btn-get-started" id="btn-get-started"><span>Get Started</span></button>
   </div>
 </section>
 
@@ -1921,70 +2081,68 @@ main {
 <div id="modal-service" class="modal-overlay hidden">
   <div class="modal-window">
     <button type="button" class="modal-close-btn" data-close-modal="service">✕</button>
-    <button type="button" class="modal-back-btn print-hide-btn" id="btn-service-back" aria-label="Back to services">
+    <button type="button" class="modal-back-btn print-hide-btn" id="btn-service-back" aria-label="Back to laundry type">
       <svg viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
     </button>
+
     <div class="service-modal-header">
       <h3 id="modal-service-name">Service Name</h3>
-      <p id="modal-service-desc">Initial Base: ₱90 · 7kg Standard</p>
+      <div id="modal-cat-box"></div>
+      <p id="modal-service-desc"></p>
     </div>
 
-    <!-- Customer identifier -->
-    <div class="form-field" style="margin-bottom:12px;">
-      <label>Customer Name:</label>
-      <input type="text" id="modal-cust-name" placeholder="e.g. Hannah (or Walk-in)" value="Hannah">
+    <!-- 1 · Customer -->
+    <div class="sec">
+      <label class="sec-title" for="modal-cust-name">CUSTOMER NAME<span class="sec-opt">optional</span></label>
+      <input type="text" id="modal-cust-name" class="sec-input" placeholder="" autocomplete="off">
     </div>
 
-    <!-- Fabric type (Dry only) -->
-    <div id="modal-cat-box"></div>
-
-    <!-- Fold only: staff-entered fee -->
+    <!-- Fold only: staff-entered fee (not used now, kept hidden) -->
     <div id="modal-fee-box" style="display:none;">
-      <label style="font-size:13px;font-weight:700;display:block;margin-top:14px;">FOLDING FEE (₱20–₱30):</label>
-      <input type="number" id="modal-fee-input" class="kg-input-box" style="width:100%;font-size:24px;margin:10px 0 14px;" step="1" min="20" max="30" value="20">
+      <input type="number" id="modal-fee-input" class="kg-input-box" step="1" min="20" max="30" value="20">
     </div>
 
-    <!-- Weight input: Dial & Manual -->
-    <div id="modal-weight-box">
-      <label style="font-size:13px;font-weight:700;display:block;margin-top:14px;">ENTER KG:</label>
+    <!-- 2 · Weight / pieces -->
+    <div class="sec" id="modal-weight-box">
+      <label class="sec-title">WEIGHT (KG)</label>
       <div class="dial-kg-wrap">
-        <button type="button" class="dial-btn" id="dial-minus">−</button>
+        <button type="button" class="dial-btn" id="dial-minus" aria-label="Less">−</button>
         <input type="number" id="dial-weight-input" class="kg-input-box" step="0.5" min="0.5" max="60" value="7.0">
-        <button type="button" class="dial-btn" id="dial-plus">+</button>
+        <button type="button" class="dial-btn" id="dial-plus" aria-label="More">+</button>
       </div>
-      <small id="modal-cap-hint" style="display:block;text-align:center;color:var(--muted);margin-bottom:14px;"></small>
+      <small id="modal-cap-hint"></small>
     </div>
 
-    <!-- Add ons (wash services only) -->
-    <div id="modal-addons-box">
-      <label style="font-size:13px;font-weight:700;display:block;margin-top:14px;">ADD ONS:</label>
+    <!-- 3 · Add-ons (wash services only) -->
+    <div class="sec" id="modal-addons-box">
+      <label class="sec-title">ADD-ONS <span class="sec-opt">optional</span></label>
       <div class="addons-list" id="modal-addons-list">
         <!-- Add-on rows render here -->
       </div>
     </div>
 
-    <!-- Live Calculation Box -->
+    <!-- Live calculation -->
     <div class="calc-summary-box">
       <div class="calc-summary-row">
-        <span>Calculated Physical Loads:</span>
+        <span>Loads</span>
         <b id="summary-loads">1 Load</b>
       </div>
       <div class="calc-summary-row">
-        <span>Service Fee:</span>
+        <span>Service fee</span>
         <span id="summary-service-fee">₱0.00</span>
       </div>
       <div class="calc-summary-row">
-        <span>Add-ons Fee:</span>
+        <span>Add-ons</span>
         <span id="summary-addons-fee">₱0.00</span>
       </div>
       <div class="calc-summary-row total-bold">
-        <span>AUTOMATIC TOTAL:</span>
+        <span>SUBTOTAL</span>
         <span id="summary-total-calc">₱0.00</span>
       </div>
     </div>
 
     <div class="modal-actions-row">
-      <button type="button" class="btn-modal-addmore" id="btn-modal-addmore">ADD MORE</button>
+      <button type="button" class="btn-modal-addmore" id="btn-modal-addmore">ADD ANOTHER SERVICE</button>
       <button type="button" class="btn-modal-placeorder" id="btn-modal-placeorder">PLACE ORDER</button>
     </div>
   </div>
@@ -1993,11 +2151,14 @@ main {
 <div id="modal-payment" class="modal-overlay hidden">
   <div class="modal-window" style="text-align:center;">
     <button type="button" class="modal-close-btn" data-close-modal="payment">✕</button>
+    <button type="button" class="modal-back-btn" id="btn-payment-back" aria-label="Back to services">
+      <svg viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+    </button>
     <h3 style="font-family:'Manrope',sans-serif;font-size:24px;margin:10px 0 6px;">ORDER CHECKOUT</h3>
-    <p style="color:var(--muted);font-size:14px;margin-bottom:24px;">Please choose customer payment timing:</p>
+    
 
     <div style="background:#f1f7fd;border:1.5px solid var(--border);border-radius:16px;padding:22px;margin-bottom:28px;">
-      <span style="font-size:12px;font-weight:800;letter-spacing:1px;color:var(--muted);display:block;margin-bottom:4px;">SHOW SUBTOTAL ONLY</span>
+      <span style="font-size:12px;font-weight:800;letter-spacing:1px;color:var(--muted);display:block;margin-bottom:4px;">SUBTOTAL</span>
       <b style="font-family:'Manrope',sans-serif;font-size:36px;color:var(--primary-dark);" id="checkout-subtotal-display">₱0.00</b>
       <div id="checkout-order-summary-lines" style="font-size:13px;color:var(--muted);margin-top:8px;"></div>
     </div>
@@ -2350,6 +2511,7 @@ function calculateLine(service, weight, addonPrices, fee = 0, catIdx = 0) {
     return { loads: pcs, serviceTotal: t, excessFee: 0, grandTotal: t + addonPrices };
   }
   const cap = cat.cap;
+  weight = Math.floor(Number(weight) || 0);   // the .5 doesn't count (7.5 = 7, 15.5 = 15)
   let n = Math.ceil(weight / cap);
   if (n < 1) n = 1;
   if (cat.strict) {
@@ -2449,7 +2611,7 @@ function syncServiceModal() {
   const isWash = s.name.includes('Wash');
 
   const catBox = document.getElementById('modal-cat-box');
-  catBox.innerHTML = `<label style="font-size:13px;font-weight:700;display:block;margin-top:14px;">LAUNDRY TYPE: <span style="color:var(--blue,#52aee6)">${CATS[activeCat].name.toUpperCase()}</span></label>`;
+  catBox.innerHTML = `<span class="type-chip">${CATS[activeCat].name}</span>`;
 
   document.getElementById('modal-weight-box').style.display = s.fee ? 'none' : 'block';
   document.getElementById('modal-fee-box').style.display = 'none';
@@ -2461,7 +2623,7 @@ function syncServiceModal() {
 
   const piece = isPiece();
   const strict = !!CATS[activeCat].strict;
-  document.getElementById('modal-weight-box').querySelector('label').textContent = piece ? 'ENTER NUMBER OF PIECES:' : 'ENTER KG:';
+  document.getElementById('modal-weight-box').querySelector('label').textContent = piece ? 'NUMBER OF PIECES' : 'WEIGHT (KG)';
   const inp = document.getElementById('dial-weight-input');
   inp.step = piece ? 1 : 0.5;
   inp.min = piece ? 1 : 0.5;
@@ -2725,6 +2887,9 @@ document.getElementById('btn-print-cust-receipt').onclick = () => {
   showEmployeeReceipts(order);
 };
 
+// Back arrow on checkout: return to the services page (the order stays in CURRENT ORDER)
+document.getElementById('btn-payment-back').onclick = () => closeModal('modal-payment');
+
 // Back arrow on the customer receipt: return to checkout (nothing has been saved yet)
 document.getElementById('btn-receipt-back').onclick = () => {
   const o = pendingOrderForReceipt;
@@ -2744,10 +2909,11 @@ let employeeSlips = [];
 function showEmployeeReceipts(order) {
   employeeSlips = [];
   let slipCount = 1;
+  const totalSlips = order.items.reduce((sum, it) => sum + it.loads, 0);
   order.items.forEach(it => {
     for (let l = 0; l < it.loads; l++) {
       employeeSlips.push({
-        slipTag: `${order.id}-${String(slipCount).padStart(2, '0')}`,
+        slipTag: totalSlips === 1 ? `${order.id}` : `${order.id}-${String(slipCount).padStart(2, '0')}`,
         serviceName: it.name,
         addonsText: it.addons.map(a => a.name).join(', '),
         price: (it.price / it.loads),
@@ -2770,12 +2936,14 @@ function renderEmployeeSlipsPage() {
 
   // Max 2 receipts per page
   const pageItems = employeeSlips.slice(slipCarouselIndex, slipCarouselIndex + 2);
+  container.classList.toggle('single', pageItems.length === 1);
+  container.classList.toggle('single', pageItems.length === 1);
 
   container.innerHTML = pageItems.map((slip, i) => `
     <div class="receipt-paper" style="text-align:center;">
-      <b style="font-size:15px;display:block;">${slip.slipTag}</b>
-      <div style="font-size:12px;margin:6px 0;border-top:1px dashed #000;border-bottom:1px dashed #000;padding:6px 0;">
-        NO. ${slipCarouselIndex + i + 1} | ${slip.serviceName} ${slip.addonsText ? '(' + slip.addonsText + ')' : ''} | 1 LOAD ONLY | ${peso(slip.price)}
+      <b style="font-size:32px;line-height:1.1;font-family:'JetBrains Mono',monospace;letter-spacing:1px;display:block;margin-bottom:4px;">${slip.slipTag}</b>
+      <div class="receipt-items-table" style="font-size:12px;margin:6px 0;padding:6px 0;">
+        <div style="margin:0;">NO. ${slipCarouselIndex + i + 1} | ${slip.serviceName} ${slip.addonsText ? '(' + slip.addonsText + ')' : ''} | 1 LOADS | ${peso(slip.price)}</div>
       </div>
       <p style="font-size:11px;margin:6px 0 2px;">Scan the QR code to check your laundry status.</p>
       <div class="receipt-qr-center" id="emp-qr-${slipCarouselIndex + i}"></div>
