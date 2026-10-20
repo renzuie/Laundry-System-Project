@@ -3446,9 +3446,10 @@ let scanBuf = '', scanLast = 0;
 document.addEventListener('keydown', e => {
   if (e.ctrlKey || e.altKey || e.metaKey) return;
   const el = document.activeElement;
-  if (el && /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName)) return;   // staff is typing in a box
+  if (el && /^(INPUT|TEXTAREA)$/.test(el.tagName)) return;          // staff is typing in a box
+  if (el && el.tagName === 'SELECT' && e.key.length === 1) e.preventDefault();   // a dropdown must not react to scanner letters
   const now = Date.now();
-  if (now - scanLast > 80) scanBuf = '';          // scanners type much faster than people
+  if (now - scanLast > 200) scanBuf = '';         // scanners type much faster than people
   scanLast = now;
   if (e.key === 'Enter') {
     if (scanBuf.length >= 3) {
@@ -3486,11 +3487,30 @@ function applyScanHighlight() {
   return hit;
 }
 
+// Small message at the bottom of the screen so staff always see that a scan was received
+function scanToast(text) {
+  let t = document.getElementById('scan-toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'scan-toast';
+    t.style.cssText = 'position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:#0f2438;color:#fff;padding:12px 22px;border-radius:12px;font-weight:700;font-size:15px;z-index:300;box-shadow:0 10px 30px rgba(0,0,0,.3);';
+    document.body.appendChild(t);
+  }
+  t.textContent = text;
+  t.style.display = 'block';
+  clearTimeout(t._h);
+  t._h = setTimeout(() => { t.style.display = 'none'; }, 3500);
+}
+
 function handleScan(raw) {
   // ignore scans on the welcome / login screens
   if (!['screen-splash', 'screen-login'].every(id => document.getElementById(id).classList.contains('hidden'))) return;
   // ignore scans while staff is in the middle of something (service, checkout, receipt...)
-  if (document.querySelector('.modal-overlay:not(.hidden):not(#modal-scan)')) return;
+  if (document.querySelector('.modal-overlay:not(.hidden):not(#modal-scan)')) {
+    scanToast('Scan received. Close the open pop-up first, then scan again.');
+    return;
+  }
+  scanToast('Scanned: ' + parseScanCode(raw));
 
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const clean = s => String(s).replace(/^#/, '').trim().toLowerCase();
