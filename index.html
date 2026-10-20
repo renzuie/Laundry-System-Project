@@ -3507,7 +3507,9 @@ function handleScan(raw) {
   if (!['screen-splash', 'screen-login'].every(id => document.getElementById(id).classList.contains('hidden'))) return;
   // ignore scans while staff is in the middle of something (service, checkout, receipt...)
   const openPopup = document.querySelector('.modal-overlay:not(.hidden):not(#modal-scan)');
-  if (openPopup) {
+  if (openPopup && openPopup.id === 'modal-emp-receipt') {
+    closeModal('modal-emp-receipt');          // the order is already saved at this point
+  } else if (openPopup) {
     scanToast('Scan received, but "' + openPopup.id + '" is open. Close it, then scan again.');
     return;
   }
