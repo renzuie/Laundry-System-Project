@@ -3811,15 +3811,16 @@ document.getElementById('btn-confirm-logout-yes').onclick = () => {
 };
 
 /* ===== QR scanner (USB scanner = keyboard that types the QR text + Enter) ===== */
-let scanBuf = '', scanLast = 0;
+let scanBuf = '', scanLast = 0, scanIdle = null;
 document.addEventListener('keydown', e => {
   if (e.ctrlKey || e.altKey || e.metaKey) return;
   const el = document.activeElement;
   if (el && /^(INPUT|TEXTAREA)$/.test(el.tagName)) return;          // staff is typing in a box
   if (el && el.tagName === 'SELECT' && e.key.length === 1) e.preventDefault();   // a dropdown must not react to scanner letters
   const now = Date.now();
-  if (now - scanLast > 200) scanBuf = '';         // scanners type much faster than people
+  if (now - scanLast > 400) scanBuf = '';         // scanners type much faster than people (400 ms gap keeps slow devices such as a Raspberry Pi working)
   scanLast = now;
+  clearTimeout(scanIdle);
   if (e.key === 'Enter') {
     if (scanBuf.length >= 3) {
       e.preventDefault();
@@ -3831,6 +3832,14 @@ document.addEventListener('keydown', e => {
     return;
   }
   if (e.key.length === 1) scanBuf += e.key;
+  // some scanners do not send Enter: when the typing stops, a buffer that looks like our QR text is scanned anyway
+  scanIdle = setTimeout(() => {
+    if (/[?&]o=[^&\s]+|^LL-\S+$/i.test(scanBuf)) {
+      const text = scanBuf; scanBuf = '';
+      if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+      handleScan(text);
+    }
+  }, 300);
 });
 
 function parseScanCode(text) {
