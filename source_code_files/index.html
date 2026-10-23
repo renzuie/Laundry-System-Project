@@ -337,9 +337,9 @@ button:active { transform: scale(0.97); }
   -webkit-text-fill-color: transparent;
 }
 .login-card {
-  width: 100%;
+  width: min(520px, 100%);
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: clamp(28px, 6vw, 72px);
   align-items: center;
   padding: clamp(24px, 4vw, 44px);
@@ -352,47 +352,6 @@ button:active { transform: scale(0.97); }
 }
 @media (max-width: 860px) {
   .login-card { grid-template-columns: 1fr; }
-}
-.login-col-title {
-  font-family: 'Manrope', sans-serif;
-  font-weight: 800;
-  font-size: 17px;
-  color: var(--primary-dark);
-  text-align: center;
-  margin: 0 0 16px;
-}
-.rfid-box {
-  display: grid;
-  place-items: center;
-  min-height: 210px;
-  background: #fff;
-  border: 2px solid var(--primary-dark);
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all .2s;
-}
-.rfid-box:hover {
-  background: #f4faff;
-  border-color: var(--brand-cyan);
-  box-shadow: 0 8px 22px rgba(46, 163, 248, 0.2);
-}
-.rfid-icon { color: var(--brand-cyan); display: block; }
-.rfid-icon svg {
-  width: 110px;
-  height: 110px;
-  display: block;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 6;
-  stroke-linecap: round;
-}
-.rfid-icon svg .dot { fill: currentColor; stroke: none; }
-.rfid-hint {
-  display: block;
-  text-align: center;
-  color: var(--muted);
-  font-size: 12.5px;
-  margin-top: 12px;
 }
 
 /* Sign-in fields (scoped so the order modal inputs stay unchanged) */
@@ -1033,16 +992,6 @@ main {
   color: #fff;
 }
 
-.btn-compute-total {
-  background: var(--primary-blue);
-  color: #fff;
-  border: 0;
-  padding: 12px 24px;
-  border-radius: 12px;
-  font-weight: 800;
-  font-size: 14px;
-}
-
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -1344,6 +1293,184 @@ main {
   stroke-linecap: round;
   stroke-linejoin: round;
 }
+
+/* Order-number search above the tables */
+.table-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  margin-right: 14px;
+  width: min(280px, 40vw);
+}
+.table-search svg {
+  position: absolute;
+  left: 14px;
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: #0558a0;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  pointer-events: none;
+}
+.table-search input {
+  width: 100%;
+  padding: 11px 38px 11px 42px;
+  border: 2px solid #0558a0;
+  border-radius: 999px;
+  background: #fff;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text, #0f2438);
+  outline: none;
+}
+.table-search input:focus { border-color: var(--brand-cyan, #2ea3f8); box-shadow: 0 0 0 4px rgba(46, 163, 248, .18); }
+.table-search .table-search-clear {
+  display: none;
+  position: absolute;
+  right: 8px;
+  width: 26px;
+  height: 26px;
+  border: 0;
+  border-radius: 50%;
+  background: #e6f1fb;
+  color: #0558a0;
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+}
+.table-search.has-text .table-search-clear { display: block; }
+.pager.empty-result .pager-info { color: var(--muted); }
+.pager.empty-result button { display: none; }
+
+.dt-time { font-size: 12px; color: var(--muted); font-weight: 600; margin-top: 2px; }
+
+/* Services + laundry type in the tables */
+.type-cell { text-align: left; }
+.type-cell + .type-cell { margin-top: 4px; }
+.load-count { color: #0558a0; font-weight: 800; white-space: nowrap; }
+
+/* Completed tab: period filter, selection, print and delete */
+.completed-tools {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: -6px 0 16px;
+}
+.completed-tools label.range-label { display: inline-flex; align-items: center; gap: 8px; font-weight: 800; color: #0558a0; font-size: 14px; }
+.completed-tools select {
+  padding: 10px 38px 10px 16px;
+  border: 2px solid #0558a0;
+  border-radius: 999px;
+  background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230558a0' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 12px center / 16px;
+  -webkit-appearance: none;
+  appearance: none;
+  field-sizing: content;   /* the box fits the chosen day, so the arrow sits right beside it */
+  color: #0f2438;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  outline: none;
+}
+
+.refresh-btn {
+  width: 42px; height: 42px; flex: none;
+  display: grid; place-items: center;
+  border: 2px solid #0558a0;
+  border-radius: 50%;
+  background: #fff;
+  color: #0558a0;
+  cursor: pointer;
+  padding: 0;
+}
+.refresh-btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; transition: transform .5s; }
+.refresh-btn:hover { background: #0558a0; color: #fff; }
+.refresh-btn.spin svg { transform: rotate(360deg); }
+
+.completed-tools .sel-info { font-weight: 800; color: var(--muted); font-size: 14px; }
+.completed-tools .tools-spacer { flex: 1; }
+.tool-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border: 2px solid #0558a0;
+  border-radius: 999px;
+  background: #fff;
+  color: #0558a0;
+  font-family: inherit;
+  font-weight: 800;
+  font-size: 14px;
+  cursor: pointer;
+}
+.tool-btn:hover:not(:disabled) { background: #0558a0; color: #fff; }
+.tool-btn.danger { border-color: #e24b3c; color: #e24b3c; }
+.tool-btn.danger:hover:not(:disabled) { background: #e24b3c; color: #fff; }
+.tool-btn:disabled { opacity: .4; cursor: default; }
+.row-check { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
+.row-check span { display: inline-block; min-width: 30px; text-align: left; }   /* same width in the header and every row, so the boxes line up */
+.row-check input, #completed-sel-all { width: 18px; height: 18px; accent-color: #1877c9; cursor: pointer; margin: 0; }
+th .row-check { color: inherit; }
+#modal-report .receipt-paper { text-align: left; font-size: 12px; line-height: 1.5; margin-top: 24px; }
+#modal-report .rp-center { text-align: center; }
+#modal-report .rp-line { border-top: 1px dashed #000; margin: 8px 0; }
+#modal-report .rp-row { display: flex; justify-content: space-between; gap: 8px; font-weight: 700; }
+#modal-report .rp-sub { font-size: 11px; padding-left: 6px; }
+#modal-report .rp-total { font-size: 15px; font-weight: 800; }
+
+/* QR button in the Actions column */
+.row-actions { display: inline-flex; align-items: center; gap: 8px; }
+.btn-qr-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff;
+  color: #0558a0;
+  border: 2px solid #0558a0;
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 15px;
+  cursor: pointer;
+}
+.btn-qr-action:hover { background: #0558a0; color: #fff; }
+.btn-qr-action svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Blank filler rows keep every page the same height */
+.pad-row td { padding: 0 !important; background: #fff !important; pointer-events: none; }
+.pad-row:hover td { background: #fff !important; }
+
+/* Table pages (10 rows per page) */
+.pager {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  margin: 18px 0 6px;
+}
+.pager.hidden { display: none; }
+.pager button {
+  min-width: 110px;
+  padding: 10px 20px;
+  border: 2px solid #0558a0;
+  border-radius: 999px;
+  background: #fff;
+  color: #0558a0;
+  font-family: inherit;
+  font-weight: 800;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background .15s, color .15s;
+}
+.pager button:hover:not(:disabled) { background: #0558a0; color: #fff; }
+.pager button:disabled { opacity: .4; cursor: default; }
+.pager-info { font-weight: 800; color: #0558a0; font-size: 14px; min-width: 120px; text-align: center; }
 
 /* Orders, Completed and Deleted tables (matches design) */
 #view-orders .data-table-card,
@@ -1897,16 +2024,9 @@ tr.scan-hit td:last-child { box-shadow: inset -3px 3px 0 #f59e0b, inset 0 -3px 0
   </div>
 
   <div class="login-wrap">
-    <h2 class="login-title">Sign-in Options</h2>
+    <h2 class="login-title">Sign-in</h2>
 
     <div class="login-card">
-      <div class="login-col">
-        <h3 class="login-col-title">Tap RFID key tag to sign-in</h3>
-        <div class="rfid-box" id="rfid-tap-area" title="Tap RFID Key Tag to sign-in">
-          <span class="rfid-icon"><svg viewBox="0 0 100 100"><circle class="dot" cx="50" cy="50" r="7"/><path d="M38 38a17 17 0 0 0 0 24"/><path d="M62 38a17 17 0 0 1 0 24"/><path d="M30 30a29 29 0 0 0 0 40"/><path d="M70 30a29 29 0 0 1 0 40"/><path d="M22 22a41 41 0 0 0 0 56"/><path d="M78 22a41 41 0 0 1 0 56"/></svg></span>
-        </div>
-      </div>
-
       <div class="login-col">
         <form id="login-form">
           <div class="form-field">
@@ -2006,6 +2126,7 @@ tr.scan-hit td:last-child { box-shadow: inset -3px 3px 0 #f59e0b, inset 0 -3px 0
             <th>NO.</th>
             <th>NAME</th>
             <th>ORDER NO.</th>
+            <th>DATE &amp; TIME</th>
             <th>LAUNDRY TYPE</th>
             <th>SUBTOTAL</th>
             <th>PAYMENT</th>
@@ -2025,19 +2146,39 @@ tr.scan-hit td:last-child { box-shadow: inset -3px 3px 0 #f59e0b, inset 0 -3px 0
       <div>
         <h2>COMPLETED</h2>
       </div>
-      <button type="button" class="btn-compute-total" id="btn-open-compute-total">COMPUTE TOTAL</button>
+
+    </div>
+    <div class="completed-tools">
+      <label class="range-label">Show:
+        <select id="completed-range" aria-label="Filter by days">
+          <option value="all">All</option>
+          <option value="1d">Last 1 day</option>
+          <option value="7d">Last 7 days</option>
+          <option value="1m">Last 1 month</option>
+          <option value="1y">Last 1 year</option>
+        </select>
+      </label>
+      <button type="button" class="refresh-btn" id="btn-completed-refresh" title="Refresh (show all, clear ticks and search)" aria-label="Refresh">
+        <svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg>
+      </button>
+      <span class="sel-info" id="completed-sel-info"></span>
+      <span class="tools-spacer"></span>
+      <button type="button" class="tool-btn" id="btn-completed-print">PRINT</button>
+      <button type="button" class="tool-btn danger" id="btn-completed-delete">DELETE</button>
     </div>
     <div class="data-table-card">
       <table class="data-table">
         <thead>
           <tr>
-            <th>NO.</th>
+            <th><label class="row-check"><input type="checkbox" id="completed-sel-all" aria-label="Select all"><span>NO.</span></label></th>
             <th>NAME</th>
             <th>ORDER NO.</th>
+            <th>DATE &amp; TIME</th>
             <th>LAUNDRY TYPE</th>
             <th>SUBTOTAL</th>
             <th>PAYMENT</th>
             <th>STATUS</th>
+            <th>ACTIONS</th>
           </tr>
         </thead>
         <tbody id="completed-table-body">
@@ -2060,6 +2201,7 @@ tr.scan-hit td:last-child { box-shadow: inset -3px 3px 0 #f59e0b, inset 0 -3px 0
             <th>NO.</th>
             <th>NAME</th>
             <th>ORDER NO.</th>
+            <th>DATE &amp; TIME</th>
             <th>LAUNDRY TYPE</th>
             <th>SUBTOTAL</th>
             <th>PAYMENT</th>
@@ -2333,30 +2475,32 @@ tr.scan-hit td:last-child { box-shadow: inset -3px 3px 0 #f59e0b, inset 0 -3px 0
   </div>
 </div>
 
-<div id="modal-compute-total" class="modal-overlay hidden">
-  <div class="modal-window" style="max-width:460px;">
-    <button type="button" class="modal-close-btn" data-close-modal="compute-total">✕</button>
-    <div style="border-bottom:1.5px solid var(--border);padding-bottom:12px;margin-bottom:16px;">
-      <h3 style="font-family:'Manrope',sans-serif;font-size:22px;margin:0;">COMPLETED TOTAL SUMMARY</h3>
-      <small style="color:var(--muted);">Total revenue breakdown for qualified completed laundry</small>
-    </div>
-
-    <div style="display:grid;gap:14px;font-size:14.5px;">
-      <div style="display:flex;justify-content:space-between;padding:12px 14px;background:#f8fafc;border-radius:10px;">
-        <span>Paid and not yet claimed =</span>
-        <b id="summary-val-pickup" style="color:var(--primary-blue);">₱0.00</b>
-      </div>
-      <div style="display:flex;justify-content:space-between;padding:12px 14px;background:#f8fafc;border-radius:10px;">
-        <span>Paid and already claimed =</span>
-        <b id="summary-val-claimed" style="color:var(--success);">₱0.00</b>
-      </div>
-      <div style="display:flex;justify-content:space-between;padding:14px 16px;background:var(--primary-light);border-radius:12px;font-weight:800;font-size:17px;color:var(--primary-dark);">
-        <span>Subtotal =</span>
-        <span id="summary-val-subtotal">₱0.00</span>
-      </div>
+<div id="modal-confirm-bulk-delete" class="modal-overlay hidden">
+  <div class="modal-window" style="max-width:440px;text-align:center;padding:40px 26px 28px;">
+    <button type="button" class="modal-back-btn" id="btn-bulk-delete-back" aria-label="Back">
+      <svg viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+    </button>
+    <h3 id="bulk-delete-title" style="font-family:'Manrope',sans-serif;font-size:22px;margin:8px 0 10px;color:var(--danger);">Delete selected orders?</h3>
+    <p id="bulk-delete-detail" style="color:var(--muted);font-size:15px;line-height:1.6;margin:0 0 24px;white-space:pre-line;"></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <button type="button" class="btn-modal-addmore" id="btn-bulk-delete-no">NO, KEEP THEM</button>
+      <button type="button" class="btn-modal-placeorder" id="btn-bulk-delete-yes" style="background:#e24b3c;">YES, DELETE</button>
     </div>
   </div>
 </div>
+
+<div id="modal-report" class="modal-overlay hidden">
+  <div class="modal-window" style="width:min(460px,96vw);">
+    <button type="button" class="modal-close-btn" data-close-modal="report">✕</button>
+    <div class="receipt-paper" id="report-paper"></div>
+    <button type="button" class="btn-modal-placeorder print-hide-btn" id="btn-print-report" style="width:100%;margin-top:16px;">PRINT REPORT</button>
+  </div>
+</div>
+<div id="modal-report" class="modal-overlay hidden">
+  ...
+</div>
+
+
 
 <div id="modal-edit-services" class="modal-overlay hidden">
   <div class="modal-window edit-window">
@@ -2832,7 +2976,25 @@ document.getElementById('btn-pay-now').onclick = () => {
 // false: it starts as "Received" and staff move it forward themselves
 const START_PROCESSING_ON_PRINT = false;
 
+// Opens the customer receipt (with its QR) for an order that is already saved.
+// Printing it again only reprints the slip, it does not create the order again.
+let reprintMode = false;
+function openSavedOrderQr(order) {
+  reprintMode = true;
+  pendingOrderForReceipt = order;
+  closeModal('modal-scan');
+  startScanTimer();                 // the scan highlight countdown starts now
+  showCustomerReceipt(order);
+}
+document.addEventListener('click', e => {
+  const btn = e.target.closest('[data-qr-order]');
+  if (!btn) return;
+  const o = orders.find(x => x.id === btn.dataset.qrOrder);
+  if (o) openSavedOrderQr(o);
+});
+
 function proceedPayment(isPaidNow) {
+  reprintMode = false;
   closeModal('modal-payment');
   const subtotal = cart.reduce((sum, it) => sum + it.price, 0);
   const totalLoads = cart.reduce((sum, it) => sum + it.loads, 0);
@@ -2856,6 +3018,7 @@ function proceedPayment(isPaidNow) {
 }
 
 function showCustomerReceipt(order) {
+  document.getElementById('btn-receipt-back').style.display = reprintMode ? 'none' : '';   // no checkout to go back to when reopening a saved order
   const d = new Date(order.created);
   document.getElementById('cr-date').textContent = d.toLocaleDateString('en-PH');
   document.getElementById('cr-time').textContent = d.toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit' });
@@ -2904,6 +3067,7 @@ document.getElementById('btn-print-cust-receipt').onclick = () => {
 
   window.print();
   closeModal('modal-cust-receipt');
+  if (reprintMode) { reprintMode = false; return; }   // reprint of a saved order: no employee slips
   showEmployeeReceipts(order);
 };
 
@@ -2921,6 +3085,7 @@ document.getElementById('btn-receipt-back').onclick = () => {
 
 // Back arrow on the employee slips: return to the customer receipt
 document.getElementById('btn-emp-back').onclick = () => {
+  reprintMode = false;
   closeModal('modal-emp-receipt');
   if (pendingOrderForReceipt) showCustomerReceipt(pendingOrderForReceipt);
 };
@@ -3141,6 +3306,116 @@ function orderTypes(o) {
   return types.length ? types.join(', ') : '—';
 }
 
+// Table pages: show 10 rows at a time with Previous / Next below the table.
+// A search box above each table filters the rows by order number first.
+const PAGE_SIZE = 10;
+const tablePage = { orders: 1, completed: 1, deleted: 1 };
+const tableSearch = { orders: '', completed: '', deleted: '' };
+const TABLE_IDS = { orders: 'orders-table-body', completed: 'completed-table-body', deleted: 'deleted-table-body' };
+let jumpToScanned = false;   // set by handleScan so the table opens on the page of the scanned order
+
+function paginateTables() {
+  const norm = s => String(s).replace(/^#/, '').trim().toLowerCase();
+  Object.keys(TABLE_IDS).forEach(tab => {
+    const tbody = document.getElementById(TABLE_IDS[tab]);
+    tbody.querySelectorAll('.pad-row').forEach(r => r.remove());          // remove blank filler rows from the last refresh
+    const allRows = Array.from(tbody.children);
+
+    // search box (created once, placed in the heading bar)
+    let box = document.getElementById('search-' + tab);
+    if (!box) {
+      box = document.createElement('div');
+      box.id = 'search-' + tab;
+      box.className = 'table-search';
+      box.innerHTML = '<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input type="text" placeholder="Search orders" autocomplete="off" aria-label="Search orders"><button type="button" class="table-search-clear" aria-label="Clear search">&times;</button>';
+      const bar = tbody.closest('.view-section').querySelector('.section-head-bar');
+      bar.insertBefore(box, bar.querySelector('button'));
+      const input = box.querySelector('input');
+      input.addEventListener('input', () => { tableSearch[tab] = input.value; tablePage[tab] = 1; paginateTables(); });
+      box.querySelector('.table-search-clear').onclick = () => { input.value = ''; tableSearch[tab] = ''; tablePage[tab] = 1; paginateTables(); input.focus(); };
+    }
+    const input = box.querySelector('input');
+
+    // a scanned order must be visible: clear the search and open its page
+    if (jumpToScanned && scanHighlightId) {
+      const i = allRows.findIndex(r => r.children[2] && norm(r.children[2].textContent) === norm(scanHighlightId));
+      if (i >= 0) { tableSearch[tab] = ''; input.value = ''; tablePage[tab] = Math.floor(i / PAGE_SIZE) + 1; }
+    }
+
+    // search every column except NO. and the buttons; for dropdowns only the chosen value counts
+    const rowText = r => Array.from(r.children).slice(1).map(td => {
+      if (td.querySelector('.row-actions')) return '';
+      const sel = td.querySelector('select');
+      return sel ? sel.options[sel.selectedIndex].text : td.innerHTML.replace(/<[^>]+>/g, ' ');   // tags become spaces so lines do not run together
+    }).join(' ').replace(/\s+/g, ' ').toLowerCase();
+    const words = tableSearch[tab].toLowerCase().replace(/#/g, '').split(/\s+/).filter(Boolean);   // every word must match
+    const rows = words.length ? allRows.filter(r => { const t = rowText(r).replace(/#/g, ''); return words.every(w => new RegExp('(^|[^a-z0-9])' + w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).test(t)); }) : allRows;   // a word matches where another word starts, so "paid" does not find "Unpaid"
+    if (tab === 'completed') { completedMatched = rows.map(r => r.children[2].textContent.trim()); updateCompletedTools(); }
+    if (tab === 'completed') { completedMatched = rows.map(r => r.children[2].textContent.trim()); updateCompletedTools(); }
+    const pages = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
+    tablePage[tab] = Math.min(Math.max(1, tablePage[tab]), pages);
+
+    const from = (tablePage[tab] - 1) * PAGE_SIZE;
+    const shown = new Set(rows.slice(from, from + PAGE_SIZE));
+    allRows.forEach(r => { r.style.display = shown.has(r) ? '' : 'none'; });
+
+    // blank rows fill the page up to 10 so the table keeps the same height on every page
+    const realRow = allRows.find(r => shown.has(r) && r.offsetHeight);
+    const rowH = realRow ? realRow.offsetHeight : 62;
+    const cols = tbody.closest('table').querySelectorAll('thead th').length;
+    for (let n = shown.size; n < PAGE_SIZE; n++) {
+      const pad = document.createElement('tr');
+      pad.className = 'pad-row';
+      pad.innerHTML = ('<td style="height:' + rowH + 'px"></td>').repeat(cols);   // same columns as the real rows
+      tbody.appendChild(pad);
+    }
+    box.classList.toggle('has-text', !!tableSearch[tab]);
+
+    let pager = document.getElementById('pager-' + tab);
+    if (!pager) {
+      pager = document.createElement('div');
+      pager.id = 'pager-' + tab;
+      pager.className = 'pager';
+      pager.innerHTML = '<button type="button" data-pg="-1">&#8249; Previous</button><span class="pager-info"></span><button type="button" data-pg="1">Next &#8250;</button>';
+      tbody.closest('.data-table-card').after(pager);
+      pager.querySelectorAll('button').forEach(b => b.onclick = () => {
+        tablePage[tab] += Number(b.dataset.pg);
+        paginateTables();
+      });
+    }
+    // the pager always stays in the same place under the table
+    pager.classList.remove('hidden');
+    pager.querySelector('.pager-info').textContent = rows.length ? 'Page ' + tablePage[tab] + ' of ' + pages : 'No order found';
+    pager.querySelector('[data-pg="-1"]').disabled = tablePage[tab] <= 1;
+    pager.querySelector('[data-pg="1"]').disabled = tablePage[tab] >= pages;
+    pager.classList.toggle('empty-result', rows.length === 0);
+  });
+}
+
+// Date and time the order was placed (same format as the receipt)
+function orderDateTime(o) {
+  if (!o.created) return '—';
+  const d = new Date(o.created);
+  return '<div>' + d.toLocaleDateString('en-PH') + '</div><div class="dt-time">' + d.toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit' }) + '</div>';
+}
+
+// Services ordered, written as "service - laundry type (loads)", one per line, for the table cells
+// ("Wash only · Lightweight", 2 loads -> Wash only - Lightweight (2 loads))
+function orderTypeServices(o) {
+  const esc = t => String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const lines = [];
+  (o.items || []).forEach(it => {
+    const parts = (it.name || '').split(' · ');
+    if (!parts[0]) return;
+    const label = parts[0] + (parts[1] ? ' - ' + parts[1] : '');   // old orders without a type show just the service
+    const loads = Number(it.loads) || 0;
+    const found = lines.find(l => l.label === label);
+    if (found) found.loads += loads; else lines.push({ label, loads });   // same service ordered twice: add the loads
+  });
+  if (!lines.length) return '—';
+  return lines.map(l => `<div class="type-cell">${esc(l.label)}${l.loads ? ' <span class="load-count">(' + l.loads + (l.loads === 1 ? ' load' : ' loads') + ')</span>' : ''}</div>`).join('');
+}
+
 function renderOrdersTables() {
   // Page 10: Active Orders
   const ordersTbody = document.getElementById('orders-table-body');
@@ -3157,7 +3432,8 @@ function renderOrdersTables() {
         <td>${idx + 1}</td>
         <td>${o.customer}</td>
         <td>${o.id}</td>
-      <td>${orderTypes(o)}</td>
+<td>${orderDateTime(o)}</td>
+      <td>${orderTypeServices(o)}</td>
         <td>${peso(o.subtotal)}</td>
         <td>
           <div class="pill-select ${payCls}">
@@ -3178,7 +3454,10 @@ function renderOrdersTables() {
           </div>
         </td>
         <td>
+          <div class="row-actions">
+          <button type="button" class="btn-qr-action" data-qr-order="${o.id}" aria-label="Show QR for ${o.id}"><span>QR</span><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v0M14 20h3M20 17v4"/></svg></button>
           ${canDelete ? `<button type="button" class="btn-del-action" data-del-order="${o.id}"><span>Delete</span><svg viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button>` : ''}
+          </div>
         </td>
       </tr>
     `;
@@ -3210,17 +3489,19 @@ function renderOrdersTables() {
 
   // Page 11: Completed Orders
   // Rule: Qualified only if (Paid & For Pick-up) OR (Paid & Claimed)
-  const completedList = orders.filter(o => o.payment === 'Paid' && (o.status === 'For Pick-up' || o.status === 'Claimed'));
+  const completedList = orders.filter(o => o.payment === 'Paid' && (o.status === 'For Pick-up' || o.status === 'Claimed') && inCompletedRange(o));
+  [...selectedCompleted].forEach(id => { if (!completedList.some(o => o.id === id)) selectedCompleted.delete(id); });   // drop ticks for orders that left the list
   const completedTbody = document.getElementById('completed-table-body');
     completedTbody.innerHTML = completedList.map((o, idx) => {
     const payCls = o.payment === 'Paid' ? 'paid' : 'unpaid';
     const statCls = { 'Received': 'received', 'Processing': 'processing', 'For Pick-up': 'pickup', 'Claimed': 'claimed' }[o.status] || 'received';
     return `
     <tr>
-      <td>${idx + 1}</td>
+      <td><label class="row-check"><input type="checkbox" data-sel-order="${o.id}" ${selectedCompleted.has(o.id) ? 'checked' : ''} aria-label="Select ${o.id}"><span>${idx + 1}</span></label></td>
       <td>${o.customer}</td>
       <td>${o.id}</td>
-      <td>${orderTypes(o)}</td>
+<td>${orderDateTime(o)}</td>
+      <td>${orderTypeServices(o)}</td>
       <td>${peso(o.subtotal)}</td>
       <td>
         <div class="pill-select ${payCls}">
@@ -3235,6 +3516,11 @@ function renderOrdersTables() {
           <select data-completed-status="${o.id}" aria-label="Status for ${o.id}">
             ${['Received', 'Processing', 'For Pick-up', 'Claimed'].filter(s => s !== 'Claimed' || o.payment === 'Paid' || o.status === 'Claimed').map(s => `<option value="${s}" ${o.status === s ? 'selected' : ''}>${s}</option>`).join('')}
           </select>
+        </div>
+      </td>
+      <td>
+        <div class="row-actions">
+          <button type="button" class="btn-qr-action" data-qr-order="${o.id}" aria-label="Show QR for ${o.id}"><span>QR</span><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v0M14 20h3M20 17v4"/></svg></button>
         </div>
       </td>
     </tr>
@@ -3262,35 +3548,153 @@ function renderOrdersTables() {
     const payCls = o.payment === 'Paid' ? 'paid' : 'unpaid';
     const statCls = { 'Received': 'received', 'Processing': 'processing', 'For Pick-up': 'pickup', 'Claimed': 'claimed' }[o.status] || 'received';
     return `
-    <tr>
+        <tr>
       <td>${idx + 1}</td>
       <td>${o.customer}</td>
       <td>${o.id}</td>
-      <td>${orderTypes(o)}</td>
+      <td>${orderDateTime(o)}</td>
+      <td>${orderTypeServices(o)}</td>
       <td>${peso(o.subtotal)}</td>
-      <td><span class="pill-badge ${payCls}">${o.payment}</span></td>
+      <td>
+        <div class="pill-select ${payCls}">${o.payment}</span></td>
       <td><span class="pill-badge ${statCls}">${o.status}</span></td>
     </tr>
   `;
   }).join('');
 
+  paginateTables();       // 10 rows per page
+  jumpToScanned = false;
   applyScanHighlight();   // keep the scanned order highlighted after a refresh
 }
 
-document.getElementById('btn-open-compute-total').onclick = () => {
-  const readyPickup = orders.filter(o => o.payment === 'Paid' && o.status !== 'Claimed');
-  const claimed = orders.filter(o => o.payment === 'Paid' && o.status === 'Claimed');
 
-  const sumPickup = readyPickup.reduce((t, o) => t + o.subtotal, 0);
-  const sumClaimed = claimed.reduce((t, o) => t + o.subtotal, 0);
-  const totalSub = sumPickup + sumClaimed;
 
-  document.getElementById('summary-val-pickup').textContent = peso(sumPickup);
-  document.getElementById('summary-val-claimed').textContent = peso(sumClaimed);
-  document.getElementById('summary-val-subtotal').textContent = peso(totalSub);
+// ---- Completed tab: days filter, tick boxes, compute / print / delete ----
+const RANGE_NAMES = { all: 'All days', '1d': 'Last 1 day', '7d': 'Last 7 days', '1m': 'Last 1 month', '1y': 'Last 1 year' };
+let completedRange = 'all';
+let completedMatched = [];            // order numbers that match the days filter + search (all pages)
+const selectedCompleted = new Set();  // ticked order numbers
 
-  openModal('modal-compute-total');
+function inCompletedRange(o) {
+  if (completedRange === 'all') return true;
+  if (!o.created) return false;
+  const from = new Date();
+  if (completedRange === '1d') from.setDate(from.getDate() - 1);
+  if (completedRange === '7d') from.setDate(from.getDate() - 7);
+  if (completedRange === '1m') from.setMonth(from.getMonth() - 1);
+  if (completedRange === '1y') from.setFullYear(from.getFullYear() - 1);
+  return o.created >= from.getTime();
+}
+
+// Orders that compute / print use: the ticked ones, or everything shown when nothing is ticked
+function completedScopeOrders() {
+  const ids = new Set(selectedCompleted.size ? selectedCompleted : completedMatched);
+  return orders.filter(o => ids.has(o.id));   // same order as the table
+}
+function completedScopeLabel() {
+  return RANGE_NAMES[completedRange] + (selectedCompleted.size ? ' (selected)' : '');
+}
+
+function updateCompletedTools() {
+  const n = selectedCompleted.size;
+  const info = document.getElementById('completed-sel-info');
+  info.textContent = n ? n + ' selected' : completedMatched.length + (completedMatched.length === 1 ? ' order' : ' orders') + ' shown';
+  const all = document.getElementById('completed-sel-all');
+  const ticked = completedMatched.filter(id => selectedCompleted.has(id)).length;
+  all.checked = completedMatched.length > 0 && ticked === completedMatched.length;
+  all.indeterminate = ticked > 0 && !all.checked;
+  document.getElementById('btn-completed-delete').disabled = n === 0;
+  document.getElementById('btn-completed-print').disabled = completedScopeOrders().length === 0;
+  
+}
+
+document.getElementById('completed-range').onchange = e => {
+  completedRange = e.target.value;
+  selectedCompleted.clear();
+  tablePage.completed = 1;
+  renderOrdersTables();
 };
+
+// Refresh: show all days again, clear the ticks and the search, go back to page 1
+document.getElementById('btn-completed-refresh').onclick = () => {
+  completedRange = 'all';
+  document.getElementById('completed-range').value = 'all';
+  selectedCompleted.clear();
+  tableSearch.completed = '';
+  const box = document.querySelector('#search-completed input');
+  if (box) box.value = '';
+  tablePage.completed = 1;
+  renderOrdersTables();
+  const btn = document.getElementById('btn-completed-refresh');
+  btn.classList.add('spin');
+  setTimeout(() => btn.classList.remove('spin'), 500);
+};
+
+document.getElementById('completed-sel-all').onchange = e => {
+  completedMatched.forEach(id => { if (e.target.checked) selectedCompleted.add(id); else selectedCompleted.delete(id); });
+  document.querySelectorAll('#completed-table-body [data-sel-order]').forEach(c => { c.checked = selectedCompleted.has(c.dataset.selOrder); });
+  updateCompletedTools();
+};
+document.addEventListener('change', e => {
+  const c = e.target.closest && e.target.closest('[data-sel-order]');
+  if (!c) return;
+  if (c.checked) selectedCompleted.add(c.dataset.selOrder); else selectedCompleted.delete(c.dataset.selOrder);
+  updateCompletedTools();
+});
+
+// Delete the ticked orders (asks first, they move to the Deleted tab)
+document.getElementById('btn-completed-delete').onclick = () => {
+  const list = completedScopeOrders();
+  if (!selectedCompleted.size || !list.length) return;
+  const total = list.reduce((t, o) => t + o.subtotal, 0);
+  document.getElementById('bulk-delete-title').textContent = 'Delete ' + list.length + (list.length === 1 ? ' order?' : ' orders?');
+  document.getElementById('bulk-delete-detail').textContent = list.length + ' selected · ' + peso(total) + '\nThey will move to the Deleted page and can\'t be restored.';
+  openModal('modal-confirm-bulk-delete');
+};
+const closeBulkDelete = () => closeModal('modal-confirm-bulk-delete');
+document.getElementById('btn-bulk-delete-no').onclick = closeBulkDelete;
+document.getElementById('btn-bulk-delete-back').onclick = closeBulkDelete;
+document.getElementById('btn-bulk-delete-yes').onclick = () => {
+  const ids = new Set(selectedCompleted);
+  closeBulkDelete();
+  const removed = orders.filter(o => ids.has(o.id));
+  if (!removed.length) return;
+  orders = orders.filter(o => !ids.has(o.id));
+  deletedOrders.unshift(...removed);
+  selectedCompleted.clear();
+  saveStored('ll_orders', orders);
+  saveStored('ll_deleted', deletedOrders);
+  renderOrdersTables();
+};
+
+// Print the ticked orders, or everything shown when nothing is ticked
+document.getElementById('btn-completed-print').onclick = () => openCompletedReport();
+function openCompletedReport() {
+  const list = completedScopeOrders();
+  if (!list.length) return;
+  const esc = t => String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const now = new Date();
+  const loads = list.reduce((t, o) => t + (Number(o.totalLoads) || 0), 0);
+  const sumPickup = list.filter(o => o.status !== 'Claimed').reduce((t, o) => t + o.subtotal, 0);
+  const sumClaimed = list.filter(o => o.status === 'Claimed').reduce((t, o) => t + o.subtotal, 0);
+  const lines = list.map(o => {
+    const d = o.created ? new Date(o.created).toLocaleDateString('en-PH') : '';
+    const svc = (o.items || []).map(it => (it.name || '').replace(' · ', ' - ') + ' (' + it.loads + ')').join(', ');
+    return '<div class="rp-row"><span>' + esc(o.id) + ' ' + esc(o.customer) + '</span><span>' + peso(o.subtotal) + '</span></div>' +
+           '<div class="rp-sub">' + esc(d) + ' · ' + esc(o.status) + (svc ? '<br>' + esc(svc) : '') + '</div>';
+  }).join('');
+  document.getElementById('report-paper').innerHTML =
+    '<div class="rp-center"><b style="font-size:16px;letter-spacing:1px;">LABADA-LINK</b><br><b>COMPLETED ORDERS REPORT</b><br>' + esc(completedScopeLabel()) +
+    '<br>Printed: ' + now.toLocaleDateString('en-PH') + ' ' + now.toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit' }) + '</div>' +
+    '<div class="rp-line"></div>' + lines + '<div class="rp-line"></div>' +
+    '<div class="rp-row"><span>Orders</span><span>' + list.length + '</span></div>' +
+    '<div class="rp-row"><span>Total loads</span><span>' + loads + '</span></div>' +
+    '<div class="rp-row"><span>Paid, not yet claimed</span><span>' + peso(sumPickup) + '</span></div>' +
+    '<div class="rp-row"><span>Paid and claimed</span><span>' + peso(sumClaimed) + '</span></div>' +
+    '<div class="rp-line"></div><div class="rp-row rp-total"><span>TOTAL</span><span>' + peso(sumPickup + sumClaimed) + '</span></div>';
+  openModal('modal-report');
+}
+document.getElementById('btn-print-report').onclick = () => { window.print(); };
 
 function showEditTab(which) {
   document.querySelectorAll('[data-edit-tab]').forEach(b => b.classList.toggle('active', b.dataset.editTab === which));
@@ -3393,8 +3797,6 @@ document.getElementById('btn-get-started').onclick = () => {
   document.getElementById('screen-splash').classList.add('hidden');
   document.getElementById('screen-login').classList.remove('hidden');
 };
-
-// RFID tap sign-in is turned off (the RFID box stays on the page)
 
 const LOGIN_USER = 'labada-link';
 const LOGIN_PASS = 'cvsu123';
@@ -3578,6 +3980,7 @@ function handleScan(raw) {
   scanHighlightTab = tab;
   scanSig = order.payment + '|' + order.status;
   clearTimeout(scanHighlightTimer);
+  jumpToScanned = true;                                        // open the page that contains this order
   document.querySelector(`[data-tab="${tab}"]`).click();      // switch tab (also refreshes the tables)
   const hit = applyScanHighlight();
   if (hit) hit.scrollIntoView({ block: 'center', behavior: 'smooth' });
@@ -3601,7 +4004,15 @@ function handleScan(raw) {
     row('Payment', `<span class="pill-badge ${payCls}">${order.payment}</span>`) +
     row('Status', `<span class="pill-badge ${statCls}">${isDeleted ? 'Deleted' : order.status}</span>`) +
     `<p style="text-align:center;font-weight:800;margin:14px 0 0;">${note}</p>`;
-  document.getElementById('scan-actions').innerHTML = '';
+  const actions = document.getElementById('scan-actions');
+  actions.innerHTML = '';
+  if (!isDeleted) {
+    const qrBtn = document.createElement('button');
+    qrBtn.type = 'button'; qrBtn.className = 'btn-modal-addmore'; qrBtn.style.cssText = 'width:100%;margin-top:14px;';
+    qrBtn.textContent = 'VIEW QR / REPRINT RECEIPT';
+    qrBtn.onclick = () => openSavedOrderQr(order);
+    actions.appendChild(qrBtn);
+  }
   openModal('modal-scan');
 }
 
