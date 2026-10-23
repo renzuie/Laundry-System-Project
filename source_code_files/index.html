@@ -35,17 +35,13 @@
   --ink: #0f2438;
   --muted: #5a738e;
   --border: #cde0f1;
-  --border-focus: #2ea3f8;
   --danger: #e11d48;
   --danger-soft: #ffe4e6;
   --success: #059669;
   --success-soft: #d1fae5;
-  --warning: #d97706;
-  --warning-soft: #fef3c7;
   --shadow-sm: 0 2px 6px rgba(15, 36, 56, 0.05);
   --shadow-md: 0 10px 25px -4px rgba(24, 119, 201, 0.16);
   --shadow-lg: 0 24px 50px -12px rgba(15, 36, 56, 0.22);
-  --radius-sm: 10px;
   --radius-md: 16px;
   --radius-lg: 24px;
 }
@@ -251,14 +247,6 @@ button:active { transform: scale(0.97); }
   .splash-bubbles i { animation: none; bottom: auto; top: var(--y, 60%); opacity: .7; }
 }
 
-.splash-title {
-  font-family: 'Manrope', sans-serif;
-  font-weight: 800;
-  font-size: 38px;
-  letter-spacing: 2.5px;
-  color: var(--primary-dark);
-  margin: 0 0 28px;
-}
 .btn-get-started {
   position: relative;
   display: flex;
@@ -936,33 +924,7 @@ main {
 .data-table tr:hover td {
   background: #fafcfe;
 }
-.order-num-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-weight: 700;
-  color: var(--primary-blue);
-  background: #f0f7fe;
-  padding: 3px 8px;
-  border-radius: 6px;
-}
-.badge-pay {
-  display: inline-block;
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 700;
-}
-.badge-pay.paid { background: var(--success-soft); color: var(--success); }
-.badge-pay.unpaid { background: var(--danger-soft); color: var(--danger); }
 
-.status-select {
-  border: 1.5px solid var(--border);
-  border-radius: 8px;
-  padding: 6px 10px;
-  background: #fff;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--ink);
-}
 .btn-del-action {
   background: #fff;
   color: var(--danger);
@@ -976,20 +938,6 @@ main {
   background: var(--danger);
   color: #fff;
   border-color: var(--danger);
-}
-.btn-restore-action {
-  background: #fff;
-  color: var(--primary-blue);
-  border: 1.5px solid #bcd9f5;
-  padding: 6px 14px;
-  border-radius: 8px;
-  font-size: 12.5px;
-  font-weight: 700;
-  margin-right: 6px;
-}
-.btn-restore-action:hover {
-  background: var(--primary-blue);
-  color: #fff;
 }
 
 .modal-overlay {
@@ -1171,11 +1119,6 @@ main {
   text-align: center;
 }
 .receipt-paper * { color: #000000 !important; }
-.receipt-logo-mark {
-  font-size: 26px;
-  display: block;
-  margin-bottom: 2px;
-}
 .receipt-claim-num {
   font-family: 'JetBrains Mono', monospace;
   font-size: 28px;
@@ -1229,58 +1172,6 @@ main {
   padding: 6px 14px;
   font-size: 13px;
   font-weight: 700;
-}
-
-/* Fabric type buttons (Dry only) */
-.cat-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin: 10px 0 4px;
-}
-.cat-btn {
-  text-align: left;
-  border: 2px solid var(--border);
-  border-radius: 12px;
-  background: #fafcfe;
-  color: var(--ink);
-  padding: 12px 14px;
-}
-.cat-btn small {
-  display: block;
-  color: var(--muted);
-  margin-top: 3px;
-  font-size: 12px;
-}
-.cat-btn.selected {
-  border-color: var(--primary-blue);
-  background: var(--primary-light);
-}
-
-/* Fabric type buttons (Dry only) */
-.cat-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin: 10px 0 4px;
-}
-.cat-btn {
-  text-align: left;
-  border: 2px solid var(--border);
-  border-radius: 12px;
-  background: #fafcfe;
-  color: var(--ink);
-  padding: 12px 14px;
-}
-.cat-btn small {
-  display: block;
-  color: var(--muted);
-  margin-top: 3px;
-  font-size: 12px;
-}
-.cat-btn.selected {
-  border-color: var(--primary-blue);
-  background: var(--primary-light);
 }
 
 /* Service card icons (line icons instead of emoji) */
@@ -1414,7 +1305,7 @@ main {
 .tool-btn:disabled { opacity: .4; cursor: default; }
 .row-check { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
 .row-check span { display: inline-block; min-width: 30px; text-align: left; }   /* same width in the header and every row, so the boxes line up */
-.row-check input, #completed-sel-all { width: 18px; height: 18px; accent-color: #1877c9; cursor: pointer; margin: 0; }
+.row-check input, #completed-sel-all, #deleted-sel-all { width: 18px; height: 18px; accent-color: #1877c9; cursor: pointer; margin: 0; }
 th .row-check { color: inherit; }
 #modal-report .receipt-paper { text-align: left; font-size: 12px; line-height: 1.5; margin-top: 24px; }
 #modal-report .rp-center { text-align: center; }
@@ -2194,11 +2085,16 @@ tr.scan-hit td:last-child { box-shadow: inset -3px 3px 0 #f59e0b, inset 0 -3px 0
         <h2>DELETED</h2>
       </div>
     </div>
+    <div class="completed-tools">
+      <span class="sel-info" id="deleted-sel-info"></span>
+      <span class="tools-spacer"></span>
+      <button type="button" class="tool-btn danger" id="btn-deleted-purge">DELETE FOREVER</button>
+    </div>
     <div class="data-table-card">
       <table class="data-table">
         <thead>
           <tr>
-            <th>NO.</th>
+            <th><label class="row-check"><input type="checkbox" id="deleted-sel-all" aria-label="Select all"><span>NO.</span></label></th>
             <th>NAME</th>
             <th>ORDER NO.</th>
             <th>DATE &amp; TIME</th>
@@ -2489,15 +2385,26 @@ tr.scan-hit td:last-child { box-shadow: inset -3px 3px 0 #f59e0b, inset 0 -3px 0
   </div>
 </div>
 
+<div id="modal-confirm-purge" class="modal-overlay hidden">
+  <div class="modal-window" style="max-width:440px;text-align:center;padding:40px 26px 28px;">
+    <button type="button" class="modal-back-btn" id="btn-purge-back" aria-label="Back">
+      <svg viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+    </button>
+    <h3 id="purge-title" style="font-family:'Manrope',sans-serif;font-size:22px;margin:8px 0 10px;color:var(--danger);">Delete forever?</h3>
+    <p id="purge-detail" style="color:var(--muted);font-size:15px;line-height:1.6;margin:0 0 24px;white-space:pre-line;"></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <button type="button" class="btn-modal-addmore" id="btn-purge-no">NO, KEEP THEM</button>
+      <button type="button" class="btn-modal-placeorder" id="btn-purge-yes" style="background:#e24b3c;">YES, DELETE FOREVER</button>
+    </div>
+  </div>
+</div>
+
 <div id="modal-report" class="modal-overlay hidden">
   <div class="modal-window" style="width:min(460px,96vw);">
     <button type="button" class="modal-close-btn" data-close-modal="report">✕</button>
     <div class="receipt-paper" id="report-paper"></div>
     <button type="button" class="btn-modal-placeorder print-hide-btn" id="btn-print-report" style="width:100%;margin-top:16px;">PRINT REPORT</button>
   </div>
-</div>
-<div id="modal-report" class="modal-overlay hidden">
-  ...
 </div>
 
 
@@ -2588,6 +2495,17 @@ function syncOrders(list, deleted) {
     })
       .then(r => { if (!r.ok) delete syncCache[o.token]; })
       .catch(() => { delete syncCache[o.token]; });
+  });
+}
+
+// Removes orders from the online database (used by DELETE FOREVER in the Deleted tab)
+function removeFromDatabase(list) {
+  const db = FIREBASE_DB.replace(/\/+$/, '');
+  if (!db) return;
+  list.forEach(o => {
+    if (!o.token) return;
+    delete syncCache[o.token];
+    fetch(db + '/status/' + o.token + '.json', { method: 'DELETE' }).catch(() => {});
   });
 }
 
@@ -3351,7 +3269,7 @@ function paginateTables() {
     const words = tableSearch[tab].toLowerCase().replace(/#/g, '').split(/\s+/).filter(Boolean);   // every word must match
     const rows = words.length ? allRows.filter(r => { const t = rowText(r).replace(/#/g, ''); return words.every(w => new RegExp('(^|[^a-z0-9])' + w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).test(t)); }) : allRows;   // a word matches where another word starts, so "paid" does not find "Unpaid"
     if (tab === 'completed') { completedMatched = rows.map(r => r.children[2].textContent.trim()); updateCompletedTools(); }
-    if (tab === 'completed') { completedMatched = rows.map(r => r.children[2].textContent.trim()); updateCompletedTools(); }
+    if (tab === 'deleted') { deletedMatched = rows.map(r => r.children[2].textContent.trim()); updateDeletedTools(); }
     const pages = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
     tablePage[tab] = Math.min(Math.max(1, tablePage[tab]), pages);
 
@@ -3544,12 +3462,13 @@ function renderOrdersTables() {
 
   // Page 13: Deleted Orders
   const deletedTbody = document.getElementById('deleted-table-body');
+  [...selectedDeleted].forEach(id => { if (!deletedOrders.some(o => o.id === id)) selectedDeleted.delete(id); });   // drop ticks for orders that are gone
     deletedTbody.innerHTML = deletedOrders.map((o, idx) => {
     const payCls = o.payment === 'Paid' ? 'paid' : 'unpaid';
     const statCls = { 'Received': 'received', 'Processing': 'processing', 'For Pick-up': 'pickup', 'Claimed': 'claimed' }[o.status] || 'received';
     return `
         <tr>
-      <td>${idx + 1}</td>
+      <td><label class="row-check"><input type="checkbox" data-sel-deleted="${o.id}" ${selectedDeleted.has(o.id) ? 'checked' : ''} aria-label="Select ${o.id}"><span>${idx + 1}</span></label></td>
       <td>${o.customer}</td>
       <td>${o.id}</td>
       <td>${orderDateTime(o)}</td>
@@ -3664,6 +3583,54 @@ document.getElementById('btn-bulk-delete-yes').onclick = () => {
   selectedCompleted.clear();
   saveStored('ll_orders', orders);
   saveStored('ll_deleted', deletedOrders);
+  renderOrdersTables();
+};
+
+// ---- Deleted tab: tick boxes and DELETE FOREVER (also removes the order from the online database) ----
+let deletedMatched = [];              // order numbers that match the search (all pages)
+const selectedDeleted = new Set();    // ticked order numbers
+
+function updateDeletedTools() {
+  const n = selectedDeleted.size;
+  document.getElementById('deleted-sel-info').textContent = n ? n + ' selected' : deletedMatched.length + (deletedMatched.length === 1 ? ' order' : ' orders') + ' shown';
+  const all = document.getElementById('deleted-sel-all');
+  const ticked = deletedMatched.filter(id => selectedDeleted.has(id)).length;
+  all.checked = deletedMatched.length > 0 && ticked === deletedMatched.length;
+  all.indeterminate = ticked > 0 && !all.checked;
+  document.getElementById('btn-deleted-purge').disabled = n === 0;
+}
+
+document.getElementById('deleted-sel-all').onchange = e => {
+  deletedMatched.forEach(id => { if (e.target.checked) selectedDeleted.add(id); else selectedDeleted.delete(id); });
+  document.querySelectorAll('#deleted-table-body [data-sel-deleted]').forEach(c => { c.checked = selectedDeleted.has(c.dataset.selDeleted); });
+  updateDeletedTools();
+};
+document.addEventListener('change', e => {
+  const c = e.target.closest && e.target.closest('[data-sel-deleted]');
+  if (!c) return;
+  if (c.checked) selectedDeleted.add(c.dataset.selDeleted); else selectedDeleted.delete(c.dataset.selDeleted);
+  updateDeletedTools();
+});
+
+document.getElementById('btn-deleted-purge').onclick = () => {
+  const list = deletedOrders.filter(o => selectedDeleted.has(o.id));
+  if (!list.length) return;
+  document.getElementById('purge-title').textContent = 'Delete ' + list.length + (list.length === 1 ? ' order' : ' orders') + ' forever?';
+  document.getElementById('purge-detail').textContent = list.length + ' selected\nThey will be removed from this page and from the online database. This can\'t be undone.';
+  openModal('modal-confirm-purge');
+};
+const closePurge = () => closeModal('modal-confirm-purge');
+document.getElementById('btn-purge-no').onclick = closePurge;
+document.getElementById('btn-purge-back').onclick = closePurge;
+document.getElementById('btn-purge-yes').onclick = () => {
+  const ids = new Set(selectedDeleted);
+  closePurge();
+  const gone = deletedOrders.filter(o => ids.has(o.id));
+  if (!gone.length) return;
+  deletedOrders = deletedOrders.filter(o => !ids.has(o.id));
+  selectedDeleted.clear();
+  saveStored('ll_deleted', deletedOrders);
+  removeFromDatabase(gone);
   renderOrdersTables();
 };
 

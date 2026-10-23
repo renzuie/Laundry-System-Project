@@ -279,18 +279,11 @@ const FIREBASE_DB = 'https://labada-link-default-rtdb.asia-southeast1.firebaseda
 const DB = FIREBASE_DB.replace(/\/+$/, '');
 const STEPS = ['Received', 'Processing', 'For Pick-up', 'Claimed'];
 const STATUS_CLS = { 'Received': 'received', 'Processing': 'processing', 'For Pick-up': 'pickup', 'Claimed': 'claimed' };
-const MSG = {
-  'Received': 'We have received your laundry.',
-  'Processing': 'Your laundry is being washed, dried and prepared.',
-  'For Pick-up': 'Your laundry is ready! Please come to the counter.',
-  'Claimed': 'Thank you! This order has already been claimed.'
-};
 
 const $ = el => document.getElementById(el);
 const params = new URLSearchParams(location.search);
 const id = (params.get('o') || '').trim();
 const token = (params.get('k') || '').trim();
-const timeText = ms => new Date(ms).toLocaleTimeString('en-PH', { hour: 'numeric', minute: '2-digit' });
 
 function render(d) {
   $('details').hidden = false;
