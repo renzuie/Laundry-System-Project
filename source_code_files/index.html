@@ -1315,6 +1315,12 @@ main {
 #view-staff .row-actions button { margin: 0 3px; }
 .owner-fab { position: fixed; right: 16px; bottom: 16px; z-index: 40; width: 44px; height: 44px; border-radius: 50%; border: 2px solid #5fdde8; background: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; opacity: .55; padding: 0; }
 .owner-fab:hover, .owner-fab.active { opacity: 1; }
+.sync-dot { position: fixed; right: 68px; bottom: 25px; z-index: 40; font-size: 12px; font-weight: 800; color: #0558a0; background: #fff; border: 2px solid #5fdde8; border-radius: 999px; padding: 5px 12px; opacity: .8; pointer-events: none; }
+.sync-dot::before { content: ''; display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; background: #2bb673; }
+.sync-dot.busy::before { background: #e8a317; }
+.sync-dot.off { color: #b4382c; border-color: #f0b3ac; }
+.sync-dot.off::before { background: #e24b3c; }
+@media print { .sync-dot, .owner-fab { display: none !important; } }
 .owner-fab svg { width: 20px; height: 20px; fill: none; stroke: #0558a0; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .row-check { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
 .row-check span { display: inline-block; min-width: 30px; text-align: left; }   /* same width in the header and every row, so the boxes line up */
@@ -2010,6 +2016,7 @@ tr.scan-hit td:last-child { box-shadow: inset -3px 3px 0 #f59e0b, inset 0 -3px 0
   </nav>
 </header>
 
+<div class="sync-dot" id="sync-dot">Synced</div>
 <button type="button" class="owner-fab" data-tab="staff" id="nav-staff" title="Owner / manager: staff accounts and delete log" aria-label="Owner / manager">
   <svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
 </button>
@@ -2530,7 +2537,11 @@ const FIREBASE_DB = 'https://labada-link-default-rtdb.asia-southeast1.firebaseda
 const syncCache = {};
 
 // small helpers for the staff accounts and the delete log, which are kept in the database
-const dbUrl = path => FIREBASE_DB.replace(/\/+$/, '') + '/' + path + '.json';
+// Everything the shop shares (orders, staff, log...) is kept under a long secret code, so the path can't be guessed.
+// Set the same code in database.rules.json. Orders for the customer status pages (status/<token>) stay where they were.
+const SHOP_CODE = 'umuwgsoi9kqmtdm9cb7oa0uc';
+const SHOP_PATHS = /^(owner|staff|deleteLog|orders|deleted|counter|rev|settings)(\/|$)/;
+const dbUrl = path => FIREBASE_DB.replace(/\/+$/, '') + '/' + (SHOP_PATHS.test(path) ? 'shop/' + SHOP_CODE + '/' : '') + path + '.json';
 async function dbGet(path) { const r = await fetch(dbUrl(path)); if (!r.ok) throw new Error('database ' + r.status); return r.json(); }
 async function dbSend(path, method, body) {
   const r = await fetch(dbUrl(path), { method, headers: { 'Content-Type': 'application/json' }, body: body === undefined ? undefined : JSON.stringify(body) });
@@ -2595,6 +2606,7 @@ function saveStored(key, val) {
   try { localStorage.setItem(key, JSON.stringify(val)); } catch {}
   if (key === 'll_orders') syncOrders(val, false);
   if (key === 'll_deleted') syncOrders(val, true);
+  if (/^ll_(orders|deleted|counter|services_v2|addons_v2)$/.test(key)) scheduleFlush();
 }
 
 let services = loadStored('ll_services_v2', DEFAULT_SERVICES);
@@ -2621,6 +2633,195 @@ let addonQtys = {};
 let nextOrderCounter = loadStored('ll_counter', 1001);
 let pendingOrderForReceipt = null;
 let slipCarouselIndex = 0;
+
+/* ===== Shared data: orders, deleted orders, prices and the order counter are kept in the database,
+   so every device (laptop, Raspberry Pi) shows the same list and nothing is lost if one browser is cleared.
+   Each device still keeps a copy on itself, so it keeps working offline and catches up later. ===== */
+const okey = id => String(id).replace(/^#/, '').replace(/[.#$\[\]\/]/g, '_');
+const idNumber = id => parseInt(String(id).replace(/\D/g, ''), 10) || 0;
+function canon(v) {      // stable text used to compare records (sorted keys; the database drops empty arrays and nulls, so they are ignored)
+  const clean = x => {
+    if (Array.isArray(x)) return x.map(clean);
+    if (x && typeof x === 'object') {
+      const o = {};
+      Object.keys(x).sort().forEach(k => {
+        const c = clean(x[k]);
+        if (c === undefined || c === null) return;
+        if (Array.isArray(c) && !c.length) return;
+        if (!Array.isArray(c) && typeof c === 'object' && !Object.keys(c).length) return;
+        o[k] = c;
+      });
+      return o;
+    }
+    return x;
+  };
+  return JSON.stringify(clean(v));
+}
+const arr = x => Array.isArray(x) ? x : (x && typeof x === 'object' ? Object.keys(x).sort((a, b) => a - b).map(k => x[k]) : []);
+function fixOrder(o) {   // the database drops empty lists: put them back so the rest of the app can rely on them
+  o = JSON.parse(JSON.stringify(o));
+  o.items = arr(o.items);
+  o.items.forEach(it => { it.addons = arr(it.addons); });
+  return o;
+}
+
+let snap = loadStored('ll_snap', null);                // what the database is known to hold (as of the last sync)
+if (!snap || snap.shop !== SHOP_CODE) snap = { shop: SHOP_CODE, orders: {}, deleted: {}, counter: 0 };
+const persistSnap = () => { try { localStorage.setItem('ll_snap', JSON.stringify(snap)); } catch {} };
+const localWrite = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
+let firstPullDone = false, netOk = true, flushing = false, flushAgain = false, flushTimer = null, pullBusy = false, lastRev = null, renderPending = false;
+
+function pendingChanges() {
+  const puts = [], dels = [];
+  [['orders', orders], ['deleted', deletedOrders]].forEach(([col, list]) => {
+    const cur = {};
+    list.forEach(o => { cur[okey(o.id)] = o; });
+    Object.keys(cur).forEach(k => { if (snap[col][k] !== canon(cur[k])) puts.push({ col, k, body: cur[k] }); });
+    Object.keys(snap[col]).forEach(k => { if (!(k in cur)) dels.push({ col, k }); });
+  });
+  const st = canon({ services, addons });
+  return { puts, dels, settings: snap.settings !== st, counter: nextOrderCounter > (snap.counter || 0) };
+}
+const pendingCount = () => { const c = pendingChanges(); return c.puts.length + c.dels.length; };   // orders waiting to be sent
+function scheduleFlush() { clearTimeout(flushTimer); flushTimer = setTimeout(flush, 300); }
+
+// Sends what changed on this device to the database
+async function flush() {
+  if (!FIREBASE_DB || !firstPullDone) return;
+  if (flushing) { flushAgain = true; return; }
+  flushing = true;
+  renderSyncDot();
+  let wrote = false;
+  try {
+    const c = pendingChanges();
+    for (const p of c.puts) { await dbSend(p.col + '/' + p.k, 'PUT', p.body); snap[p.col][p.k] = canon(p.body); wrote = true; }
+    for (const d of c.dels) { await dbSend(d.col + '/' + d.k, 'DELETE'); delete snap[d.col][d.k]; wrote = true; }
+    if (c.settings) { await dbSend('settings', 'PUT', { services, addons }); snap.settings = canon({ services, addons }); wrote = true; }
+    if (c.counter) { await dbSend('counter', 'PUT', nextOrderCounter); snap.counter = nextOrderCounter; wrote = true; }
+    if (wrote) await dbSend('rev', 'PUT', Date.now() + '-' + Math.random().toString(36).slice(2, 7));   // tells the other devices to look
+    netOk = true;
+  } catch (err) { netOk = false; }
+  persistSnap();
+  flushing = false;
+  renderSyncDot();
+  if (flushAgain) { flushAgain = false; scheduleFlush(); }
+}
+
+// Brings in what other devices changed
+async function pullShared(force) {
+  if (!FIREBASE_DB || pullBusy) return;
+  pullBusy = true;
+  try {
+    const rev = await dbGet('rev');
+    if (!force && firstPullDone && rev === lastRev) { netOk = true; return; }
+    const [ro, rd, rc, rs] = await Promise.all([dbGet('orders'), dbGet('deleted'), dbGet('counter'), dbGet('settings')]);
+    if (flushing) return;                                 // our own write is in progress: look again next time
+    mergeShared(ro || {}, rd || {}, rc, rs);
+    lastRev = rev; firstPullDone = true; netOk = true;
+  } catch (err) { netOk = false; }
+  finally { pullBusy = false; }
+}
+
+function mergeShared(ro, rd, rc, rs) {
+  let changed = false, renumbered = false;
+  const rem = { orders: ro, deleted: rd };
+  Object.keys(rem.deleted).forEach(k => { delete rem.orders[k]; });       // "deleted" always wins over the same record in "orders"
+  const local = { orders: {}, deleted: {} };
+  orders.forEach(o => { local.orders[okey(o.id)] = o; });
+  deletedOrders.forEach(o => { local.deleted[okey(o.id)] = o; });
+  const out = { orders: [], deleted: [] };
+  const taken = new Set([...Object.keys(rem.orders), ...Object.keys(rem.deleted), ...Object.keys(local.orders), ...Object.keys(local.deleted)]);
+  let free = Math.max(nextOrderCounter, Number(rc) || 0, ...[...taken].map(k => idNumber(k) + 1));
+
+  ['orders', 'deleted'].forEach(col => {
+    const keys = new Set([...Object.keys(rem[col]), ...Object.keys(local[col]), ...Object.keys(snap[col])]);
+    keys.forEach(k => {
+      const L = local[col][k], S = snap[col][k], R = rem[col][k] ? fixOrder(rem[col][k]) : null;
+      if (R) {
+        if (!L && S !== undefined) return;                                                            // removed on this device, the delete is sent next
+        if (!L) { out[col].push(R); snap[col][k] = canon(R); changed = true; return; }                // new from another device
+        if (S === undefined && L.token && R.token && L.token !== R.token) {                           // two devices used the same order number
+          L.id = '#' + (free++);
+          taken.add(okey(L.id));
+          out[col].push(L); out[col].push(R); snap[col][k] = canon(R); changed = true; renumbered = true;
+          scanToast('Order ' + R.id + ' was already used by another device. This device\'s order was renumbered to ' + L.id + '.');
+          return;
+        }
+        if (S !== undefined && S !== canon(L)) { out[col].push(L); return; }                           // edited on this device: our change is sent next
+        out[col].push(R); snap[col][k] = canon(R);
+        if (canon(L) !== canon(R)) changed = true;
+      } else {
+        if (!L) { delete snap[col][k]; return; }                                                       // gone from both
+        if (S !== undefined && S === canon(L)) { delete snap[col][k]; changed = true; return; }       // removed by another device
+        out[col].push(L);                                                                              // new or edited here: sent next
+      }
+    });
+  });
+  const byNew = (a, b) => (b.created || 0) - (a.created || 0) || idNumber(b.id) - idNumber(a.id);
+  out.orders.sort(byNew); out.deleted.sort(byNew);
+  if (changed || out.orders.length !== orders.length || out.deleted.length !== deletedOrders.length) {
+    orders = out.orders; deletedOrders = out.deleted;
+    localWrite('ll_orders', orders); localWrite('ll_deleted', deletedOrders);
+    changed = true;
+  }
+  // order counter: never lower than anything already used
+  const want = Math.max(nextOrderCounter, Number(rc) || 0, free, ...[...out.orders, ...out.deleted].map(o => idNumber(o.id) + 1));
+  if (want !== nextOrderCounter) { nextOrderCounter = want; localWrite('ll_counter', want); }
+  snap.counter = Number(rc) || 0;
+  // prices: the first time a device joins it takes the shop's prices; later, its own edits win until sent
+  if (rs && (rs.services || rs.addons)) {
+    const rst = canon({ services: arr(rs.services), addons: arr(rs.addons) });
+    if (snap.settings === undefined || snap.settings === canon({ services, addons })) {
+      if (rst !== canon({ services, addons })) {
+        services = arr(rs.services); addons = arr(rs.addons);
+        localWrite('ll_services_v2', services); localWrite('ll_addons_v2', addons);
+        changed = true;
+      }
+      snap.settings = rst;
+    }
+  }
+  persistSnap();
+  if (renumbered) { syncOrders(orders, false); syncOrders(deletedOrders, true); }   // the customer status page gets the new number too
+  if (changed) renderPending = true;
+}
+
+// Before a new order is saved: make sure its number is free in the database (another device may have used it)
+async function claimOrder(order) {
+  if (!FIREBASE_DB || !firstPullDone) return false;
+  let renumbered = false;
+  for (let i = 0; i < 12; i++) {
+    try {
+      const k = okey(order.id);
+      const [a, b] = await Promise.all([dbGet('orders/' + k), dbGet('deleted/' + k)]);
+      if (!(a && a.token !== order.token) && !(b && b.token !== order.token)) return renumbered;
+    } catch (err) { return renumbered; }           // offline: save it on this device, the number is checked when it connects
+    order.id = '#' + Math.max(nextOrderCounter, idNumber(order.id) + 1);
+    nextOrderCounter = idNumber(order.id);
+    renumbered = true;
+  }
+  return renumbered;
+}
+
+function renderSyncDot() {
+  const el = document.getElementById('sync-dot');
+  if (!el) return;
+  const n = pendingCount();
+  el.className = 'sync-dot' + (!netOk ? ' off' : (flushing || n ? ' busy' : ''));
+  el.textContent = !netOk ? 'Offline · saved on this device' + (n ? ' (' + n + ' waiting)' : '') : (flushing || n ? 'Syncing…' : 'Synced');
+}
+function startShared() {
+  if (!FIREBASE_DB) { const el = document.getElementById('sync-dot'); if (el) el.style.display = 'none'; return; }
+  const afterPull = () => {
+    if (renderPending && !document.querySelector('.modal-overlay:not(.hidden)')) { renderPending = false; renderServicesGrid(); renderOrdersTables(); }
+    renderSyncDot();
+  };
+  const tick = async () => { await pullShared(false); afterPull(); await flush(); afterPull(); };
+  pullShared(true).then(() => { afterPull(); return flush(); }).then(afterPull);
+  setInterval(tick, 4000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) tick(); });
+  window.addEventListener('online', tick);
+  window.addEventListener('offline', () => { netOk = false; renderSyncDot(); });
+}
 
 // Where the customer page lives. Leave '' to use status.html next to this page,
 const STATUS_PAGE_URL = '';
@@ -2994,6 +3195,7 @@ function proceedPayment(isPaidNow) {
   const custName = cart[0]?.customer || 'Walk-in';
 
   // The order is only prepared here. It is saved to the Orders page when the receipt is printed.
+  nextOrderCounter = Math.max(nextOrderCounter, ...[...orders, ...deletedOrders].map(o => idNumber(o.id) + 1));
   const newOrder = {
     id: `#${nextOrderCounter}`,
     customer: custName,
@@ -3042,15 +3244,19 @@ function showCustomerReceipt(order) {
 }
 
 // "PRINT CUSTOMER RECEIPT" -> Print & advance to Employee Slips (PDF Page 7 & 8)
-document.getElementById('btn-print-cust-receipt').onclick = () => {
+let printingReceipt = false;
+document.getElementById('btn-print-cust-receipt').onclick = async () => {
   const order = pendingOrderForReceipt;
-  if (!order) return;
+  if (!order || printingReceipt) return;
+  printingReceipt = true;
+  try {
 
   // First print = the order becomes real: save it to the Orders page (and sync it online)
-  if (!orders.some(o => o.id === order.id)) {
+  if (!orders.some(o => o.token === order.token)) {
     order.status = START_PROCESSING_ON_PRINT ? 'Processing' : 'Received';
+    if (await claimOrder(order)) showCustomerReceipt(order);   // the number was taken by another device: the receipt shows the new number and QR
     orders.unshift(order);
-    nextOrderCounter++;
+    nextOrderCounter = Math.max(nextOrderCounter, idNumber(order.id) + 1);
     saveStored('ll_counter', nextOrderCounter);
     saveStored('ll_orders', orders);
     cart = [];
@@ -3062,6 +3268,7 @@ document.getElementById('btn-print-cust-receipt').onclick = () => {
   closeModal('modal-cust-receipt');
   if (reprintMode) { reprintMode = false; return; }   // reprint of a saved order: no employee slips
   showEmployeeReceipts(order);
+  } finally { printingReceipt = false; }
 };
 
 // Back arrow on checkout: return to the services page (the order stays in CURRENT ORDER)
@@ -3071,7 +3278,7 @@ document.getElementById('btn-payment-back').onclick = () => closeModal('modal-pa
 document.getElementById('btn-receipt-back').onclick = () => {
   const o = pendingOrderForReceipt;
   closeModal('modal-cust-receipt');
-  if (!o || orders.some(x => x.id === o.id)) return;   // already printed and saved: just close
+  if (!o || orders.some(x => x.token === o.token)) return;   // already printed and saved: just close
   pendingOrderForReceipt = null;
   openPaymentModal();   // the cart is still there
 };
@@ -4299,6 +4506,7 @@ document.querySelector('#modal-scan .modal-close-btn').addEventListener('click',
 renderServicesGrid();
 renderOrdersTables();
 setupFitModals();
+startShared();
 </script>
 </body>
 </html>
