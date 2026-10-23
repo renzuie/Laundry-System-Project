@@ -1303,6 +1303,19 @@ main {
 .tool-btn.danger { border-color: #e24b3c; color: #e24b3c; }
 .tool-btn.danger:hover:not(:disabled) { background: #e24b3c; color: #fff; }
 .tool-btn:disabled { opacity: .4; cursor: default; }
+.pin-dots { font-size: 28px; letter-spacing: 10px; color: var(--primary-dark); min-height: 40px; line-height: 40px; }
+.pin-error { color: var(--danger); font-weight: 700; font-size: 13.5px; min-height: 20px; margin-bottom: 8px; }
+.pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-width: 260px; margin: 0 auto 18px; }
+.pin-pad button { padding: 14px 0; font-size: 20px; font-weight: 800; border: 1.5px solid var(--border); border-radius: 12px; background: #fafcfe; color: var(--ink); cursor: pointer; }
+.pin-pad button:active { background: var(--primary-light); }
+.staff-form { background: #fff; border: 2px solid #0558a0; border-radius: 18px; padding: 16px 18px; margin: 0 0 18px; }
+.staff-form input[type="text"], .staff-form input[type="password"] { padding: 10px 14px; border: 2px solid #0558a0; border-radius: 12px; font-family: inherit; font-size: 14px; font-weight: 600; min-width: 190px; }
+.staff-msg { font-weight: 700; color: var(--danger); min-height: 20px; margin: 0 0 8px; font-size: 14px; }
+.staff-sub { font-family: 'Manrope', sans-serif; color: #0558a0; font-size: 20px; margin: 26px 0 12px; }
+#view-staff .row-actions button { margin: 0 3px; }
+.owner-fab { position: fixed; right: 16px; bottom: 16px; z-index: 40; width: 44px; height: 44px; border-radius: 50%; border: 2px solid #5fdde8; background: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; opacity: .55; padding: 0; }
+.owner-fab:hover, .owner-fab.active { opacity: 1; }
+.owner-fab svg { width: 20px; height: 20px; fill: none; stroke: #0558a0; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .row-check { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
 .row-check span { display: inline-block; min-width: 30px; text-align: left; }   /* same width in the header and every row, so the boxes line up */
 .row-check input, #completed-sel-all, #deleted-sel-all { width: 18px; height: 18px; accent-color: #1877c9; cursor: pointer; margin: 0; }
@@ -1366,7 +1379,8 @@ th .row-check { color: inherit; }
 /* Orders, Completed and Deleted tables (matches design) */
 #view-orders .data-table-card,
 #view-completed .data-table-card,
-#view-deleted .data-table-card {
+#view-deleted .data-table-card,
+#view-staff .data-table-card {
   border: 2px solid #0558a0;
   border-radius: 18px;
   background: #0558a0;
@@ -1375,7 +1389,8 @@ th .row-check { color: inherit; }
 }
 #view-orders .data-table,
 #view-completed .data-table,
-#view-deleted .data-table {
+#view-deleted .data-table,
+#view-staff .data-table {
   min-width: 880px;
   margin: 0;
   border-collapse: collapse;
@@ -1385,7 +1400,8 @@ th .row-check { color: inherit; }
 }
 #view-orders .data-table th,
 #view-completed .data-table th,
-#view-deleted .data-table th {
+#view-deleted .data-table th,
+#view-staff .data-table th {
   background: #0558a0;
   color: #fff;
   text-align: center;
@@ -1397,7 +1413,8 @@ th .row-check { color: inherit; }
 }
 #view-orders .data-table td,
 #view-completed .data-table td,
-#view-deleted .data-table td {
+#view-deleted .data-table td,
+#view-staff .data-table td {
   border: 1.5px solid #0558a0;
   background: #fff;
   padding: 10px;
@@ -1407,7 +1424,8 @@ th .row-check { color: inherit; }
 }
 #view-orders .data-table tr:hover td,
 #view-completed .data-table tr:hover td,
-#view-deleted .data-table tr:hover td { background: #f4faff; }
+#view-deleted .data-table tr:hover td,
+#view-staff .data-table tr:hover td { background: #f4faff; }
 
 /* Colored label (same look as the dropdowns, but not clickable) */
 .pill-badge {
@@ -1992,6 +2010,11 @@ tr.scan-hit td:last-child { box-shadow: inset -3px 3px 0 #f59e0b, inset 0 -3px 0
   </nav>
 </header>
 
+<button type="button" class="owner-fab" data-tab="staff" id="nav-staff" title="Owner / manager: staff accounts and delete log" aria-label="Owner / manager">
+  <svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+</button>
+
+
 <main>
   <section id="view-services" class="view-section active">
     <div class="section-head-bar">
@@ -2107,6 +2130,40 @@ tr.scan-hit td:last-child { box-shadow: inset -3px 3px 0 #f59e0b, inset 0 -3px 0
         <tbody id="deleted-table-body">
           <!-- Deleted orders render here -->
         </tbody>
+      </table>
+    </div>
+  </section>
+  <section id="view-staff" class="view-section">
+    <div class="section-head-bar">
+      <div>
+        <h2>STAFF</h2>
+      </div>
+    </div>
+    <div class="staff-msg" id="staff-msg"></div>
+    <form id="staff-form" class="completed-tools staff-form" autocomplete="off">
+      <input type="text" id="staff-name" placeholder="Staff name" aria-label="Staff name" required>
+      <input type="password" id="staff-pin" placeholder="PIN (4-8 digits)" inputmode="numeric" maxlength="8" aria-label="PIN" autocomplete="new-password">
+      <span class="tools-spacer"></span>
+      <button type="button" class="tool-btn" id="btn-staff-cancel" style="display:none;">CANCEL</button>
+      <button type="submit" class="tool-btn" id="btn-staff-save">ADD STAFF</button>
+      <button type="button" class="tool-btn" id="btn-owner-pin">CHANGE OWNER PIN</button>
+      <button type="button" class="tool-btn danger" id="btn-owner-lock">LOCK</button>
+    </form>
+    <div class="data-table-card">
+      <table class="data-table">
+        <thead>
+          <tr><th>NAME</th><th>PIN</th><th>ADDED</th><th>ACTIONS</th></tr>
+        </thead>
+        <tbody id="staff-table-body"></tbody>
+      </table>
+    </div>
+    <h3 class="staff-sub">Delete log</h3>
+    <div class="data-table-card">
+      <table class="data-table">
+        <thead>
+          <tr><th>DATE &amp; TIME</th><th>DELETED BY</th><th>ORDERS</th><th>TOTAL</th></tr>
+        </thead>
+        <tbody id="log-table-body"></tbody>
       </table>
     </div>
   </section>
@@ -2385,16 +2442,25 @@ tr.scan-hit td:last-child { box-shadow: inset -3px 3px 0 #f59e0b, inset 0 -3px 0
   </div>
 </div>
 
-<div id="modal-confirm-purge" class="modal-overlay hidden">
+<div id="modal-pin" class="modal-overlay hidden">
   <div class="modal-window" style="max-width:440px;text-align:center;padding:40px 26px 28px;">
-    <button type="button" class="modal-back-btn" id="btn-purge-back" aria-label="Back">
+    <button type="button" class="modal-back-btn" id="btn-pin-back" aria-label="Back">
       <svg viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
     </button>
-    <h3 id="purge-title" style="font-family:'Manrope',sans-serif;font-size:22px;margin:8px 0 10px;color:var(--danger);">Delete forever?</h3>
-    <p id="purge-detail" style="color:var(--muted);font-size:15px;line-height:1.6;margin:0 0 24px;white-space:pre-line;"></p>
+    <h3 id="pin-title" style="font-family:'Manrope',sans-serif;font-size:22px;margin:8px 0 10px;color:var(--primary-dark);">Enter PIN</h3>
+    <p id="pin-detail" style="color:var(--muted);font-size:15px;line-height:1.6;margin:0 0 16px;white-space:pre-line;"></p>
+    <div id="pin-label" style="font-weight:800;color:var(--primary-dark);margin-bottom:8px;"></div>
+    <div id="pin-dots" class="pin-dots" aria-live="polite"></div>
+    <div id="pin-error" class="pin-error"></div>
+    <div class="pin-pad">
+      <button type="button" data-pin-key="1">1</button><button type="button" data-pin-key="2">2</button><button type="button" data-pin-key="3">3</button>
+      <button type="button" data-pin-key="4">4</button><button type="button" data-pin-key="5">5</button><button type="button" data-pin-key="6">6</button>
+      <button type="button" data-pin-key="7">7</button><button type="button" data-pin-key="8">8</button><button type="button" data-pin-key="9">9</button>
+      <button type="button" data-pin-key="C" aria-label="Clear">C</button><button type="button" data-pin-key="0">0</button><button type="button" data-pin-key="B" aria-label="Backspace">&#9003;</button>
+    </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-      <button type="button" class="btn-modal-addmore" id="btn-purge-no">NO, KEEP THEM</button>
-      <button type="button" class="btn-modal-placeorder" id="btn-purge-yes" style="background:#e24b3c;">YES, DELETE FOREVER</button>
+      <button type="button" class="btn-modal-addmore" id="btn-pin-cancel">CANCEL</button>
+      <button type="button" class="btn-modal-placeorder" id="btn-pin-ok">OK</button>
     </div>
   </div>
 </div>
@@ -2462,6 +2528,15 @@ const DEFAULT_ADDONS = [
 // 'https://labada-link-default-rtdb.asia-southeast1.firebasedatabase.app'
 const FIREBASE_DB = 'https://labada-link-default-rtdb.asia-southeast1.firebasedatabase.app/';
 const syncCache = {};
+
+// small helpers for the staff accounts and the delete log, which are kept in the database
+const dbUrl = path => FIREBASE_DB.replace(/\/+$/, '') + '/' + path + '.json';
+async function dbGet(path) { const r = await fetch(dbUrl(path)); if (!r.ok) throw new Error('database ' + r.status); return r.json(); }
+async function dbSend(path, method, body) {
+  const r = await fetch(dbUrl(path), { method, headers: { 'Content-Type': 'application/json' }, body: body === undefined ? undefined : JSON.stringify(body) });
+  if (!r.ok) throw new Error('database ' + r.status);
+  return r.json();
+}
 
 function makeToken() {
   const a = new Uint8Array(9);
@@ -3612,21 +3687,241 @@ document.addEventListener('change', e => {
   updateDeletedTools();
 });
 
-document.getElementById('btn-deleted-purge').onclick = () => {
+// ---- PIN pop-up (used for the owner PIN and for staff PINs) ----
+// pinHash() turns text into a short code, so a PIN itself is never stored.
+function pinHash(p) {
+  p = 'll:' + p;
+  let h1 = 0xdeadbeef, h2 = 0x41c6ce57;
+  for (let i = 0; i < p.length; i++) { const c = p.charCodeAt(i); h1 = Math.imul(h1 ^ c, 2654435761); h2 = Math.imul(h2 ^ c, 1597334677); }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+  return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(36);
+}
+const staffPinHash = pin => pinHash('staff:' + pin);
+const ownerPinHash = pin => pinHash('owner:' + pin);
+const escHtml = t => String(t == null ? '' : t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+let pinState = null, pinFails = 0, pinLockUntil = 0;
+function showPin(msg) {
+  const n = pinState ? pinState.pin.length : 0;
+  document.getElementById('pin-dots').textContent = '●'.repeat(n) + '○'.repeat(Math.max(0, 4 - n));
+  document.getElementById('pin-error').textContent = msg || '';
+}
+// Opens the pop-up. verify(pin) answers { ok: true, value } or { ok: false, msg, soft }. Resolves with value, or null when cancelled.
+function pinDialog(o) {
+  return new Promise(resolve => {
+    pinState = { pin: '', verify: o.verify, resolve, busy: false };
+    document.getElementById('pin-title').textContent = o.title;
+    document.getElementById('pin-title').style.color = o.danger ? 'var(--danger)' : 'var(--primary-dark)';
+    document.getElementById('pin-detail').textContent = o.detail || '';
+    document.getElementById('pin-label').textContent = o.label || 'Enter PIN';
+    const ok = document.getElementById('btn-pin-ok');
+    ok.textContent = o.okText || 'OK';
+    ok.style.background = o.danger ? '#e24b3c' : '';
+    showPin('');
+    openModal('modal-pin');
+  });
+}
+function pinFinish(value) {
+  const st = pinState;
+  pinState = null;
+  closeModal('modal-pin');
+  if (st) st.resolve(value);
+}
+document.querySelectorAll('[data-pin-key]').forEach(b => b.onclick = () => {
+  if (!pinState) return;
+  const k = b.dataset.pinKey;
+  if (k === 'C') pinState.pin = '';
+  else if (k === 'B') pinState.pin = pinState.pin.slice(0, -1);
+  else if (pinState.pin.length < 8) pinState.pin += k;
+  showPin('');
+});
+document.addEventListener('keydown', e => {            // a keyboard works too
+  if (!pinState) return;
+  const used = /^[0-9]$/.test(e.key) || e.key === 'Backspace' || e.key === 'Enter';
+  if (!used) return;
+  e.stopImmediatePropagation();                       // keep the scanner listener from reading the PIN as a scan
+  e.preventDefault();                                 // and Enter must not press the button that opened this pop-up
+  if (e.key === 'Enter') document.getElementById('btn-pin-ok').click();
+  else document.querySelector('[data-pin-key="' + (e.key === 'Backspace' ? 'B' : e.key) + '"]').click();
+});
+document.getElementById('btn-pin-cancel').onclick = () => pinFinish(null);
+document.getElementById('btn-pin-back').onclick = () => pinFinish(null);
+document.getElementById('btn-pin-ok').onclick = async () => {
+  const st = pinState;
+  if (!st || st.busy) return;
+  const wait = Math.ceil((pinLockUntil - Date.now()) / 1000);
+  if (wait > 0) { st.pin = ''; showPin('Too many wrong tries. Wait ' + wait + ' s.'); return; }
+  if (st.pin.length < 4) { showPin('Enter at least 4 digits.'); return; }
+  st.busy = true;
+  let r;
+  try { r = await st.verify(st.pin); }
+  catch (err) { r = { ok: false, soft: true, msg: 'Can\'t reach the database. Check the internet.' }; }
+  st.busy = false;
+  if (pinState !== st) return;
+  if (r.ok) { pinFails = 0; pinFinish(r.value === undefined ? true : r.value); return; }
+  st.pin = '';
+  if (!r.soft) {
+    pinFails++;
+    if (pinFails >= 3) { pinFails = 0; pinLockUntil = Date.now() + 30000; showPin('Too many wrong tries. Wait 30 s.'); return; }
+  }
+  showPin(r.msg || 'Wrong PIN. Try again.');
+};
+
+// ---- Owner / manager area: locked behind the owner PIN, which is saved in the database ----
+let ownerUnlocked = false;
+const askNewPin = (title, detail, label, okText) => pinDialog({ title, detail, label, okText, verify: async p => /^\d{4,8}$/.test(p) ? { ok: true, value: p } : { ok: false, soft: true, msg: 'Use 4 to 8 digits.' } });
+
+async function ownerGate() {
+  let owner;
+  try { owner = await dbGet('owner'); }
+  catch (err) { scanToast('Can\'t reach the database. Check the internet.'); return false; }
+  if (!owner || !owner.pinHash) {                      // first time: the owner chooses a PIN
+    const p1 = await askNewPin('Set the owner PIN', 'Only the owner or manager should know this PIN. It opens the STAFF tab, where staff accounts and PINs are created and the delete log is shown.', 'Choose an owner PIN', 'NEXT');
+    if (!p1) return false;
+    const p2 = await pinDialog({ title: 'Confirm the owner PIN', label: 'Enter the same PIN again', okText: 'SAVE', verify: async p => p === p1 ? { ok: true, value: p } : { ok: false, soft: true, msg: 'The PINs do not match.' } });
+    if (!p2) return false;
+    try { await dbSend('owner', 'PUT', { pinHash: ownerPinHash(p1), changed: Date.now() }); }
+    catch (err) { scanToast('Could not save the owner PIN. Check the internet.'); return false; }
+    return true;
+  }
+  const ok = await pinDialog({ title: 'Owner / manager', detail: 'The STAFF tab is only for the owner or manager.', label: 'Enter the owner PIN', okText: 'OPEN',
+    verify: async p => ownerPinHash(p) === (await dbGet('owner') || {}).pinHash ? { ok: true } : { ok: false, msg: 'Wrong PIN. Try again.' } });
+  return !!ok;
+}
+function lockStaffView() {
+  ownerUnlocked = false;
+  document.getElementById('staff-table-body').innerHTML = '';
+  document.getElementById('log-table-body').innerHTML = '';
+  document.getElementById('staff-msg').textContent = '';
+  resetStaffForm();
+}
+
+// ---- STAFF tab: staff accounts (name + PIN) and the delete log ----
+let staffCache = {}, staffEditId = null;
+function resetStaffForm() {
+  staffEditId = null;
+  document.getElementById('staff-form').reset();
+  document.getElementById('staff-pin').placeholder = 'PIN (4-8 digits)';
+  document.getElementById('btn-staff-save').textContent = 'ADD STAFF';
+  document.getElementById('btn-staff-cancel').style.display = 'none';
+}
+async function loadStaffAdmin() {
+  if (!ownerUnlocked) return;
+  const msg = document.getElementById('staff-msg');
+  msg.textContent = '';
+  try {
+    const [staff, log] = await Promise.all([dbGet('staff'), dbGet('deleteLog')]);
+    staffCache = staff || {};
+    renderStaff(); renderDeleteLog(log || {});
+  } catch (err) { msg.textContent = 'Could not load the staff list. Check the internet.'; }
+}
+function renderStaff() {
+  const rows = Object.keys(staffCache).map(id => ({ id, ...staffCache[id] })).sort((a, b) => String(a.name).localeCompare(String(b.name)));
+  document.getElementById('staff-table-body').innerHTML = rows.length ? rows.map(r => `
+    <tr>
+      <td>${escHtml(r.name)}</td>
+      <td>${r.pinHash ? 'Set' : 'Not set'}</td>
+      <td>${r.created ? new Date(r.created).toLocaleDateString('en-PH') : '—'}</td>
+      <td><div class="row-actions">
+        <button type="button" class="tool-btn" data-staff-edit="${escHtml(r.id)}">EDIT</button>
+        <button type="button" class="tool-btn danger" data-staff-del="${escHtml(r.id)}">REMOVE</button>
+      </div></td>
+    </tr>`).join('') : '<tr><td colspan="4">No staff accounts yet. Add the first one above.</td></tr>';
+}
+function renderDeleteLog(log) {
+  const rows = Object.keys(log).map(k => log[k]).sort((a, b) => (b.at || 0) - (a.at || 0)).slice(0, 50);
+  document.getElementById('log-table-body').innerHTML = rows.length ? rows.map(r => {
+    const d = new Date(r.at || 0);
+    const ids = (r.orders || []).map(o => o.id).join(', ');
+    return `<tr>
+      <td><div>${d.toLocaleDateString('en-PH')}</div><div class="dt-time">${d.toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit' })}</div></td>
+      <td>${escHtml(r.by)}</td>
+      <td>${r.count || 0} (${escHtml(ids)})</td>
+      <td>${peso(r.total || 0)}</td>
+    </tr>`;
+  }).join('') : '<tr><td colspan="4">Nothing has been deleted forever yet.</td></tr>';
+}
+document.getElementById('btn-staff-cancel').onclick = resetStaffForm;
+document.getElementById('btn-owner-lock').onclick = () => document.querySelector('[data-tab="services"]').click();
+document.getElementById('btn-owner-pin').onclick = async () => {
+  const msg = document.getElementById('staff-msg');
+  const p1 = await askNewPin('New owner PIN', '', 'Choose a new owner PIN', 'NEXT');
+  if (!p1) return;
+  const p2 = await pinDialog({ title: 'Confirm the new owner PIN', label: 'Enter the same PIN again', okText: 'SAVE', verify: async p => p === p1 ? { ok: true, value: p } : { ok: false, soft: true, msg: 'The PINs do not match.' } });
+  if (!p2) return;
+  try { await dbSend('owner', 'PUT', { pinHash: ownerPinHash(p1), changed: Date.now() }); msg.style.color = 'var(--success)'; msg.textContent = 'Owner PIN changed.'; }
+  catch (err) { msg.style.color = ''; msg.textContent = 'Could not save the owner PIN. Check the internet.'; }
+};
+document.getElementById('staff-form').onsubmit = async e => {
+  e.preventDefault();
+  const msg = document.getElementById('staff-msg');
+  msg.style.color = '';
+  const name = document.getElementById('staff-name').value.trim();
+  const pin = document.getElementById('staff-pin').value.trim();
+  const old = staffEditId ? staffCache[staffEditId] : null;
+  if (!name) return;
+  if (pin && !/^\d{4,8}$/.test(pin)) { msg.textContent = 'The PIN must be 4 to 8 digits.'; return; }
+  if (!pin && !(old && old.pinHash)) { msg.textContent = 'Set a PIN (4 to 8 digits) for this staff member.'; return; }
+  const hash = pin ? staffPinHash(pin) : old.pinHash;
+  const clash = Object.keys(staffCache).find(id => id !== staffEditId && staffCache[id].pinHash === hash);
+  if (clash) { msg.textContent = 'That PIN is already used by ' + staffCache[clash].name + '. Choose another PIN.'; return; }
+  const id = staffEditId || 's' + Date.now().toString(36);
+  const rec = { name, pinHash: hash, active: true, created: old ? old.created : Date.now() };
+  try { await dbSend('staff/' + id, 'PUT', rec); resetStaffForm(); await loadStaffAdmin(); }
+  catch (err) { msg.textContent = 'Could not save. Check the internet.'; }
+};
+document.getElementById('staff-table-body').addEventListener('click', async e => {
+  const ed = e.target.closest('[data-staff-edit]');
+  const del = e.target.closest('[data-staff-del]');
+  const msg = document.getElementById('staff-msg');
+  if (ed) {
+    const r = staffCache[ed.dataset.staffEdit];
+    if (!r) return;
+    staffEditId = ed.dataset.staffEdit;
+    document.getElementById('staff-name').value = r.name || '';
+    document.getElementById('staff-pin').value = '';
+    document.getElementById('staff-pin').placeholder = 'New PIN (leave empty to keep)';
+    document.getElementById('btn-staff-save').textContent = 'SAVE';
+    document.getElementById('btn-staff-cancel').style.display = '';
+    document.getElementById('staff-name').focus();
+  } else if (del) {
+    const r = staffCache[del.dataset.staffDel];
+    if (!r || !confirm('Remove ' + r.name + '? They will no longer be able to delete forever.')) return;
+    try { await dbSend('staff/' + del.dataset.staffDel, 'DELETE'); await loadStaffAdmin(); }
+    catch (err) { msg.textContent = 'Could not remove. Check the internet.'; }
+  }
+});
+
+// ---- DELETE FOREVER: a staff member enters their own PIN; the delete is written to the log first ----
+document.getElementById('btn-deleted-purge').onclick = async () => {
   const list = deletedOrders.filter(o => selectedDeleted.has(o.id));
   if (!list.length) return;
-  document.getElementById('purge-title').textContent = 'Delete ' + list.length + (list.length === 1 ? ' order' : ' orders') + ' forever?';
-  document.getElementById('purge-detail').textContent = list.length + ' selected\nThey will be removed from this page and from the online database. This can\'t be undone.';
-  openModal('modal-confirm-purge');
-};
-const closePurge = () => closeModal('modal-confirm-purge');
-document.getElementById('btn-purge-no').onclick = closePurge;
-document.getElementById('btn-purge-back').onclick = closePurge;
-document.getElementById('btn-purge-yes').onclick = () => {
+  let staff;
+  try { staff = await dbGet('staff'); } catch (err) { scanToast('Can\'t reach the database. Check the internet.'); return; }
+  if (!Object.keys(staff || {}).length) { scanToast('No staff accounts yet. The owner creates them in the STAFF tab.'); return; }
+  const who = await pinDialog({
+    title: 'Delete ' + list.length + (list.length === 1 ? ' order' : ' orders') + ' forever?',
+    detail: list.length + ' selected. They will be removed from this page and from the online database. This can\'t be undone.',
+    label: 'Enter your staff PIN', okText: 'YES, DELETE FOREVER', danger: true,
+    verify: async pin => {
+      const all = await dbGet('staff') || {};
+      const h = staffPinHash(pin);
+      const id = Object.keys(all).find(k => all[k].active !== false && all[k].pinHash === h);
+      return id ? { ok: true, value: { id, name: all[id].name } } : { ok: false, msg: 'Wrong PIN. Try again.' };
+    }
+  });
+  if (!who) return;
   const ids = new Set(selectedDeleted);
-  closePurge();
   const gone = deletedOrders.filter(o => ids.has(o.id));
   if (!gone.length) return;
+  try {
+    await dbSend('deleteLog', 'POST', {
+      by: who.name, staffId: who.id, at: Date.now(), count: gone.length,
+      total: gone.reduce((t, o) => t + (o.subtotal || 0), 0),
+      orders: gone.map(o => ({ id: o.id, customer: o.customer, subtotal: o.subtotal }))
+    });
+  } catch (err) { scanToast('Could not save the delete log, so nothing was deleted. Check the internet.'); return; }
   deletedOrders = deletedOrders.filter(o => !ids.has(o.id));
   selectedDeleted.clear();
   saveStored('ll_deleted', deletedOrders);
@@ -3724,6 +4019,9 @@ document.getElementById('edit-services-form').onsubmit = (e) => {
 // Navigation tab switches
 document.querySelectorAll('[data-tab]').forEach(btn => {
   btn.onclick = () => {
+    const goingTo = btn.dataset.tab;
+    if (goingTo === 'staff' && !ownerUnlocked) { ownerGate().then(ok => { if (ok) { ownerUnlocked = true; btn.click(); } }); return; }
+    if (goingTo !== 'staff' && ownerUnlocked) lockStaffView();
     renderOrdersTables();   // always show the latest orders
     document.querySelectorAll('[data-tab]').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
@@ -3731,6 +4029,7 @@ document.querySelectorAll('[data-tab]').forEach(btn => {
     const tabName = btn.dataset.tab;
     const view = document.getElementById(`view-${tabName}`);
     if (view) view.classList.add('active');
+    if (tabName === 'staff') loadStaffAdmin();
   };
 });
 
@@ -3806,6 +4105,7 @@ document.getElementById('btn-confirm-logout-yes').onclick = () => {
   document.getElementById('login-form').reset();
   closeModal('modal-confirm-logout');
   cart = [];
+  if (ownerUnlocked) lockStaffView();
   document.getElementById('screen-login').classList.add('hidden');
   document.getElementById('screen-splash').classList.remove('hidden');
 };
