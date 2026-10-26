@@ -466,6 +466,7 @@ button:active { transform: scale(0.97); }
 
 header {
   background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(14px);
   border-bottom: 1.5px solid var(--border);
   padding: 14px 4%;
   display: flex;
@@ -957,6 +958,8 @@ main {
   inset: 0;
   z-index: 80;
   background: rgba(15, 36, 56, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1887,6 +1890,35 @@ tr.scan-hit td:first-child { box-shadow: inset 3px 3px 0 #f59e0b, inset 0 -3px 0
 tr.scan-hit td:last-child { box-shadow: inset -3px 3px 0 #f59e0b, inset 0 -3px 0 #f59e0b; }
 @keyframes scan-pulse { 50% { background: #ffe08a; } }
 
+/* On-screen keyboard (touchscreen). Shown only when a typing box is tapped. */
+#osk {
+  display: none; position: fixed; left: 0; right: 0; bottom: 0; z-index: 300;
+  background: #dbe9f8; border-top: 2px solid #b7d3ee; padding: 8px 8px 10px;
+  box-shadow: 0 -8px 24px rgba(15, 36, 56, 0.18);
+  touch-action: none; -webkit-user-select: none; user-select: none;
+}
+#osk.on { display: block; }
+#osk .r { display: flex; gap: 6px; margin-bottom: 6px; }
+#osk .r:last-child { margin-bottom: 0; }
+#osk.num .r { max-width: 440px; margin-left: auto; margin-right: auto; margin-bottom: 6px; }
+#osk .k {
+  flex: 1 1 0; min-width: 0; height: 46px; padding: 0; cursor: pointer;
+  border: 1.5px solid #cde0f1; border-radius: 10px; background: #fff; color: #0f2438;
+  font: 700 20px 'DM Sans', sans-serif; box-shadow: 0 2px 0 #b7d3ee;
+  transition: none; touch-action: none;
+}
+#osk .k:active, #osk .k.press { background: #e0f0fd; transform: translateY(1px); box-shadow: 0 1px 0 #b7d3ee; }
+#osk .k.fn { background: #cde0f1; }
+#osk .k.go { background: #1877c9; color: #fff; border-color: #0f5c9e; box-shadow: 0 2px 0 #0f5c9e; }
+#osk .k.act { background: #2ea3f8; color: #fff; border-color: #1877c9; }
+#osk .k.sp { flex: 5 1 0; }
+#osk .k.wd { flex: 1.5 1 0; }
+#osk .k.gap { visibility: hidden; }
+html.osk-open body { padding-bottom: var(--kb-h, 0px); }
+html.osk-open .screen-layer { padding-bottom: calc(var(--kb-h, 0px) + 12px); padding-top: 12px; overflow-y: auto; align-items: safe center; }
+html.osk-open .modal-overlay { padding-bottom: calc(var(--kb-h, 0px) + 12px); padding-top: 12px; }
+html.osk-open .modal-overlay > * { max-height: calc(100vh - var(--kb-h, 0px) - 28px) !important; overflow-y: auto; }
+@media print { #osk { display: none !important; } }
 </style>
 </head>
 <body>
@@ -3343,7 +3375,7 @@ async function printReceipts(selectors) {
       for (const sel of selectors) {
         const els = document.querySelectorAll(sel);
         for (const el of els) {
-          // photograph a copy at the same 320 px width the paper print uses, so text size matches the paper
+          // photograph a copy of the receipt at RECEIPT_CSS_WIDTH, then print it
           const box = document.createElement('div');
           box.style.cssText = 'position:fixed;left:-10000px;top:0;width:' + RECEIPT_CSS_WIDTH + 'px;background:#fff;';
           const copy = el.cloneNode(true);
@@ -4671,6 +4703,152 @@ startShared();
 document.addEventListener('contextmenu', e => {
   if (!e.target.closest('input, textarea')) e.preventDefault();
 });
+
+// ---- On-screen keyboard for the touchscreen ----------------------------------
+// Pops up when a typing box is tapped. It is built into the page, so it does not depend on the Pi's own keyboard.
+// OSK_MODE: 'touch' = only on touchscreens | 'always' = everywhere | 'never' = off.  (Add ?kb=1 or ?kb=0 to the web address to test.)
+const OSK_MODE = 'touch';
+(function () {
+  const qs = new URLSearchParams(location.search).get('kb');
+  const mode = qs === '1' ? 'always' : qs === '0' ? 'never' : OSK_MODE;
+  if (mode === 'never') return;
+  if (mode === 'touch' && !(window.matchMedia && matchMedia('(any-pointer: coarse)').matches)) return;
+
+  const root = document.documentElement;
+  const kb = document.createElement('div');
+  kb.id = 'osk';
+  document.body.appendChild(kb);
+  let target = null, shift = false, symbols = false, numeric = false, decimal = false, buf = null, repeat = null;
+
+  const eligible = el => {
+    if (!el || el.disabled || el.readOnly || el.hasAttribute('data-no-osk')) return false;
+    if (el.tagName === 'TEXTAREA') return true;
+    if (el.tagName !== 'INPUT') return false;
+    return ['text', 'password', 'search', 'tel', 'url', 'email', 'number', ''].includes(el.type);
+  };
+  const cap = s => s.length ? s[0].toUpperCase() + s.slice(1) : s;
+  const fire = () => target.dispatchEvent(new Event('input', { bubbles: true }));
+
+  function layout() {
+    const dig = '1234567890'.split('');
+    if (numeric) return [['1', '2', '3', 'back'], ['4', '5', '6', 'done'], ['7', '8', '9', 'hide'], [decimal ? '.' : 'gap', '0', 'gap', 'gap']];
+    const bottom = [symbols ? 'ABC' : '123', 'space', 'done', 'hide'];
+    if (symbols) return [[...dig, 'back'], '@#₱%&*()"\''.split(''), '+=/:;!?_~-'.split(''), [',', '.', '[', ']', '{', '}', '|', '\\', '^', '`'], bottom];
+    return [[...dig, 'back'], 'qwertyuiop'.split(''), 'asdfghjkl-'.split(''), ['shift', ...'zxcvbnm,.'.split('')], bottom];
+  }
+  const LABEL = { back: '⌫', shift: '⇧', done: 'Done', hide: '⌄', space: 'space', gap: '', ABC: 'ABC', '123': '123' };
+
+  function render() {
+    kb.classList.toggle('num', numeric);
+    kb.innerHTML = layout().map(row => '<div class="r">' + row.map(k => {
+      const cls = ['k'];
+      if (['back', 'shift', 'ABC', '123', 'hide'].includes(k)) cls.push('fn');
+      if (k === 'done') cls.push('go');
+      if (k === 'shift' && shift) cls.push('act');
+      if (k === 'space') cls.push('sp');
+      if (['shift', 'back', 'ABC', '123', 'done', 'hide'].includes(k) && !numeric) cls.push('wd');
+      if (k === 'gap') cls.push('gap');
+      const label = k in LABEL ? LABEL[k] : (k.length === 1 && /[a-z]/.test(k) && shift ? k.toUpperCase() : k);
+      return '<button type="button" class="' + cls.join(' ') + '" data-k="' + k.replace(/"/g, '&quot;') + '" tabindex="-1">' + label + '</button>';
+    }).join('') + '</div>').join('');
+    root.style.setProperty('--kb-h', kb.offsetHeight + 'px');
+  }
+
+  function autoShift() {
+    // customer name: capital letter at the start of every word
+    if (target && target.id === 'modal-cust-name') {
+      const v = target.value.slice(0, target.selectionStart == null ? target.value.length : target.selectionStart);
+      shift = !v || /\s$/.test(v);
+    }
+  }
+
+  function show(el) {
+    target = el; symbols = false; shift = false; buf = null;
+    numeric = el.type === 'number' || ['numeric', 'decimal', 'tel'].includes(el.getAttribute('data-oskmode') || el.getAttribute('inputmode') || '');
+    decimal = el.type === 'number' ? (el.step !== '1' || el.getAttribute('inputmode') === 'decimal') : el.getAttribute('inputmode') === 'decimal';
+    if (!el.hasAttribute('data-oskmode')) el.setAttribute('data-oskmode', el.getAttribute('inputmode') || (el.type === 'number' ? 'numeric' : 'text'));
+    el.setAttribute('inputmode', 'none');           // stop the system keyboard
+    if (el.type === 'number' && el.value !== '') { buf = ''; el.select(); }   // first tap replaces the old number
+    autoShift();
+    kb.classList.add('on'); root.classList.add('osk-open');
+    render();
+    setTimeout(() => { try { el.scrollIntoView({ block: 'center' }); } catch (e) {} }, 60);
+  }
+  function hide() {
+    target = null; kb.classList.remove('on'); root.classList.remove('osk-open'); root.style.removeProperty('--kb-h');
+  }
+
+  function put(ch) {
+    const el = target; if (!el) return;
+    const max = el.maxLength > 0 ? el.maxLength : 0;
+    if (el.type === 'number' || el.selectionStart == null) {       // numbers and email boxes: build the text ourselves
+      let v = buf === null ? el.value : buf;
+      if (max && v.length >= max) return;
+      if (ch === '.' && v.includes('.')) return;
+      v += ch; buf = v;
+      if (el.type !== 'number' || /^-?\d+(\.\d+)?$/.test(v)) { el.value = v; fire(); }
+      return;
+    }
+    const s = el.selectionStart, e = el.selectionEnd;
+    if (max && el.value.length - (e - s) >= max) return;
+    el.setRangeText(ch, s, e, 'end'); fire();
+  }
+  function back() {
+    const el = target; if (!el) return;
+    if (el.type === 'number' || el.selectionStart == null) {
+      let v = buf === null ? el.value : buf;
+      v = v.slice(0, -1); buf = v;
+      if (el.type !== 'number' || v === '' || /^-?\d+(\.\d+)?$/.test(v)) { el.value = v; fire(); }
+      return;
+    }
+    const s = el.selectionStart, e = el.selectionEnd;
+    if (s !== e) el.setRangeText('', s, e, 'end');
+    else if (s > 0) el.setRangeText('', s - 1, s, 'end');
+    else return;
+    fire();
+  }
+  function press(k) {
+    if (!target) return;
+    if (k === 'back') { back(); autoShift(); render(); return; }
+    if (k === 'shift') { shift = !shift; render(); return; }
+    if (k === '123' || k === 'ABC') { symbols = !symbols; render(); return; }
+    if (k === 'hide') { const el = target; hide(); el.blur(); return; }
+    if (k === 'done') {
+      const el = target, form = el.form;
+      hide(); el.blur();
+      if (form && form.requestSubmit) form.requestSubmit();
+      else ['keydown', 'keyup'].forEach(t => el.dispatchEvent(new KeyboardEvent(t, { key: 'Enter', code: 'Enter', keyCode: 13, which: 13, bubbles: true })));
+      return;
+    }
+    if (k === 'gap') return;
+    const ch = k === 'space' ? ' ' : (shift && /^[a-z]$/.test(k) ? k.toUpperCase() : k);
+    put(ch);
+    if (shift && /^[a-z]$/.test(k)) shift = false;
+    autoShift(); render();
+  }
+
+  // keys act the moment the finger touches them; the typing box keeps the focus
+  kb.addEventListener('pointerdown', e => {
+    const b = e.target.closest('.k'); if (!b) return;
+    e.preventDefault();
+    const k = b.dataset.k;
+    press(k);
+    if (k === 'back') {                                   // hold the delete key to keep deleting
+      clearTimeout(repeat); clearInterval(repeat);
+      repeat = setTimeout(() => { repeat = setInterval(() => press('back'), 70); }, 450);
+    }
+  });
+  ['pointerup', 'pointercancel', 'pointerleave'].forEach(t => kb.addEventListener(t, () => { clearTimeout(repeat); clearInterval(repeat); repeat = null; }));
+  kb.addEventListener('mousedown', e => e.preventDefault());
+  kb.addEventListener('click', e => e.preventDefault());
+
+  document.addEventListener('focusin', e => {
+    const el = e.target;
+    if (eligible(el)) show(el); else if (!kb.contains(el)) hide();
+  });
+  document.addEventListener('focusout', () => setTimeout(() => { if (!eligible(document.activeElement)) hide(); }, 150));
+  setInterval(() => { if (target && target.getClientRects().length === 0) hide(); }, 500);   // the box was closed with its pop-up
+})();
 
 // Staff can't open the browser's own print page with Ctrl+P (the app's print buttons still work)
 document.addEventListener('keydown', e => {
