@@ -2714,6 +2714,21 @@ let slipCarouselIndex = 0;
    Each device still keeps a copy on itself, so it keeps working offline and catches up later. ===== */
 const okey = id => String(id).replace(/^#/, '').replace(/[.#$\[\]\/]/g, '_');
 const idNumber = id => parseInt(String(id).replace(/\D/g, ''), 10) || 0;
+
+// Order numbers are random (not counting up), so nobody can tell how many orders the shop has.
+// A number is never used twice: it skips every number already used by an order or a deleted order.
+function randomOrderId(extraTaken) {
+  const used = new Set([...orders, ...deletedOrders].map(o => idNumber(o.id)));
+  if (extraTaken) extraTaken.forEach(k => used.add(idNumber(k)));
+  for (let digits = 4; digits <= 8; digits++) {          // 4 digits (1000-9999); only when those run out: 5 digits, and so on
+    const lo = Math.pow(10, digits - 1), span = 9 * lo;
+    for (let i = 0; i < 300; i++) {
+      const n = lo + Math.floor(Math.random() * span);
+      if (!used.has(n)) return '#' + n;
+    }
+  }
+  return '#' + Date.now();
+}
 function canon(v) {      // stable text used to compare records (sorted keys; the database drops empty arrays and nulls, so they are ignored)
   const clean = x => {
     if (Array.isArray(x)) return x.map(clean);
@@ -2815,7 +2830,7 @@ function mergeShared(ro, rd, rc, rs) {
         if (!L && S !== undefined) return;                                                            // removed on this device, the delete is sent next
         if (!L) { out[col].push(R); snap[col][k] = canon(R); changed = true; return; }                // new from another device
         if (S === undefined && L.token && R.token && L.token !== R.token) {                           // two devices used the same order number
-          L.id = '#' + (free++);
+          L.id = randomOrderId(taken);
           taken.add(okey(L.id));
           out[col].push(L); out[col].push(R); snap[col][k] = canon(R); changed = true; renumbered = true;
           scanToast('Order ' + R.id + ' was already used by another device. This device\'s order was renumbered to ' + L.id + '.');
@@ -2869,8 +2884,7 @@ async function claimOrder(order) {
       const [a, b] = await Promise.all([dbGet('orders/' + k), dbGet('deleted/' + k)]);
       if (!(a && a.token !== order.token) && !(b && b.token !== order.token)) return renumbered;
     } catch (err) { return renumbered; }           // offline: save it on this device, the number is checked when it connects
-    order.id = '#' + Math.max(nextOrderCounter, idNumber(order.id) + 1);
-    nextOrderCounter = idNumber(order.id);
+    order.id = randomOrderId();
     renumbered = true;
   }
   return renumbered;
@@ -3279,9 +3293,8 @@ function proceedPayment(isPaidNow) {
   const custName = cart[0]?.customer || 'Walk-in';
 
   // The order is only prepared here. It is saved to the Orders page when the receipt is printed.
-  nextOrderCounter = Math.max(nextOrderCounter, ...[...orders, ...deletedOrders].map(o => idNumber(o.id) + 1));
   const newOrder = {
-    id: `#${nextOrderCounter}`,
+    id: randomOrderId(),
     customer: custName,
     subtotal: subtotal,
     payment: isPaidNow ? 'Paid' : 'Unpaid',
@@ -4457,10 +4470,13 @@ function closeModal(id) {
 }
 
 // Authentication flow: Splash -> Login -> System -> Logout
+// Plug and play: a device opened with ?auto=1 at the end of the address goes straight into the system (no sign-in screen)
+const AUTO_START = new URLSearchParams(location.search).get('auto') === '1';
 document.getElementById('btn-get-started').onclick = () => {
   document.getElementById('screen-splash').classList.add('hidden');
-  document.getElementById('screen-login').classList.remove('hidden');
+  if (!AUTO_START) document.getElementById('screen-login').classList.remove('hidden');
 };
+if (AUTO_START) document.getElementById('screen-splash').classList.add('hidden');
 
 const LOGIN_USER = 'labada-link';
 const LOGIN_PASS = 'cvsu123';
