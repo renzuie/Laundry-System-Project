@@ -3286,6 +3286,7 @@ function showCustomerReceipt(order) {
   // Render centered QR
   const qrBox = document.getElementById('cr-qr-code');
   qrBox.innerHTML = '';
+  qrBox.dataset.qr = orderQrText(order);   // the printer redraws this QR sharper
   new QRCode(qrBox, {
     text: orderQrText(order),
     width: 160,
@@ -3302,6 +3303,11 @@ function showCustomerReceipt(order) {
 // If the small print helper program is running on this computer, receipts are sent to it
 // as pictures and printed + cut. If it is not running, normal browser printing is used.
 const PRINT_HELPER_URL = 'http://127.0.0.1:5000';
+// ---- Receipt size settings (change these two numbers) ----
+// RECEIPT_CSS_WIDTH: smaller number = bigger text on the paper (320 = normal, 280 = bigger)
+// QR_PRINT_DOTS: size of the QR code in printer dots (384 = full paper width). Bigger = easier to scan.
+const RECEIPT_CSS_WIDTH = 320;
+const QR_PRINT_DOTS = 288;
 let helperCache = { at: 0, info: null };
 async function helperInfo() {
   if (Date.now() - helperCache.at < 5000) return helperCache.info;
@@ -3317,6 +3323,21 @@ async function helperInfo() {
   helperCache = { at: Date.now(), info };
   return info;
 }
+// Redraws each QR so every square is a whole number of printer dots (sharp edges, easy to scan)
+function sharpQr(copy, dots) {
+  const k = dots / RECEIPT_CSS_WIDTH;
+  copy.querySelectorAll('[data-qr]').forEach(box => {
+    const text = box.dataset.qr;
+    const probe = new QRCode(document.createElement('div'), { text, width: 100, height: 100, correctLevel: QRCode.CorrectLevel.M });
+    const n = probe._oQRCode.getModuleCount();
+    const m = Math.max(2, Math.floor(QR_PRINT_DOTS / n));   // printer dots per square
+    const side = n * m;
+    box.innerHTML = '';
+    new QRCode(box, { text, width: side, height: side, colorDark: '#000000', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
+    box.querySelectorAll('canvas, img').forEach(x => { x.style.width = (side / k) + 'px'; x.style.height = (side / k) + 'px'; });
+    box.style.padding = (16 / k) + 'px';   // white border around the QR
+  });
+}
 async function printReceipts(selectors) {
   const info = (typeof html2canvas === 'function') ? await helperInfo() : null;
   if (info) {
@@ -3327,14 +3348,15 @@ async function printReceipts(selectors) {
         for (const el of els) {
           // photograph a copy at the same 320 px width the paper print uses, so text size matches the paper
           const box = document.createElement('div');
-          box.style.cssText = 'position:fixed;left:-10000px;top:0;width:320px;background:#fff;';
+          box.style.cssText = 'position:fixed;left:-10000px;top:0;width:' + RECEIPT_CSS_WIDTH + 'px;background:#fff;';
           const copy = el.cloneNode(true);
-          copy.style.cssText += ';width:320px;max-width:none;margin:0;box-shadow:none;';
+          copy.style.cssText += ';width:' + RECEIPT_CSS_WIDTH + 'px;max-width:none;margin:0;box-shadow:none;';
           box.appendChild(copy);
           document.body.appendChild(box);
+          sharpQr(copy, info.dots);
           try {
             const cv = await html2canvas(copy, {
-              scale: info.dots / 320, backgroundColor: '#ffffff', useCORS: true, logging: false
+              scale: info.dots / RECEIPT_CSS_WIDTH, backgroundColor: '#ffffff', useCORS: true, logging: false
             });
             images.push(cv.toDataURL('image/png'));
           } finally { box.remove(); }
@@ -3452,6 +3474,7 @@ function renderEmployeeSlipsPage() {
   pageItems.forEach((slip, i) => {
     const el = document.getElementById(`emp-qr-${slipCarouselIndex + i}`);
     if (el) {
+      el.dataset.qr = slip.qrText;
       new QRCode(el, {
         text: slip.qrText,
         width: 130,
