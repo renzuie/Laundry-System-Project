@@ -3380,13 +3380,13 @@ function sharpQr(copy, dots) {
     box.style.padding = (16 / k) + 'px';   // white border around the QR
   });
 }
-async function printReceipts(selectors) {
+async function printReceipts(selectors, extraEls) {
   const info = (typeof html2canvas === 'function') ? await helperInfo() : null;
   if (info) {
     try {
       const images = [];
-      for (const sel of selectors) {
-        const els = document.querySelectorAll(sel);
+      const groups = extraEls ? [extraEls] : selectors.map(sel => document.querySelectorAll(sel));
+      for (const els of groups) {
         for (const el of els) {
           // photograph a copy of the receipt at RECEIPT_CSS_WIDTH, then print it
           const box = document.createElement('div');
@@ -3409,7 +3409,7 @@ async function printReceipts(selectors) {
           method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ images })
         });
         if (!r.ok) throw new Error('printer helper answered ' + r.status);
-        return;
+        return true;
       }
     } catch (e) {
       helperCache = { at: 0, info: null };
@@ -3418,6 +3418,7 @@ async function printReceipts(selectors) {
     }
   }
   window.print();
+  return false;
 }
 
 // "PRINT CUSTOMER RECEIPT" -> Print & advance to Employee Slips (PDF Page 7 & 8)
@@ -3491,6 +3492,21 @@ function showEmployeeReceipts(order) {
   openModal('modal-emp-receipt');
 }
 
+// One bag tag (n = its position, starting at 0). Used for the screen and for printing every tag.
+function slipMarkup(slip, n) {
+  const attr = t => String(t).replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+  return `
+    <div class="receipt-paper" style="text-align:center;">
+      <b style="font-size:32px;line-height:1.1;font-family:'JetBrains Mono',monospace;letter-spacing:1px;display:block;margin-bottom:4px;">${slip.slipTag}</b>
+      <div class="receipt-items-table" style="font-size:12px;margin:6px 0;padding:6px 0;">
+        <div style="margin:0;">NO. ${n + 1} | ${slip.serviceName} ${slip.addonsText ? '(' + slip.addonsText + ')' : ''} | 1 LOADS | ${peso(slip.price)}</div>
+      </div>
+      <p style="font-size:11px;margin:6px 0 2px;">Scan the QR code to check your laundry status.</p>
+      <div class="receipt-qr-center" id="emp-qr-${n}" data-qr="${attr(slip.qrText)}"></div>
+    </div>
+  `;
+}
+
 function renderEmployeeSlipsPage() {
   const container = document.getElementById('employee-slips-container');
   const navBar = document.getElementById('carousel-nav-bar');
@@ -3501,16 +3517,7 @@ function renderEmployeeSlipsPage() {
   container.classList.toggle('single', pageItems.length === 1);
   container.classList.toggle('single', pageItems.length === 1);
 
-  container.innerHTML = pageItems.map((slip, i) => `
-    <div class="receipt-paper" style="text-align:center;">
-      <b style="font-size:32px;line-height:1.1;font-family:'JetBrains Mono',monospace;letter-spacing:1px;display:block;margin-bottom:4px;">${slip.slipTag}</b>
-      <div class="receipt-items-table" style="font-size:12px;margin:6px 0;padding:6px 0;">
-        <div style="margin:0;">NO. ${slipCarouselIndex + i + 1} | ${slip.serviceName} ${slip.addonsText ? '(' + slip.addonsText + ')' : ''} | 1 LOADS | ${peso(slip.price)}</div>
-      </div>
-      <p style="font-size:11px;margin:6px 0 2px;">Scan the QR code to check your laundry status.</p>
-      <div class="receipt-qr-center" id="emp-qr-${slipCarouselIndex + i}"></div>
-    </div>
-  `).join('');
+  container.innerHTML = pageItems.map((slip, i) => slipMarkup(slip, slipCarouselIndex + i)).join('');
 
   // Render identical QR code as requested in PDF Page 8 ("SAME LANG SILA LAHAT NG QR")
   pageItems.forEach((slip, i) => {
@@ -3553,7 +3560,10 @@ document.getElementById('slip-next-btn').onclick = () => {
 };
 
 document.getElementById('btn-print-emp-receipt').onclick = async () => {
-  await printReceipts(['#employee-slips-container .receipt-paper']);
+  // every bag tag is printed (not only the 2 on the screen); each one is cut separately
+  const all = employeeSlips.map((slip, n) => { const d = document.createElement('div'); d.innerHTML = slipMarkup(slip, n); return d.firstElementChild; });
+  const viaHelper = await printReceipts([], all);
+  if (!viaHelper && employeeSlips.length > 2) scanToast('Browser printing prints the 2 tags on screen. Press Next and print again for the rest.');
   closeModal('modal-emp-receipt');
   renderOrdersTables();
 };
