@@ -9,6 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..800;1,9..40,400..800&family=JetBrains+Mono:wght@400;600;700&family=Manrope:wght@500;700;800&display=swap" rel="stylesheet">
 <!-- QRCode generator -->
 <script src="vendor/qrcode.min.js"></script>
+<script src="vendor/html2canvas.min.js"></script>
 <style>
 
 /* Logo fallback: used on splash, header and receipt when logo.png can't load */
@@ -47,6 +48,18 @@
 }
 
 * { box-sizing: border-box; }
+
+/* Touchscreen: no text selecting / copy menu while scrolling (typing boxes still work) */
+html, body {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+input, textarea, [contenteditable] {
+  -webkit-user-select: text;
+  user-select: text;
+}
 
 body {
   margin: 0;
@@ -2039,6 +2052,9 @@ tr.scan-hit td:last-child { box-shadow: inset -3px 3px 0 #f59e0b, inset 0 -3px 0
   <section id="view-orders" class="view-section">
     <div class="section-head-bar">
       <h2>ORDERS</h2>
+      <button type="button" class="refresh-btn" id="btn-orders-refresh" title="Refresh (clear the search, go to page 1, check for changes from other devices)" aria-label="Refresh">
+        <svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg>
+      </button>
     </div>
     <div class="data-table-card">
       <table class="data-table">
@@ -2449,6 +2465,20 @@ tr.scan-hit td:last-child { box-shadow: inset -3px 3px 0 #f59e0b, inset 0 -3px 0
   </div>
 </div>
 
+<div id="modal-yesno" class="modal-overlay hidden">
+  <div class="modal-window" style="max-width:440px;text-align:center;padding:40px 26px 28px;">
+    <button type="button" class="modal-back-btn" id="btn-yesno-back" aria-label="Back">
+      <svg viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+    </button>
+    <h3 id="yesno-title" style="font-family:'Manrope',sans-serif;font-size:22px;margin:8px 0 10px;color:var(--danger);"></h3>
+    <p id="yesno-detail" style="color:var(--muted);font-size:15px;line-height:1.6;margin:0 0 24px;white-space:pre-line;"></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <button type="button" class="btn-modal-addmore" id="btn-yesno-no">NO, KEEP IT</button>
+      <button type="button" class="btn-modal-placeorder" id="btn-yesno-yes" style="background:#e24b3c;">YES, REMOVE</button>
+    </div>
+  </div>
+</div>
+
 <div id="modal-pin" class="modal-overlay hidden">
   <div class="modal-window" style="max-width:440px;text-align:center;padding:40px 26px 28px;">
     <button type="button" class="modal-back-btn" id="btn-pin-back" aria-label="Back">
@@ -2585,14 +2615,30 @@ function syncOrders(list, deleted) {
 }
 
 // Removes orders from the online database (used by DELETE FOREVER in the Deleted tab)
+let statusDels = loadStored('ll_status_dels', []), statusDelBusy = false;   // customer status pages still to be removed (kept until the database confirms)
 function removeFromDatabase(list) {
-  const db = FIREBASE_DB.replace(/\/+$/, '');
-  if (!db) return;
+  if (!FIREBASE_DB) return;
   list.forEach(o => {
     if (!o.token) return;
     delete syncCache[o.token];
-    fetch(db + '/status/' + o.token + '.json', { method: 'DELETE' }).catch(() => {});
+    if (!statusDels.includes(o.token)) statusDels.push(o.token);
   });
+  try { localStorage.setItem('ll_status_dels', JSON.stringify(statusDels)); } catch {}
+  retryStatusDeletes();
+}
+async function retryStatusDeletes() {
+  const db = FIREBASE_DB.replace(/\/+$/, '');
+  if (!db || !statusDels.length || statusDelBusy) return;
+  statusDelBusy = true;
+  for (const t of [...statusDels]) {
+    try {
+      const r = await fetch(db + '/status/' + t + '.json', { method: 'DELETE' });
+      if (!r.ok) break;
+      statusDels = statusDels.filter(x => x !== t);
+    } catch (err) { break; }                 // offline: try again on the next round
+  }
+  try { localStorage.setItem('ll_status_dels', JSON.stringify(statusDels)); } catch {}
+  statusDelBusy = false;
 }
 
 function loadStored(key, def) {
@@ -2682,7 +2728,7 @@ function pendingChanges() {
   const st = canon({ services, addons });
   return { puts, dels, settings: snap.settings !== st, counter: nextOrderCounter > (snap.counter || 0) };
 }
-const pendingCount = () => { const c = pendingChanges(); return c.puts.length + c.dels.length; };   // orders waiting to be sent
+const pendingCount = () => { const c = pendingChanges(); return c.puts.length + c.dels.length + statusDels.length; };   // things waiting to be sent
 function scheduleFlush() { clearTimeout(flushTimer); flushTimer = setTimeout(flush, 300); }
 
 // Sends what changed on this device to the database
@@ -2698,8 +2744,7 @@ async function flush() {
     for (const d of c.dels) { await dbSend(d.col + '/' + d.k, 'DELETE'); delete snap[d.col][d.k]; wrote = true; }
     if (c.settings) { await dbSend('settings', 'PUT', { services, addons }); snap.settings = canon({ services, addons }); wrote = true; }
     if (c.counter) { await dbSend('counter', 'PUT', nextOrderCounter); snap.counter = nextOrderCounter; wrote = true; }
-    if (wrote) await dbSend('rev', 'PUT', Date.now() + '-' + Math.random().toString(36).slice(2, 7));   // tells the other devices to look
-    netOk = true;
+    if (wrote) { await dbSend('rev', 'PUT', Date.now() + '-' + Math.random().toString(36).slice(2, 7)); netOk = true; }   // tells the other devices to look (a successful write also proves we are online)
   } catch (err) { netOk = false; }
   persistSnap();
   flushing = false;
@@ -2802,12 +2847,17 @@ async function claimOrder(order) {
   return renumbered;
 }
 
+let lastNet = true;
 function renderSyncDot() {
   const el = document.getElementById('sync-dot');
   if (!el) return;
   const n = pendingCount();
   el.className = 'sync-dot' + (!netOk ? ' off' : (flushing || n ? ' busy' : ''));
-  el.textContent = !netOk ? 'Offline · saved on this device' + (n ? ' (' + n + ' waiting)' : '') : (flushing || n ? 'Syncing…' : 'Synced');
+  el.textContent = !netOk ? 'Offline · will sync later' + (n ? ' (' + n + ' waiting)' : '') : (flushing || n ? 'Syncing…' : 'Synced');
+  if (netOk !== lastNet) {                 // tell the staff once when the connection drops or comes back
+    lastNet = netOk;
+    scanToast(netOk ? 'Back online. Syncing…' : 'No internet. Orders are saved on this device and will sync later.');
+  }
 }
 function startShared() {
   if (!FIREBASE_DB) { const el = document.getElementById('sync-dot'); if (el) el.style.display = 'none'; return; }
@@ -2815,7 +2865,12 @@ function startShared() {
     if (renderPending && !document.querySelector('.modal-overlay:not(.hidden)')) { renderPending = false; renderServicesGrid(); renderOrdersTables(); }
     renderSyncDot();
   };
-  const tick = async () => { await pullShared(false); afterPull(); await flush(); afterPull(); };
+  const tick = async () => {
+    await pullShared(false); afterPull();
+    await flush(); afterPull();
+    syncOrders(orders, false); syncOrders(deletedOrders, true);   // customer status pages: anything that failed earlier is sent again
+    await retryStatusDeletes(); renderSyncDot();
+  };
   pullShared(true).then(() => { afterPull(); return flush(); }).then(afterPull);
   setInterval(tick, 4000);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) tick(); });
@@ -3243,6 +3298,64 @@ function showCustomerReceipt(order) {
   openModal('modal-cust-receipt');
 }
 
+// ---- Receipt printer helper (auto-cut) -------------------------------------
+// If the small print helper program is running on this computer, receipts are sent to it
+// as pictures and printed + cut. If it is not running, normal browser printing is used.
+const PRINT_HELPER_URL = 'http://127.0.0.1:5000';
+let helperCache = { at: 0, info: null };
+async function helperInfo() {
+  if (Date.now() - helperCache.at < 5000) return helperCache.info;
+  let info = null;
+  try {
+    const ctl = new AbortController();
+    const t = setTimeout(() => ctl.abort(), 1500);
+    const r = await fetch(PRINT_HELPER_URL + '/ping', { signal: ctl.signal });
+    clearTimeout(t);
+    const j = r.ok ? await r.json() : null;
+    if (j && j.ok) info = j;
+  } catch (e) { info = null; }
+  helperCache = { at: Date.now(), info };
+  return info;
+}
+async function printReceipts(selectors) {
+  const info = (typeof html2canvas === 'function') ? await helperInfo() : null;
+  if (info) {
+    try {
+      const images = [];
+      for (const sel of selectors) {
+        const els = document.querySelectorAll(sel);
+        for (const el of els) {
+          // photograph a copy at the same 320 px width the paper print uses, so text size matches the paper
+          const box = document.createElement('div');
+          box.style.cssText = 'position:fixed;left:-10000px;top:0;width:320px;background:#fff;';
+          const copy = el.cloneNode(true);
+          copy.style.cssText += ';width:320px;max-width:none;margin:0;box-shadow:none;';
+          box.appendChild(copy);
+          document.body.appendChild(box);
+          try {
+            const cv = await html2canvas(copy, {
+              scale: info.dots / 320, backgroundColor: '#ffffff', useCORS: true, logging: false
+            });
+            images.push(cv.toDataURL('image/png'));
+          } finally { box.remove(); }
+        }
+      }
+      if (images.length) {
+        const r = await fetch(PRINT_HELPER_URL + '/print', {
+          method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ images })
+        });
+        if (!r.ok) throw new Error('printer helper answered ' + r.status);
+        return;
+      }
+    } catch (e) {
+      helperCache = { at: 0, info: null };
+      console.warn('Printer helper:', e);
+      scanToast('Printer helper problem - using normal printing');
+    }
+  }
+  window.print();
+}
+
 // "PRINT CUSTOMER RECEIPT" -> Print & advance to Employee Slips (PDF Page 7 & 8)
 let printingReceipt = false;
 document.getElementById('btn-print-cust-receipt').onclick = async () => {
@@ -3264,7 +3377,7 @@ document.getElementById('btn-print-cust-receipt').onclick = async () => {
     renderOrdersTables();
   }
 
-  window.print();
+  await printReceipts(['#customer-receipt-paper']);
   closeModal('modal-cust-receipt');
   if (reprintMode) { reprintMode = false; return; }   // reprint of a saved order: no employee slips
   showEmployeeReceipts(order);
@@ -3374,8 +3487,8 @@ document.getElementById('slip-next-btn').onclick = () => {
   }
 };
 
-document.getElementById('btn-print-emp-receipt').onclick = () => {
-  window.print();
+document.getElementById('btn-print-emp-receipt').onclick = async () => {
+  await printReceipts(['#employee-slips-container .receipt-paper']);
   closeModal('modal-emp-receipt');
   renderOrdersTables();
 };
@@ -3757,7 +3870,7 @@ function renderOrdersTables() {
       <td>${orderTypeServices(o)}</td>
       <td>${peso(o.subtotal)}</td>
       <td>
-        <div class="pill-select ${payCls}">${o.payment}</span></td>
+        <div class="pill-select ${payCls}">${o.payment}</div></td>
       <td><span class="pill-badge ${statCls}">${o.status}</span></td>
     </tr>
   `;
@@ -3829,6 +3942,20 @@ document.getElementById('btn-completed-refresh').onclick = () => {
   const btn = document.getElementById('btn-completed-refresh');
   btn.classList.add('spin');
   setTimeout(() => btn.classList.remove('spin'), 500);
+};
+
+// Orders refresh: clear the search, go back to page 1 and check the database for changes from other devices
+document.getElementById('btn-orders-refresh').onclick = async () => {
+  tableSearch.orders = '';
+  const box = document.querySelector('#search-orders input');
+  if (box) box.value = '';
+  tablePage.orders = 1;
+  renderOrdersTables();
+  const btn = document.getElementById('btn-orders-refresh');
+  btn.classList.add('spin');
+  setTimeout(() => btn.classList.remove('spin'), 500);
+  await pullShared(true);
+  renderOrdersTables();
 };
 
 document.getElementById('completed-sel-all').onchange = e => {
@@ -4078,6 +4205,18 @@ document.getElementById('staff-form').onsubmit = async e => {
   try { await dbSend('staff/' + id, 'PUT', rec); resetStaffForm(); await loadStaffAdmin(); }
   catch (err) { msg.textContent = 'Could not save. Check the internet.'; }
 };
+// A yes / no pop-up in the app's own style (resolves true for YES)
+function askYesNo(title, detail) {
+  return new Promise(resolve => {
+    document.getElementById('yesno-title').textContent = title;
+    document.getElementById('yesno-detail').textContent = detail;
+    const done = v => { closeModal('modal-yesno'); resolve(v); };
+    document.getElementById('btn-yesno-yes').onclick = () => done(true);
+    document.getElementById('btn-yesno-no').onclick = () => done(false);
+    document.getElementById('btn-yesno-back').onclick = () => done(false);
+    openModal('modal-yesno');
+  });
+}
 document.getElementById('staff-table-body').addEventListener('click', async e => {
   const ed = e.target.closest('[data-staff-edit]');
   const del = e.target.closest('[data-staff-del]');
@@ -4094,7 +4233,7 @@ document.getElementById('staff-table-body').addEventListener('click', async e =>
     document.getElementById('staff-name').focus();
   } else if (del) {
     const r = staffCache[del.dataset.staffDel];
-    if (!r || !confirm('Remove ' + r.name + '? They will no longer be able to delete forever.')) return;
+    if (!r || !(await askYesNo('Remove ' + r.name + '?', 'They will no longer be able to delete forever.'))) return;
     try { await dbSend('staff/' + del.dataset.staffDel, 'DELETE'); await loadStaffAdmin(); }
     catch (err) { msg.textContent = 'Could not remove. Check the internet.'; }
   }
@@ -4507,6 +4646,23 @@ renderServicesGrid();
 renderOrdersTables();
 setupFitModals();
 startShared();
+
+// No long-press / right-click menu on the page (typing boxes keep theirs)
+document.addEventListener('contextmenu', e => {
+  if (!e.target.closest('input, textarea')) e.preventDefault();
+});
+
+// Staff can't open the browser's own print page with Ctrl+P (the app's print buttons still work)
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && (e.key === 'p' || e.key === 'P')) e.preventDefault();
+}, true);
+
+// Offline start-up: saves the app on this device so it opens even with no internet
+if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+  window.addEventListener('load', () => {
+    try { navigator.serviceWorker.register('sw.js').catch(() => {}); } catch (e) {}
+  });
+}
 </script>
 </body>
 </html>

@@ -1,0 +1,12 @@
+{
+  "port": 5000,
+  "allowed_origins": [
+    "https://labada-link.cvsu.workers.dev",
+    "http://localhost",
+    "http://127.0.0.1"
+  ],
+  "paper_dots": 384,
+  "cut": "feed_partial",
+  "feed_lines": 4,
+  "printer": { "type": "windows", "name": "Caysn58-2" }
+}
