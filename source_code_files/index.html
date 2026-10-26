@@ -1919,6 +1919,11 @@ html.osk-open .screen-layer { padding-bottom: calc(var(--kb-h, 0px) + 12px); pad
 html.osk-open .modal-overlay { padding-bottom: calc(var(--kb-h, 0px) + 12px); padding-top: 12px; }
 html.osk-open .modal-overlay > * { max-height: calc(100vh - var(--kb-h, 0px) - 28px) !important; overflow-y: auto; }
 @media print { #osk { display: none !important; } }
+
+/* Scan mode switch (bottom left): AUTO-ADVANCE or LOOK UP ONLY */
+#scan-mode { position: fixed; left: 14px; bottom: 25px; z-index: 40; font: 800 12px 'DM Sans', sans-serif; letter-spacing: .3px; color: #0558a0; background: #fff; border: 2px solid #5fdde8; border-radius: 999px; padding: 6px 12px; opacity: .92; cursor: pointer; }
+#scan-mode.on { background: #0558a0; color: #fff; border-color: #0558a0; }
+@media print { #scan-mode { display: none !important; } }
 </style>
 </head>
 <body>
@@ -4620,6 +4625,52 @@ function scanToast(text) {
   t._h = setTimeout(() => { t.style.display = 'none'; }, 3500);
 }
 
+// ---- Scan to move an order to its next status (with Undo) -------------------------
+// Received -> Processing -> For Pick-up -> Claimed.  Claimed needs the order to be paid: if it is not, staff confirm payment first.
+const SCAN_NEXT = { 'Received': 'Processing', 'Processing': 'For Pick-up', 'For Pick-up': 'Claimed' };
+const SCAN_DOUBLE_MS = 8000;        // the same order scanned again within this time is not moved twice
+const SCAN_CLOSE_MS = 8000;         // the pop-up closes by itself after a move (UNDO is on it until then)
+let scanAuto = (() => { try { return localStorage.getItem('ll_scan_auto') !== '0'; } catch (e) { return true; } })();
+let lastAdvance = { id: null, at: 0, from: '', payFrom: '' };
+let scanCloseTimer = null;
+
+function autoAdvance(order) {
+  const to = SCAN_NEXT[order.status];
+  if (!to) return null;                                                                  // already claimed
+  if (to === 'Claimed' && order.payment !== 'Paid') return { blocked: 'unpaid' };       // money first
+  if (lastAdvance.id === order.id && Date.now() - lastAdvance.at < SCAN_DOUBLE_MS) return { blocked: 'recent' };   // scanned twice by accident
+  lastAdvance = { id: order.id, at: Date.now(), from: order.status, payFrom: '' };
+  const from = order.status;
+  order.status = to;
+  saveStored('ll_orders', orders);
+  return { from, to };
+}
+
+function undoAdvance() {
+  const a = lastAdvance, o = orders.find(x => x.id === a.id);
+  if (!o) return false;
+  o.status = a.from;
+  if (a.payFrom) o.payment = a.payFrom;
+  saveStored('ll_orders', orders);
+  lastAdvance = { id: null, at: 0, from: '', payFrom: '' };
+  renderOrdersTables();
+  return true;
+}
+
+(function () {
+  const b = document.createElement('button');
+  b.type = 'button'; b.id = 'scan-mode';
+  document.body.appendChild(b);
+  const draw = () => { b.textContent = scanAuto ? 'SCAN: AUTO-ADVANCE' : 'SCAN: LOOK UP ONLY'; b.className = scanAuto ? 'on' : ''; };
+  b.onclick = () => {
+    scanAuto = !scanAuto;
+    try { localStorage.setItem('ll_scan_auto', scanAuto ? '1' : '0'); } catch (e) {}
+    draw();
+    scanToast(scanAuto ? 'Scanning now moves the order to its next status (you can undo).' : 'Scanning only shows the order. The status will not change.');
+  };
+  draw();
+})();
+
 function handleScan(raw) {
   // ignore scans on the welcome / login screens
   if (!['screen-splash', 'screen-login'].every(id => document.getElementById(id).classList.contains('hidden'))) return;
@@ -4650,11 +4701,12 @@ function handleScan(raw) {
   };
 
   let order = orders.find(o => clean(o.id) === clean(code));
-  let tab, isDeleted = false;
+  let tab, isDeleted = false, scanMove = null;
   if (order) {
     if (order.token && key && key.toLowerCase() !== String(order.token).toLowerCase()) {
       return message('Invalid QR', 'This QR code does not match the order. Ask the customer for the receipt.');
     }
+    if (scanAuto) scanMove = autoAdvance(order);                  // move to the next status first, so the right tab opens
     // same rule as the tables: Paid + (For Pick-up or Claimed) = Completed, everything else = Orders
     const done = order.payment === 'Paid' && (order.status === 'For Pick-up' || order.status === 'Claimed');
     tab = done ? 'completed' : 'orders';
@@ -4684,9 +4736,14 @@ function handleScan(raw) {
   else if (order.status === 'Claimed') note = 'Already claimed.';
   else if (order.status === 'For Pick-up') note = order.payment === 'Paid' ? 'Ready for pick-up.' : `Ready for pick-up. Payment due: ${peso(order.subtotal)}.`;
   else note = 'Not ready yet.';
+  if (scanMove && scanMove.blocked === 'unpaid') note = `Payment due: ${peso(order.subtotal)}. Confirm payment to hand over.`;
+  else if (scanMove && scanMove.blocked === 'recent') note = 'Just updated a moment ago.';
+  const banner = scanMove && scanMove.to
+    ? `<div style="background:#d1fae5;color:#047857;border-radius:12px;padding:10px 12px;margin:0 0 10px;text-align:center;font-weight:800;">&#10003; Moved to ${esc(scanMove.to.toUpperCase())} <span style="font-weight:600;">(was ${esc(scanMove.from)})</span></div>`
+    : '';
 
   document.getElementById('scan-title').textContent = order.id;
-  document.getElementById('scan-body').innerHTML =
+  document.getElementById('scan-body').innerHTML = banner +
     row('Name', esc(order.customer)) +
     row('Laundry type', esc(orderTypes(order))) +
     row('Total loads', order.totalLoads) +
@@ -4696,6 +4753,31 @@ function handleScan(raw) {
     `<p style="text-align:center;font-weight:800;margin:14px 0 0;">${note}</p>`;
   const actions = document.getElementById('scan-actions');
   actions.innerHTML = '';
+  if (!isDeleted && scanMove && scanMove.blocked === 'unpaid') {
+    const payBtn = document.createElement('button');
+    payBtn.type = 'button'; payBtn.className = 'btn-modal-placeorder'; payBtn.style.cssText = 'width:100%;margin-top:14px;';
+    payBtn.textContent = 'CUSTOMER PAID · HAND OVER';
+    payBtn.onclick = () => {
+      lastAdvance = { id: order.id, at: Date.now(), from: order.status, payFrom: order.payment };
+      order.payment = 'Paid'; order.status = 'Claimed';
+      saveStored('ll_orders', orders);
+      closeModal('modal-scan'); startScanTimer(); renderOrdersTables();
+      scanToast(order.id + ' paid and claimed. Scan it again within a minute to undo.');
+    };
+    actions.appendChild(payBtn);
+  }
+  if (!isDeleted && lastAdvance.id === order.id && Date.now() - lastAdvance.at < 60000) {
+    const undoBtn = document.createElement('button');
+    undoBtn.type = 'button'; undoBtn.className = 'btn-modal-addmore'; undoBtn.style.cssText = 'width:100%;margin-top:14px;';
+    undoBtn.textContent = 'UNDO · BACK TO ' + lastAdvance.from.toUpperCase();
+    undoBtn.onclick = () => { const back = lastAdvance.from; if (undoAdvance()) { closeModal('modal-scan'); startScanTimer(); scanToast(order.id + ' is back to ' + back + '.'); } };
+    actions.appendChild(undoBtn);
+  }
+  clearTimeout(scanCloseTimer);
+  if (scanMove && scanMove.to) scanCloseTimer = setTimeout(() => {
+    const m = document.getElementById('modal-scan');
+    if (m && !m.classList.contains('hidden') && document.getElementById('scan-title').textContent === order.id) { closeModal('modal-scan'); startScanTimer(); }
+  }, SCAN_CLOSE_MS);
   if (!isDeleted) {
     const qrBtn = document.createElement('button');
     qrBtn.type = 'button'; qrBtn.className = 'btn-modal-addmore'; qrBtn.style.cssText = 'width:100%;margin-top:14px;';
