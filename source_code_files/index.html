@@ -1363,6 +1363,9 @@ th .row-check { color: inherit; }
   cursor: pointer;
 }
 .btn-qr-action:hover { background: #0558a0; color: #fff; }
+.data-table .row-actions { display: inline-flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+.data-table .row-actions .btn-qr-action, .data-table .row-actions .btn-del-action { padding: 6px 9px; font-size: 12.5px; gap: 5px; white-space: nowrap; }
+.data-table .row-actions .btn-qr-action svg, .data-table .row-actions .btn-del-action svg { width: 16px; height: 16px; }
 .btn-qr-action svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
 /* Blank filler rows keep every page the same height */
@@ -3315,8 +3318,8 @@ const START_PROCESSING_ON_PRINT = false;
 // Opens the customer receipt (with its QR) for an order that is already saved.
 // Printing it again only reprints the slip, it does not create the order again.
 let reprintMode = false;
-function openSavedOrderQr(order) {
-  reprintMode = true;
+function openSavedOrderQr(order, withTags) {
+  reprintMode = !withTags;          // withTags: same steps as a new order (customer receipt, then the staff bag tags)
   pendingOrderForReceipt = order;
   closeModal('modal-scan');
   startScanTimer();                 // the scan highlight countdown starts now
@@ -3326,7 +3329,7 @@ document.addEventListener('click', e => {
   const btn = e.target.closest('[data-qr-order]');
   if (!btn) return;
   const o = orders.find(x => x.id === btn.dataset.qrOrder);
-  if (o) openSavedOrderQr(o);
+  if (o) openSavedOrderQr(o, true);
 });
 
 function proceedPayment(isPaidNow) {
@@ -3970,7 +3973,7 @@ function renderOrdersTables() {
         </td>
         <td>
           <div class="row-actions">
-          <button type="button" class="btn-qr-action" data-qr-order="${o.id}" aria-label="Show QR for ${o.id}"><span>QR</span><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v0M14 20h3M20 17v4"/></svg></button>
+          <button type="button" class="btn-qr-action" data-qr-order="${o.id}" aria-label="Customer receipt for ${o.id}"><span>RECEIPT</span><svg viewBox="0 0 24 24"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg></button>
           ${canDelete ? `<button type="button" class="btn-del-action" data-del-order="${o.id}"><span>Delete</span><svg viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button>` : ''}
           </div>
         </td>
@@ -4035,7 +4038,7 @@ function renderOrdersTables() {
       </td>
       <td>
         <div class="row-actions">
-          <button type="button" class="btn-qr-action" data-qr-order="${o.id}" aria-label="Show QR for ${o.id}"><span>QR</span><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v0M14 20h3M20 17v4"/></svg></button>
+          <button type="button" class="btn-qr-action" data-qr-order="${o.id}" aria-label="Customer receipt for ${o.id}"><span>RECEIPT</span><svg viewBox="0 0 24 24"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg></button>
         </div>
       </td>
     </tr>
