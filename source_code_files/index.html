@@ -3365,6 +3365,15 @@ async function helperInfo() {
   helperCache = { at: Date.now(), info };
   return info;
 }
+// Printed slips are made shorter than the on-screen receipt: tighter gaps, smaller logo (screen is not changed).
+// Change the numbers below to make the paper longer or shorter (all in CSS pixels; 1 px is about 0.2 mm on paper).
+const PRINT_SLIM_CSS =
+  '.receipt-logo-wrap{width:44px!important;height:44px!important;margin-bottom:2px!important;}'
+  + '.receipt-items-table{padding:5px 0!important;margin:5px 0!important;}'
+  + '.receipt-paper p{margin:3px 0 1px!important;}'
+  + '.receipt-claim-num{margin:2px 0!important;}'
+  + '.receipt-paper:not(#customer-receipt-paper) p{display:none!important;}'   // bag tags: no "Scan the QR" line (saves paper)
+  + '.receipt-paper>div[style*="space-between"]{margin-top:3px!important;margin-bottom:2px!important;}';
 // Redraws each QR so every square is a whole number of printer dots (sharp edges, easy to scan)
 function sharpQr(copy, dots) {
   const k = dots / RECEIPT_CSS_WIDTH;
@@ -3377,8 +3386,8 @@ function sharpQr(copy, dots) {
     box.innerHTML = '';
     new QRCode(box, { text, width: side, height: side, colorDark: '#000000', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
     box.querySelectorAll('canvas, img').forEach(x => { x.style.width = (side / k) + 'px'; x.style.height = (side / k) + 'px'; });
-    box.style.padding = (16 / k) + 'px';   // white border around the QR
-    box.style.margin = '4px auto 0';
+    box.style.padding = (6 / k) + 'px';   // small white border (the blank paper around it is white too)
+    box.style.margin = '2px auto 0';
   });
 }
 // ---- "Printing..." screen: blocks every touch while a print is running, so a second tap can't print twice ----
@@ -3424,8 +3433,9 @@ async function printReceiptsNow(selectors, extraEls) {
           // photograph a copy of the receipt at RECEIPT_CSS_WIDTH, then print it
           const box = document.createElement('div');
           box.style.cssText = 'position:fixed;left:-10000px;top:0;width:' + RECEIPT_CSS_WIDTH + 'px;background:#fff;';
+          box.innerHTML = '<style>' + PRINT_SLIM_CSS + '</style>';
           const copy = el.cloneNode(true);
-          copy.style.cssText += ';width:' + RECEIPT_CSS_WIDTH + 'px;max-width:none;margin:0;box-shadow:none;border:none;border-radius:0;padding:6px 8px 4px;';   // printed slip: no frame, tight margins (less paper, faster)
+          copy.style.cssText += ';width:' + RECEIPT_CSS_WIDTH + 'px;max-width:none;margin:0;box-shadow:none;border:none;border-radius:0;padding:4px 8px 0;';   // printed slip: no frame, tight margins (less paper, faster)
           box.appendChild(copy);
           document.body.appendChild(box);
           sharpQr(copy, info.dots);
