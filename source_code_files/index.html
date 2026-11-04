@@ -3844,7 +3844,10 @@ function paginateTables() {
         bar.addEventListener('click', e => {
           const b = e.target.closest('[data-chip]');
           if (!b) return;
+          if (statusFilter[tab] === b.dataset.chip) return;          // same button again: nothing to do
           statusFilter[tab] = b.dataset.chip; tablePage[tab] = 1; paginateTables();
+          const card = tbody.closest('.data-table-card');            // quick skeleton flash (0.25 s) so the change is easy to see
+          skeletonOn(card); setTimeout(() => skeletonOff(card), 250);
         });
       }
       bar.innerHTML = STATUS_CHIPS[tab].map(c => {
