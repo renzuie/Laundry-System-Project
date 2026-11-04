@@ -1936,6 +1936,17 @@ html.osk-open .modal-overlay > * { max-height: calc(100vh - var(--kb-h, 0px) - 2
 .is-skeleton .data-table tbody tr td::before { content: ''; position: absolute; left: 14%; right: 14%; top: 50%; height: 14px; margin-top: -7px; border-radius: 7px;
   background: linear-gradient(100deg, #dbe9f7 30%, #eef5fc 50%, #dbe9f7 70%); background-size: 200% 100%; animation: skelmove 1.2s linear infinite; }
 
+/* ---- Arrow on the customer receipt: go forward to the staff bag tags ---- */
+/* arrows sit on the middle of the left / right edge of the receipt pop-up */
+#modal-cust-receipt #btn-receipt-back, #modal-emp-receipt #btn-emp-back,
+#modal-cust-receipt #btn-receipt-next {
+  top: 50%; transform: translateY(-50%); width: 44px; height: 44px;
+  box-shadow: 0 4px 14px rgba(20,60,110,.22); z-index: 5;
+}
+#modal-cust-receipt #btn-receipt-back, #modal-emp-receipt #btn-emp-back { left: -22px; }
+#modal-cust-receipt #btn-receipt-next { left: auto; right: -22px; }
+#btn-receipt-next:disabled { opacity: .35; cursor: not-allowed; }
+
 /* ---- Status buttons above the Orders / Completed tables ---- */
 .status-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 2px 0 12px; }
 .status-chip { border: 2px solid #55b0e6; background: #fff; color: #0b3d75; border-radius: 24px; padding: 8px 16px; font-weight: 800; font-size: 14px; font-family: inherit; cursor: pointer; }
@@ -2379,6 +2390,9 @@ html.osk-open .modal-overlay > * { max-height: calc(100vh - var(--kb-h, 0px) - 2
     <button type="button" class="modal-close-btn" data-close-modal="cust-receipt">✕</button>
     <button type="button" class="modal-back-btn print-hide-btn" id="btn-receipt-back" aria-label="Back to checkout">
       <svg viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+    </button>
+    <button type="button" class="modal-back-btn print-hide-btn" id="btn-receipt-next" aria-label="Next: bag tags" title="Next: bag tags">
+      <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
     </button>
     <div class="receipt-paper" id="customer-receipt-paper">
       <div style="width:58px;height:58px;margin:0 auto 4px;" class="receipt-logo-wrap">
@@ -3357,6 +3371,10 @@ function proceedPayment(isPaidNow) {
 }
 
 function showCustomerReceipt(order) {
+  // the right arrow (next: bag tags) works once the order is saved, so the order can't be skipped past its receipt
+  const nextBtn = document.getElementById('btn-receipt-next');
+  nextBtn.disabled = !orders.some(o => o.token === order.token);
+  nextBtn.title = nextBtn.disabled ? 'Print the customer receipt first' : 'Next: bag tags';
   document.getElementById('btn-receipt-back').style.display = reprintMode ? 'none' : '';   // no checkout to go back to when reopening a saved order
   const d = new Date(order.created);
   document.getElementById('cr-date').textContent = d.toLocaleDateString('en-PH');
@@ -3422,10 +3440,18 @@ const PRINT_SLIM_CSS =
   + '.receipt-paper:not(#customer-receipt-paper) p{display:none!important;}'   // bag tags: no "Scan the QR" line (saves paper)
   + '.receipt-paper>div[style*="space-between"]{margin-top:3px!important;margin-bottom:2px!important;}';
 // Redraws each QR so every square is a whole number of printer dots (sharp edges, easy to scan)
+const qrPrintCache = new Map();   // QR picture is made once per order and reused for every slip (all bag tags share the same QR)
 function sharpQr(copy, dots) {
   const k = dots / RECEIPT_CSS_WIDTH;
   copy.querySelectorAll('[data-qr]').forEach(box => {
     const text = box.dataset.qr;
+    const hit = qrPrintCache.get(text + '|' + dots);
+    if (hit) {
+      box.innerHTML = '<img src="' + hit.url + '" style="display:block;width:' + (hit.side / k) + 'px;height:' + (hit.side / k) + 'px;">';
+      box.style.padding = (6 / k) + 'px';
+      box.style.margin = '2px auto 0';
+      return;
+    }
     const probe = new QRCode(document.createElement('div'), { text, width: 100, height: 100, correctLevel: QRCode.CorrectLevel.M });
     const n = probe._oQRCode.getModuleCount();
     const m = Math.max(2, Math.floor(QR_PRINT_DOTS / n));   // printer dots per square
@@ -3433,10 +3459,31 @@ function sharpQr(copy, dots) {
     box.innerHTML = '';
     new QRCode(box, { text, width: side, height: side, colorDark: '#000000', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
     box.querySelectorAll('canvas, img').forEach(x => { x.style.width = (side / k) + 'px'; x.style.height = (side / k) + 'px'; });
+    const cvs = box.querySelector('canvas');
+    if (cvs) {
+      if (qrPrintCache.size > 20) qrPrintCache.delete(qrPrintCache.keys().next().value);
+      qrPrintCache.set(text + '|' + dots, { url: cvs.toDataURL('image/png'), side });
+    }
     box.style.padding = (6 / k) + 'px';   // small white border (the blank paper around it is white too)
     box.style.margin = '2px auto 0';
   });
 }
+// Logo: resized once to its printed size and reused (no re-loading / re-scaling the picture for every slip)
+const logoPrintCache = {};
+async function printLogoUrl(dots) {
+  if (logoPrintCache[dots]) return logoPrintCache[dots];
+  const px = Math.round(44 * dots / RECEIPT_CSS_WIDTH);
+  const src = document.querySelector('#customer-receipt-paper .brand-img-src');
+  if (!src || !src.complete || !src.naturalWidth) return null;
+  const c = document.createElement('canvas'); c.width = px; c.height = px;
+  const g = c.getContext('2d'); g.imageSmoothingQuality = 'high';
+  const r = Math.min(px / src.naturalWidth, px / src.naturalHeight);
+  const w = src.naturalWidth * r, h = src.naturalHeight * r;
+  g.drawImage(src, (px - w) / 2, (px - h) / 2, w, h);
+  try { return (logoPrintCache[dots] = c.toDataURL('image/png')); } catch (e) { return null; }
+}
+// Shows how long printing takes (a small message after each print). Set to false to hide it.
+const SHOW_PRINT_TIMING = true;
 // ---- "Printing..." screen: blocks every touch while a print is running, so a second tap can't print twice ----
 let printBusy = false;
 function showPrintBusy() {
@@ -3464,16 +3511,20 @@ async function printReceipts(selectors, extraEls) {
   const t0 = Date.now();
   try { return await printReceiptsNow(selectors, extraEls); }
   finally {
+    if (SHOW_PRINT_TIMING && lastPrintTiming) { console.log('[print timing]', lastPrintTiming); scanToast('Print: ' + lastPrintTiming.slips + ' slip(s) · prepare ' + lastPrintTiming.prepare + ' s · send ' + lastPrintTiming.send + ' s'); lastPrintTiming = null; }
     const left = 3000 - (Date.now() - t0);    // keep the screen up at least 3 seconds
     if (left > 0) await new Promise(r => setTimeout(r, left));
     hidePrintBusy(); printBusy = false;
   }
 }
+let lastPrintTiming = null;
 async function printReceiptsNow(selectors, extraEls) {
+  const tStart = performance.now();
   const info = (typeof html2canvas === 'function') ? await helperInfo() : null;
   if (info) {
     try {
       const images = [];
+      const logoUrl = await printLogoUrl(info.dots);
       const groups = extraEls ? [extraEls] : selectors.map(sel => document.querySelectorAll(sel));
       for (const els of groups) {
         for (const el of els) {
@@ -3486,6 +3537,7 @@ async function printReceiptsNow(selectors, extraEls) {
           box.appendChild(copy);
           document.body.appendChild(box);
           sharpQr(copy, info.dots);
+          if (logoUrl) copy.querySelectorAll('.brand-img-src').forEach(im => { im.removeAttribute('onerror'); im.src = logoUrl; });
           try {
             const cv = await html2canvas(copy, {
               scale: info.dots / RECEIPT_CSS_WIDTH, backgroundColor: '#ffffff', useCORS: true, logging: false
@@ -3495,10 +3547,12 @@ async function printReceiptsNow(selectors, extraEls) {
         }
       }
       if (images.length) {
+        const tSend = performance.now();
         const r = await fetch(PRINT_HELPER_URL + '/print', {
           method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ images })
         });
         if (!r.ok) throw new Error('printer helper answered ' + r.status);
+        lastPrintTiming = { slips: images.length, prepare: ((tSend - tStart) / 1000).toFixed(1), send: ((performance.now() - tSend) / 1000).toFixed(1) };
         return true;
       }
     } catch (e) {
@@ -3541,6 +3595,14 @@ document.getElementById('btn-print-cust-receipt').onclick = async () => {
 
 // Back arrow on checkout: return to the services page (the order stays in CURRENT ORDER)
 document.getElementById('btn-payment-back').onclick = () => closeModal('modal-payment');
+
+// Right arrow on the customer receipt: go to the staff bag tags without printing
+document.getElementById('btn-receipt-next').onclick = () => {
+  const o = pendingOrderForReceipt;
+  if (!o || !orders.some(x => x.token === o.token)) return;
+  closeModal('modal-cust-receipt');
+  showEmployeeReceipts(o);
+};
 
 // Back arrow on the customer receipt: return to checkout (nothing has been saved yet)
 document.getElementById('btn-receipt-back').onclick = () => {
