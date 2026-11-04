@@ -1920,6 +1920,19 @@ html.osk-open .modal-overlay { padding-bottom: calc(var(--kb-h, 0px) + 12px); pa
 html.osk-open .modal-overlay > * { max-height: calc(100vh - var(--kb-h, 0px) - 28px) !important; overflow-y: auto; }
 @media print { #osk { display: none !important; } }
 
+/* ---- Skeleton loading (grey shimmering shapes shown for a moment while data loads) ---- */
+@keyframes skelmove { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+.is-skeleton { pointer-events: none; }
+.is-skeleton .service-card { position: relative; overflow: hidden; background: linear-gradient(#dbe9f7, #dbe9f7) 50% 74% / 46% 12px no-repeat, linear-gradient(#cfe3f6, #cfe3f6) 0 100% / 100% 40px no-repeat, #fff !important; }
+.is-skeleton .service-card > * { visibility: hidden; }
+.is-skeleton .service-card::before { content: ''; position: absolute; left: 50%; top: 24%; width: 56px; height: 56px; margin-left: -28px; border-radius: 16px; background: #dbe9f7; }
+.is-skeleton .service-card::after { content: ''; position: absolute; inset: 0;
+  background: linear-gradient(100deg, transparent 30%, rgba(255,255,255,.85) 50%, transparent 70%); background-size: 200% 100%; animation: skelmove 1.2s linear infinite; }
+.is-skeleton .data-table tbody tr:nth-child(-n+6) td { position: relative; }
+.is-skeleton .data-table tbody tr:nth-child(-n+6) td > * { visibility: hidden; }
+.is-skeleton .data-table tbody tr:nth-child(-n+6) td::before { content: ''; position: absolute; left: 14%; right: 14%; top: 50%; height: 14px; margin-top: -7px; border-radius: 7px;
+  background: linear-gradient(100deg, #dbe9f7 30%, #eef5fc 50%, #dbe9f7 70%); background-size: 200% 100%; animation: skelmove 1.2s linear infinite; }
+
 /* ---- Status buttons above the Orders / Completed tables ---- */
 .status-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 2px 0 12px; }
 .status-chip { border: 2px solid #55b0e6; background: #fff; color: #0b3d75; border-radius: 24px; padding: 8px 16px; font-weight: 800; font-size: 14px; font-family: inherit; cursor: pointer; }
@@ -3774,6 +3787,18 @@ const PAGE_SIZE = 10;
 const tablePage = { orders: 1, completed: 1, deleted: 1 };
 const tableSearch = { orders: '', completed: '', deleted: '' };
 const TABLE_IDS = { orders: 'orders-table-body', completed: 'completed-table-body', deleted: 'deleted-table-body' };
+// Skeleton loading: grey shimmering shapes for a short moment (at least minMs, until done() says so, at most maxMs)
+function skeletonOn(el) { if (el) el.classList.add('is-skeleton'); }
+function skeletonOff(el) { if (el) el.classList.remove('is-skeleton'); }
+async function skeletonWhile(el, work, minMs = 450, maxMs = 2000) {
+  skeletonOn(el);
+  const t0 = Date.now();
+  try { await Promise.race([Promise.resolve().then(work), new Promise(r => setTimeout(r, maxMs))]); } catch (e) {}
+  const left = minMs - (Date.now() - t0);
+  if (left > 0) await new Promise(r => setTimeout(r, left));
+  skeletonOff(el);
+}
+
 // Status buttons above the Orders and Completed tables (a Claimed order always sits in COMPLETED, so ORDERS has no Claimed button)
 const STATUS_CHIPS = { orders: ['All', 'Received', 'Processing', 'For Pick-up'], completed: ['All', 'For Pick-up', 'Claimed'] };
 const statusFilter = { orders: 'All', completed: 'All' };
@@ -4117,6 +4142,7 @@ document.getElementById('btn-completed-refresh').onclick = () => {
   const btn = document.getElementById('btn-completed-refresh');
   btn.classList.add('spin');
   setTimeout(() => btn.classList.remove('spin'), 500);
+  skeletonWhile(document.querySelector('#view-completed .data-table-card'), () => pullShared(true), 400, 2000).then(renderOrdersTables);
 };
 
 // Orders refresh: clear the search, go back to page 1 and check the database for changes from other devices
@@ -4130,7 +4156,7 @@ document.getElementById('btn-orders-refresh').onclick = async () => {
   const btn = document.getElementById('btn-orders-refresh');
   btn.classList.add('spin');
   setTimeout(() => btn.classList.remove('spin'), 500);
-  await pullShared(true);
+  await skeletonWhile(document.querySelector('#view-orders .data-table-card'), () => pullShared(true), 450, 2000);
   renderOrdersTables();
 };
 
@@ -4609,6 +4635,10 @@ document.getElementById('login-form').onsubmit = (e) => {
   msg.style.color = '';
   msg.textContent = '';
   document.getElementById('screen-login').classList.add('hidden');
+  // short skeleton while the first data arrives (at least 0.6 s, at most 1.5 s)
+  skeletonWhile(document.getElementById('services-grid-container'), () => new Promise(r => {
+    const t = setInterval(() => { if (firstPullDone || !FIREBASE_DB) { clearInterval(t); r(); } }, 100);
+  }), 600, 1500);
 };
 
 document.getElementById('login-eye').onclick = () => {
