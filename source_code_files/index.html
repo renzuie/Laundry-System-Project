@@ -1920,6 +1920,12 @@ html.osk-open .modal-overlay { padding-bottom: calc(var(--kb-h, 0px) + 12px); pa
 html.osk-open .modal-overlay > * { max-height: calc(100vh - var(--kb-h, 0px) - 28px) !important; overflow-y: auto; }
 @media print { #osk { display: none !important; } }
 
+/* ---- Status buttons above the Orders / Completed tables ---- */
+.status-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 2px 0 12px; }
+.status-chip { border: 2px solid #55b0e6; background: #fff; color: #0b3d75; border-radius: 24px; padding: 8px 16px; font-weight: 800; font-size: 14px; font-family: inherit; cursor: pointer; }
+.status-chip span { opacity: .8; margin-left: 2px; }
+.status-chip.on { background: #1877c9; border-color: #1877c9; color: #fff; }
+
 /* ---- One-page Services screen (kiosk size): compact top bar, 3 + 2 cards, no scrolling ---- */
 @media (min-width: 900px) and (min-height: 480px) {
   header { padding: 6px 18px !important; min-height: 0 !important; height: 60px !important; display: flex !important; flex-wrap: nowrap !important; align-items: center !important; gap: 10px !important; }
@@ -3768,6 +3774,9 @@ const PAGE_SIZE = 10;
 const tablePage = { orders: 1, completed: 1, deleted: 1 };
 const tableSearch = { orders: '', completed: '', deleted: '' };
 const TABLE_IDS = { orders: 'orders-table-body', completed: 'completed-table-body', deleted: 'deleted-table-body' };
+// Status buttons above the Orders and Completed tables (a Claimed order always sits in COMPLETED, so ORDERS has no Claimed button)
+const STATUS_CHIPS = { orders: ['All', 'Received', 'Processing', 'For Pick-up'], completed: ['All', 'For Pick-up', 'Claimed'] };
+const statusFilter = { orders: 'All', completed: 'All' };
 let jumpToScanned = false;   // set by handleScan so the table opens on the page of the scanned order
 
 function paginateTables() {
@@ -3795,8 +3804,30 @@ function paginateTables() {
     // a scanned order must be visible: clear the search and open its page
     if (jumpToScanned && scanHighlightId) {
       const i = allRows.findIndex(r => r.children[2] && norm(r.children[2].textContent) === norm(scanHighlightId));
-      if (i >= 0) { tableSearch[tab] = ''; input.value = ''; tablePage[tab] = Math.floor(i / PAGE_SIZE) + 1; }
+      if (i >= 0) { tableSearch[tab] = ''; input.value = ''; if (statusFilter[tab]) statusFilter[tab] = 'All'; tablePage[tab] = Math.floor(i / PAGE_SIZE) + 1; }
     }
+
+    // status buttons (All / Received / Processing / ...), each with the number of orders
+    const statusOf = r => { const td = r.children[7]; if (!td) return ''; const sel = td.querySelector('select'); return (sel ? sel.options[sel.selectedIndex].text : td.textContent).trim(); };
+    if (STATUS_CHIPS[tab]) {
+      let bar = document.getElementById('chips-' + tab);
+      if (!bar) {
+        bar = document.createElement('div');
+        bar.id = 'chips-' + tab;
+        bar.className = 'status-chips';
+        tbody.closest('.data-table-card').before(bar);
+        bar.addEventListener('click', e => {
+          const b = e.target.closest('[data-chip]');
+          if (!b) return;
+          statusFilter[tab] = b.dataset.chip; tablePage[tab] = 1; paginateTables();
+        });
+      }
+      bar.innerHTML = STATUS_CHIPS[tab].map(c => {
+        const n = c === 'All' ? allRows.length : allRows.filter(r => statusOf(r) === c).length;
+        return '<button type="button" class="status-chip' + (statusFilter[tab] === c ? ' on' : '') + '" data-chip="' + c + '">' + c + ' <span>' + n + '</span></button>';
+      }).join('');
+    }
+    const base = (STATUS_CHIPS[tab] && statusFilter[tab] !== 'All') ? allRows.filter(r => statusOf(r) === statusFilter[tab]) : allRows;
 
     // search every column except NO. and the buttons; for dropdowns only the chosen value counts
     const rowText = r => Array.from(r.children).slice(1).map(td => {
@@ -3805,7 +3836,7 @@ function paginateTables() {
       return sel ? sel.options[sel.selectedIndex].text : td.innerHTML.replace(/<[^>]+>/g, ' ');   // tags become spaces so lines do not run together
     }).join(' ').replace(/\s+/g, ' ').toLowerCase();
     const words = tableSearch[tab].toLowerCase().replace(/#/g, '').split(/\s+/).filter(Boolean);   // every word must match
-    const rows = words.length ? allRows.filter(r => { const t = rowText(r).replace(/#/g, ''); return words.every(w => new RegExp('(^|[^a-z0-9])' + w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).test(t)); }) : allRows;   // a word matches where another word starts, so "paid" does not find "Unpaid"
+    const rows = words.length ? base.filter(r => { const t = rowText(r).replace(/#/g, ''); return words.every(w => new RegExp('(^|[^a-z0-9])' + w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).test(t)); }) : base;   // a word matches where another word starts, so "paid" does not find "Unpaid"
     if (tab === 'completed') { completedMatched = rows.map(r => r.children[2].textContent.trim()); updateCompletedTools(); }
     if (tab === 'deleted') { deletedMatched = rows.map(r => r.children[2].textContent.trim()); updateDeletedTools(); }
     const pages = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
@@ -4078,6 +4109,7 @@ document.getElementById('btn-completed-refresh').onclick = () => {
   document.getElementById('completed-range').value = 'all';
   selectedCompleted.clear();
   tableSearch.completed = '';
+  statusFilter.completed = 'All';
   const box = document.querySelector('#search-completed input');
   if (box) box.value = '';
   tablePage.completed = 1;
@@ -4090,6 +4122,7 @@ document.getElementById('btn-completed-refresh').onclick = () => {
 // Orders refresh: clear the search, go back to page 1 and check the database for changes from other devices
 document.getElementById('btn-orders-refresh').onclick = async () => {
   tableSearch.orders = '';
+  statusFilter.orders = 'All';
   const box = document.querySelector('#search-orders input');
   if (box) box.value = '';
   tablePage.orders = 1;
