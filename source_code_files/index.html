@@ -1919,6 +1919,31 @@ html.osk-open .screen-layer { padding-bottom: calc(var(--kb-h, 0px) + 12px); pad
 html.osk-open .modal-overlay { padding-bottom: calc(var(--kb-h, 0px) + 12px); padding-top: 12px; }
 html.osk-open .modal-overlay > * { max-height: calc(100vh - var(--kb-h, 0px) - 28px) !important; overflow-y: auto; }
 @media print { #osk { display: none !important; } }
+
+/* ---- One-page Services screen (kiosk size): compact top bar, 3 + 2 cards, no scrolling ---- */
+@media (min-width: 900px) and (min-height: 480px) {
+  header { padding: 6px 18px !important; min-height: 0 !important; height: 60px !important; display: flex !important; flex-wrap: nowrap !important; align-items: center !important; gap: 10px !important; }
+  header .brand-logo-icon { width: 44px !important; height: 44px !important; }
+  header .brand-wrap { font-size: 19px !important; gap: 8px !important; flex: 0 0 auto !important; }
+  header .header-nav { margin-left: auto !important; display: flex !important; flex-wrap: nowrap !important; gap: 6px !important; }
+  header .header-nav .nav-tab-btn, header .header-nav .btn-logout, header .header-nav .btn-current-order {
+    padding: 0 12px !important; min-height: 0 !important; height: 42px !important; font-size: 12px !important; border-radius: 22px !important; white-space: nowrap !important; }
+  header .header-nav .btn-current-order { gap: 6px !important; }
+  header .header-nav svg { width: 16px !important; height: 16px !important; }
+  main { padding: 0 18px 12px !important; }
+  body:has(#view-services.active) { overflow: hidden !important; }
+  #view-services.active { display: flex !important; flex-direction: column !important; height: calc(100vh - 72px) !important; }
+  #view-services .section-head-bar { margin: 10px 0 !important; flex: 0 0 auto !important; }
+  #view-services .section-head-bar h2 { font-size: 22px !important; }
+  #services-grid-container { flex: 1 1 auto !important; min-height: 0 !important; display: grid !important; grid-template-columns: repeat(6, 1fr) !important; grid-auto-rows: 1fr !important; gap: 14px 18px !important; }
+  #services-grid-container .service-card { grid-column: span 2; min-height: 0 !important; height: 100% !important; }
+  #services-grid-container .service-card:nth-child(4):nth-last-child(2) { grid-column: 2 / span 2; }
+  #services-grid-container .service-card:nth-child(5):last-child { grid-column: 4 / span 2; }
+  #services-grid-container .service-card-icon { padding-top: 6px !important; }
+  #services-grid-container .service-card-icon svg { width: clamp(36px, 9vh, 52px) !important; height: clamp(36px, 9vh, 52px) !important; }
+  #services-grid-container .service-card-title { margin: 0 0 8px !important; font-size: 15px !important; }
+  #services-grid-container .service-card-price { padding: 7px 0 !important; font-size: 18px !important; }
+}
 </style>
 </head>
 <body>
