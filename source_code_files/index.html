@@ -3346,10 +3346,10 @@ function showCustomerReceipt(order) {
 // as pictures and printed + cut. If it is not running, normal browser printing is used.
 const PRINT_HELPER_URL = 'http://127.0.0.1:5000';
 // ---- Receipt size settings (change these two numbers) ----
-// RECEIPT_CSS_WIDTH: smaller number = bigger text on the paper (320 = normal, 280 = bigger)
+// RECEIPT_CSS_WIDTH: smaller number = bigger text on the paper (360 = a bit smaller than before, 320 = previous size, 280 = bigger)
 // QR_PRINT_DOTS: size of the QR code in printer dots (384 = full paper width). Bigger = easier to scan.
-const RECEIPT_CSS_WIDTH = 320;
-const QR_PRINT_DOTS = 288;
+const RECEIPT_CSS_WIDTH = 360;
+const QR_PRINT_DOTS = 264;
 let helperCache = { at: 0, info: null };
 async function helperInfo() {
   if (Date.now() - helperCache.at < 5000) return helperCache.info;
@@ -3378,9 +3378,42 @@ function sharpQr(copy, dots) {
     new QRCode(box, { text, width: side, height: side, colorDark: '#000000', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
     box.querySelectorAll('canvas, img').forEach(x => { x.style.width = (side / k) + 'px'; x.style.height = (side / k) + 'px'; });
     box.style.padding = (16 / k) + 'px';   // white border around the QR
+    box.style.margin = '4px auto 0';
   });
 }
+// ---- "Printing..." screen: blocks every touch while a print is running, so a second tap can't print twice ----
+let printBusy = false;
+function showPrintBusy() {
+  let el = document.getElementById('print-busy');
+  if (!el) {
+    const css = document.createElement('style');
+    css.textContent = '#print-busy{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;background:rgba(8,38,78,.62);touch-action:none;}'
+      + '#print-busy .pb-card{background:#fff;border-radius:22px;padding:30px 44px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.35);max-width:86vw;}'
+      + '#print-busy .pb-spin{width:54px;height:54px;margin:0 auto 16px;border:6px solid #cfe6fb;border-top-color:#1877c9;border-radius:50%;animation:pbspin .9s linear infinite;}'
+      + '#print-busy b{display:block;font-size:22px;color:#0b3d75;margin-bottom:6px;}#print-busy span{font-size:14px;color:#5b6b7e;}'
+      + '@keyframes pbspin{to{transform:rotate(360deg)}}@media print{#print-busy{display:none!important}}';
+    document.head.appendChild(css);
+    el = document.createElement('div');
+    el.id = 'print-busy';
+    el.innerHTML = '<div class="pb-card"><div class="pb-spin"></div><b>Printing, please wait...</b><span>Do not press anything until the paper is cut.</span></div>';
+    ['click', 'pointerdown', 'touchstart'].forEach(ev => el.addEventListener(ev, e => { e.stopPropagation(); e.preventDefault(); }, true));
+    document.body.appendChild(el);
+  }
+  el.style.display = 'flex';
+}
+function hidePrintBusy() { const el = document.getElementById('print-busy'); if (el) el.style.display = 'none'; }
 async function printReceipts(selectors, extraEls) {
+  if (printBusy) return true;                 // a print is already running: ignore the extra tap
+  printBusy = true; showPrintBusy();
+  const t0 = Date.now();
+  try { return await printReceiptsNow(selectors, extraEls); }
+  finally {
+    const left = 3000 - (Date.now() - t0);    // keep the screen up at least 3 seconds
+    if (left > 0) await new Promise(r => setTimeout(r, left));
+    hidePrintBusy(); printBusy = false;
+  }
+}
+async function printReceiptsNow(selectors, extraEls) {
   const info = (typeof html2canvas === 'function') ? await helperInfo() : null;
   if (info) {
     try {
@@ -3392,7 +3425,7 @@ async function printReceipts(selectors, extraEls) {
           const box = document.createElement('div');
           box.style.cssText = 'position:fixed;left:-10000px;top:0;width:' + RECEIPT_CSS_WIDTH + 'px;background:#fff;';
           const copy = el.cloneNode(true);
-          copy.style.cssText += ';width:' + RECEIPT_CSS_WIDTH + 'px;max-width:none;margin:0;box-shadow:none;';
+          copy.style.cssText += ';width:' + RECEIPT_CSS_WIDTH + 'px;max-width:none;margin:0;box-shadow:none;border:none;border-radius:0;padding:6px 8px 4px;';   // printed slip: no frame, tight margins (less paper, faster)
           box.appendChild(copy);
           document.body.appendChild(box);
           sharpQr(copy, info.dots);
@@ -4377,7 +4410,11 @@ function openCompletedReport() {
     '<div class="rp-line"></div><div class="rp-row rp-total"><span>TOTAL</span><span>' + peso(sumPickup + sumClaimed) + '</span></div>';
   openModal('modal-report');
 }
-document.getElementById('btn-print-report').onclick = () => { window.print(); };
+document.getElementById('btn-print-report').onclick = () => {
+  if (printBusy) return;
+  printBusy = true; showPrintBusy();
+  setTimeout(() => { window.print(); setTimeout(() => { hidePrintBusy(); printBusy = false; }, 2500); }, 50);
+};
 
 function showEditTab(which) {
   document.querySelectorAll('[data-edit-tab]').forEach(b => b.classList.toggle('active', b.dataset.editTab === which));
